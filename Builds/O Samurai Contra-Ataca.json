@@ -1,0 +1,91 @@
+{
+  "version": "1.0",
+  "game": "got-legends",
+  "builds": [
+    {
+      "version": "1.0",
+      "game": "got-legends",
+      "id": "mo8s37wd1575n",
+      "name": "O Samurai Contra-Ataca",
+      "createdAt": "2026-04-21T15:28:15.037Z",
+      "build": {
+        "classId": "samurai",
+        "abilityId": "lamina_explosiva",
+        "ronin_breath": null,
+        "techs": {
+          "I": "golpes_prof",
+          "II": "golpe_cur",
+          "III": "furia_hach_t3"
+        },
+        "gear": {
+          "katana": {
+            "itemId": "ira_sarugami",
+            "p1": {
+              "propId": "janela_aparo",
+              "value": 0.12
+            },
+            "p2": {
+              "propId": "dano_contra",
+              "value": 0.2
+            },
+            "perk1": "contra_intim",
+            "perk2": "postura_lua"
+          },
+          "ranged": {
+            "itemId": "arco_curto",
+            "p1": {
+              "propId": "ganho_det_dist",
+              "value": 0.1
+            },
+            "p2": {
+              "propId": "vel_tensao",
+              "value": 0.2
+            },
+            "perk1": "mun_env",
+            "perk2": "mun_afi"
+          },
+          "charm": {
+            "itemId": "amuleto_samurai",
+            "p1": {
+              "propId": "janela_c",
+              "value": 0.12
+            },
+            "p2": {
+              "propId": "contra_c",
+              "value": 0.2
+            },
+            "perk1": "ritmo_cresc",
+            "perk2": "golpes_abenc",
+            "linkedClass": "samurai"
+          },
+          "gw1": {
+            "itemId": "arremesso_terra",
+            "p1": {
+              "propId": "janela_k",
+              "value": 0.12
+            },
+            "p2": {
+              "propId": "red_rec_gw1_kill",
+              "value": 4
+            },
+            "perk1": "em_chamas2",
+            "perk2": "podridao"
+          },
+          "gw2": {
+            "itemId": "cabaca_curativa",
+            "p1": {
+              "propId": "red_dano_g",
+              "value": 0.1
+            },
+            "p2": {
+              "propId": "red_rec_gw2_kill",
+              "value": 4
+            },
+            "perk1": "det_repent2",
+            "perk2": "bebida_forte"
+          }
+        }
+      }
+    }
+  ]
+}
