@@ -36,9 +36,10 @@
 - Troca de classe preservando itens compatíveis e técnicas magistrais equivalentes
 - `SettingsModal`: tema, modo de layout, modo de ícone de gear, código no export, créditos
 - **Fase 2** — `generateBuildText` funcional para modos `build`, `detailed`, `stats`
-  - Texto bilíngue conforme `lang` ativo
+  - Texto bilíngue conforme `lang` ativo — **inclusive nas estatísticas** (corrigido em 2026-07-22)
   - Cooldowns calculados (recarga real, não base)
   - HP e DET sempre presentes nas estatísticas
+  - Demais stats com valor formatado, filtradas pelo que o build alterou, e com o grupo específico da classe presente (FIX-005)
   - Código Base64 opcional (toggle nas configurações)
 - `ExportPanel` com 2 grupos visuais: `📋 Texto` e `🖼️ Print` × 3 modos
 
@@ -60,12 +61,13 @@ _Nada ativo._ (Bug com sintoma observável entra aqui; quando resolvido e se foi
 
 > ⚠️ **O `GUIA_CORRECOES_FASE3.md` não existe mais** — não está na pasta local nem no repositório, e não será recuperado (confirmado pelo usuário em 2026-07-22). O código destes quatro itens **precisa ser reescrito do zero**. Não perca tempo procurando o arquivo. Daqui em diante correção de código sai por spec aplicada pelo Claude Code, não por guia para colar à mão — foi justamente esse formato que deixou a Fase 3 parada desde junho (DEC-007).
 
-Os quatro itens que continuam pendentes:
+Os três itens que continuam pendentes — todos de layout, nenhum de cálculo:
 
 - **Tooltip `wrapperStyle` prop**: assinatura e span do Tooltip precisam aceitar `wrapperStyle`
 - **TechRow independente por modo**: 3-col → full-width uniforme; 2-col → side-by-side em grid
 - **Contador de Magistrais**: texto completo ("Legendary Slots" / "Magistrais"), padding maior, estrelas maiores
-- **`generateBuildText` stats fix**: `getStatGroups(stats, build.classId, lang)` + `fmtStatTxt()` + filtro `value === base`
+
+> O quarto item — o fix das estatísticas de `generateBuildText` — **saiu desta lista em 2026-07-22**: foi de fato aplicado pela spec0004. Ver FIX-005.
 
 ---
 

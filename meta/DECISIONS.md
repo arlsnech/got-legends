@@ -173,6 +173,12 @@ Cada item magistral tem seus `props` e `perks` escritos **explicitamente e compl
 - **Solução:** Corrigir chamada para `getStatGroups(stats, build.classId, lang)`, adicionar `fmtStatTxt(s)` local, mudar filtro para `stat.value === stat.base`. Código entregue no `GUIA_CORRECOES_FASE3.md`.
 - **Lição:** Sempre verificar a assinatura de funções de `logic.js` antes de usar — elas têm parâmetros específicos que o assistente pode errar ao referenciar de memória.
 
+> **Emenda de 2026-07-22 — esta entrada esteve factualmente errada por quase um mês.** FIX-005 foi registrado como resolvido em 2026-06-24, mas a correção existia apenas dentro do `GUIA_CORRECOES_FASE3.md` e nunca foi aplicada ao `App.jsx`. O bug seguiu vivo e reapareceu em uso normal. A correção só entrou no código em 2026-07-22, pela spec0004. As três causas-raiz acima foram reconferidas nessa data e estavam exatas.
+>
+> Duas consequências da causa-raiz 1 que não constavam do registro original: com `classId` recebendo o valor de `lang`, (a) o rótulo nunca resolvia para `LABELS_EN` — **o export em inglês saía com rótulos em português**; e (b) o grupo de stats específico da classe era omitido por inteiro do texto, não impresso como `undefined`.
+>
+> **Lição maior, que motivou DEC-007:** um bug não está resolvido quando o conserto está escrito num documento. Está resolvido quando está no código, compilado e conferido. Nenhuma entrada de FIX deve ser criada com base em código que ainda não foi aplicado — se o código não entrou, o lugar é o `STATUS.md`, em «⏳ Pendente de Aplicação».
+
 ---
 
 ## DEC-007 — Adoção do kit KCM v1.73 e do fluxo chat ↔ Claude Code

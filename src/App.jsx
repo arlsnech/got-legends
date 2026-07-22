@@ -7,7 +7,7 @@ import {
   selectTech, selectAbility, selectItem, selectProp,
   setPropValue, selectPerk, setCharmLinkedClass,
   checkLegendaryLimit, getGearListForClass, getAvailableProps, getRequiredPerkId,
-  getAvailablePerks, getEffectiveCharm, getStatGroups,
+  getAvailablePerks, getEffectiveCharm, getStatGroups, isStatChanged,
   getClass, getItem,
   formatStatValue, formatPropRange, propValueForDisplay,
   propValueFromDisplay, formatCd,
@@ -1863,15 +1863,18 @@ function generateBuildText({ build, stats, lang, buildName, mode, includeShareCo
     lines.push(`  HP: ${hp}`)
     lines.push(`  ${L ? 'Resolve' : 'Determinação'}: ${resolve}`)
 
-    // Demais stats — somente as modificadas (valor !== 0)
-    const groups = getStatGroups(stats, lang)
+    // Demais stats — somente as que diferem do valor base.
+    // ATENÇÃO: getStatGroups(stats, classId, lang) — o classId é obrigatório.
+    // Sem ele o lang cai no lugar errado (rótulos sempre em PT) e o grupo
+    // de stats específico da classe some da lista. Ver FIX-005.
+    const groups = getStatGroups(stats, build.classId, lang)
     for (const group of groups) {
       for (const stat of group.stats) {
         // HP e DET já foram adicionados acima
         if (stat.key === 'maxHP' || stat.key === 'maxResolve') continue
-        // Só mostra se foi modificada (valor diferente de 0 ou base)
-        if (!stat.value || stat.value === 0) continue
-        lines.push(`  ${stat.label}: ${stat.formatted}`)
+        // Só mostra o que o build de fato alterou em relação à base
+        if (!isStatChanged(stat)) continue
+        lines.push(`  ${stat.label}: ${formatStatValue(stat.value, stat.unit)}`)
       }
     }
   }

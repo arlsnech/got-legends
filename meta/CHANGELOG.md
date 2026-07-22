@@ -30,6 +30,7 @@
 
 ### Corrigido
 - Props de item Magistral saíam abaixo do máximo na build aleatória (FIX-006). Builds salvos ou compartilhados com o valor errado são saneados ao carregar
+- Estatísticas do texto exportado saíam como `undefined` (FIX-005 — diagnosticado em junho, aplicado só agora). Junto com isso: os rótulos das estatísticas passam a respeitar o idioma EN, e o grupo de estatísticas específico da classe volta a aparecer no texto
 
 ### Pendente de aplicação (código precisa ser reescrito — guia original perdido)
 - `Tooltip` com prop `wrapperStyle` para controle de layout
