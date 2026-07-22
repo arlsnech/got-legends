@@ -212,6 +212,69 @@ export function getEffectiveCharm(itemId, linkedClass) {
   return item;
 }
 
+/**
+ * Diz se o item equipado num slot é Magistral (legendary).
+ *
+ * Item Magistral tem as props travadas no valor máximo — regra do jogo,
+ * documentada no README > Mecânicas Implementadas > Itens Magistrais.
+ *
+ * Lê o item efetivo: para amuletos com classBinding, resolveCharmClassBinding
+ * faz `...item`, então a flag `leg` é preservada na cópia.
+ *
+ * @param {Object} build
+ * @param {string} slotName  'katana' | 'ranged' | 'charm' | 'gw1' | 'gw2'
+ * @returns {boolean}
+ */
+export function isLegendarySlot(build, slotName) {
+  const slot = build?.gear?.[slotName];
+  if (!slot?.itemId) return false;
+  const item = slotName === 'charm'
+    ? getEffectiveCharm(slot.itemId, slot.linkedClass)
+    : getItem(slot.itemId);
+  return item?.leg === true;
+}
+
+/**
+ * Força as props de todo item Magistral do build para o valor máximo.
+ *
+ * Rede para builds salvos ou compartilhados ANTES desta correção: o valor
+ * errado gerado pelo randomBuild ficou gravado no JSON, então precisa ser
+ * consertado na LEITURA, não só na geração.
+ *
+ * @param {Object} build
+ * @returns {Object} novo build, ou o mesmo objeto se nada precisou mudar
+ */
+export function normalizeLegendaryProps(build) {
+  if (!build?.gear) return build;
+
+  let changed = false;
+  const gear = {};
+
+  Object.entries(build.gear).forEach(([slotName, slot]) => {
+    gear[slotName] = slot;
+    if (!slot?.itemId) return;
+
+    const item = slotName === 'charm'
+      ? getEffectiveCharm(slot.itemId, slot.linkedClass)
+      : getItem(slot.itemId);
+    if (item?.leg !== true) return;
+
+    let next = slot;
+    ['p1', 'p2'].forEach(ps => {
+      const propId = next[ps]?.propId;
+      if (!propId) return;
+      const propDef = item.props.find(p => p.id === propId);
+      if (!propDef || next[ps].value === propDef.mx) return;
+      next = { ...next, [ps]: { propId, value: propDef.mx } };
+      changed = true;
+    });
+
+    gear[slotName] = next;
+  });
+
+  return changed ? { ...build, gear } : build;
+}
+
 // ─── ACUMULADOR DE STATS ─────────────────────────────────────
 
 /** Cria um acumulador zerado com todos os stats reconhecidos. */
@@ -795,7 +858,10 @@ export function setPropValue(build, slotName, propSlot, value, clamp = true) {
 
   let v = parseFloat(value);
   if (isNaN(v)) v = propDef.mn;
-  if (clamp) {
+  if (isLegendarySlot(build, slotName)) {
+    // Magistral: travado no máximo, venha de onde vier a chamada
+    v = propDef.mx;
+  } else if (clamp) {
     v = Math.max(propDef.mn, Math.min(propDef.mx, v));
   }
 
@@ -999,18 +1065,22 @@ export function randomBuild(build) {
       ? getEffectiveCharm(chosen.id, linkedClass)
       : chosen;
 
-    // P1
+    // P1 — item Magistral trava no máximo; comum sorteia dentro da faixa
     const p1opts = effectiveItem.props.filter(p => p.sl.includes('P1'));
     const p1 = p1opts.length > 0 ? pick(p1opts) : null;
-    const p1val = p1 ? randomInRange(p1.mn, p1.mx, p1.u) : 0;
+    const p1val = p1
+      ? (chosen.leg ? p1.mx : randomInRange(p1.mn, p1.mx, p1.u))
+      : 0;
 
-    // P2 (bloqueando mesma sk que P1)
+    // P2 (bloqueando mesma sk que P1) — mesma regra do Magistral
     const p2opts = effectiveItem.props.filter(p =>
       p.sl.includes('P2') &&
       !(p1 && p.sk === p1.sk)
     );
     const p2 = p2opts.length > 0 ? pick(p2opts) : null;
-    const p2val = p2 ? randomInRange(p2.mn, p2.mx, p2.u) : 0;
+    const p2val = p2
+      ? (chosen.leg ? p2.mx : randomInRange(p2.mn, p2.mx, p2.u))
+      : 0;
 
     // Perks
     const perks = [...effectiveItem.perks];
@@ -1088,7 +1158,7 @@ export function deserializeBuild(saved) {
   if (!cls) {
     return { ok: false, error: `Classe desconhecida: ${saved.build.classId}` };
   }
-  return { ok: true, build: saved.build };
+  return { ok: true, build: normalizeLegendaryProps(saved.build) };
 }
 
 /**

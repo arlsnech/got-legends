@@ -28,8 +28,8 @@
 - Branch `v2-planner` criada a partir da `main` para abrigar o estado atual da ferramenta — a `main` e o site publicado seguem intactos
 - `src/v1..v4` e `GUIA_COMPLETO_v4.md` preservados em commit próprio antes da limpeza futura
 
-### Bug conhecido (registrado, não corrigido)
-- Props de item Magistral não ficam travadas no máximo — visível na build aleatória. Diagnóstico completo em `meta/STATUS.md`
+### Corrigido
+- Props de item Magistral saíam abaixo do máximo na build aleatória (FIX-006). Builds salvos ou compartilhados com o valor errado são saneados ao carregar
 
 ### Pendente de aplicação (código precisa ser reescrito — guia original perdido)
 - `Tooltip` com prop `wrapperStyle` para controle de layout

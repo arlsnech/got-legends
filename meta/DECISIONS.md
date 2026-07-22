@@ -238,3 +238,31 @@ O `CONTEXT.md` registrava commits no imperativo curto em PT-BR, com o exemplo `a
 
 ### Consequências
 O histórico do repo fica legível por ferramenta e imune ao encoding do CMD. Commits antigos não são reescritos — a convenção vale daqui em diante.
+
+---
+
+## FIX-006 — Props de item Magistral saíam abaixo do máximo na build aleatória
+
+**Data:** 2026-07-22 · **Gravidade:** alta (valor errado gravado e propagado)
+
+### Sintoma
+Ao gerar build com o botão 🎲, itens Magistrais apareciam com props abaixo do máximo — por exemplo, Fustigador de Pedra ★ com `Dano de Contra-Ataque (10–20%)` em 11% e `Red. Recarga Habilidade (5–12%)` em 5%. No jogo, item Magistral sempre tem a prop no valor máximo, regra que o próprio `README.md` documenta.
+
+### Causa raiz
+`randomBuild()` chamava `randomInRange(p.mn, p.mx, p.u)` sem consultar `chosen.leg`, embora já usasse essa mesma flag duas linhas acima para controlar o limite de slots Magistrais. A trava de máximo nunca existiu na camada de lógica: ela só *parecia* funcionar porque `selectProp()` já usava `propDef.mx` como valor padrão, então quem montava a build à mão nunca via o problema.
+
+### O que NÃO era a causa
+O `App.jsx` estava correto o tempo todo. O `PropInput` recebe `locked={isLeg}` e renderiza o valor como texto travado, sem steppers. Ele travava fielmente — no valor errado que a lógica havia gravado. Um diagnóstico anterior culpou a UI por engano; ficou registrado aqui para não se repetir a suspeita.
+
+### Alcance
+Pior do que "o número aparece errado na tela": o valor fica gravado no estado do build, então viaja para o `.json` salvo e para o código Base64 de compartilhamento. Toda build gerada no 🎲 e salva antes desta correção carrega o valor errado no arquivo. A build de exemplo `O Samurai Contra-Ataca` foi conferida e está limpa — foi montada à mão.
+
+### Correção
+Quatro pontos em `src/logic.js`:
+1. `isLegendarySlot(build, slotName)` — helper único, lê o item efetivo (preserva `leg` no amuleto com `classBinding`).
+2. `randomBuild()` — usa `p.mx` quando `chosen.leg`.
+3. `setPropValue()` — força `propDef.mx` em slot Magistral, antes do clamp comum. Defesa em profundidade; a UI hoje não alcança esse caminho.
+4. `normalizeLegendaryProps(build)` chamado em `deserializeBuild()` — conserta na leitura o que já foi salvo errado. Cobre import de `.json` e código Base64, porque `decodeBuild` passa por `deserializeBuild`.
+
+### Consequência aberta
+O saneamento acontece **na leitura**. Um arquivo `.json` antigo no disco continua com o valor errado gravado até ser carregado e salvo de novo. Isso é intencional: a ferramenta não reescreve arquivos do usuário sozinha.
