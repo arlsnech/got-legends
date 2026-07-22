@@ -23,7 +23,15 @@
 - `meta/STATUS.md` — `❌ Quebrado` e `⏳ Pendente de Aplicação` viram seções distintas
 - `meta/LOG-TEMPLATE.md` — acrescentado o campo «Specs entregues / aplicadas»
 
-### Pendente de aplicação (guia pronto, não aplicado)
+### Infraestrutura de repositório
+- Pasta local ligada ao remoto `arlsnech/got-legends` (SSH, alias `github-gametools`); histórico preservado, nada reescrito
+- Branch `v2-planner` criada a partir da `main` para abrigar o estado atual da ferramenta — a `main` e o site publicado seguem intactos
+- `src/v1..v4` e `GUIA_COMPLETO_v4.md` preservados em commit próprio antes da limpeza futura
+
+### Bug conhecido (registrado, não corrigido)
+- Props de item Magistral não ficam travadas no máximo — visível na build aleatória. Diagnóstico completo em `meta/STATUS.md`
+
+### Pendente de aplicação (código precisa ser reescrito — guia original perdido)
 - `Tooltip` com prop `wrapperStyle` para controle de layout
 - `TechRow` independente por modo (3-col full-width uniforme; 2-col side-by-side em grid)
 - Contador de Magistrais com nome completo e maior espaçamento

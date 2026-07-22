@@ -52,13 +52,31 @@
 
 ## ❌ Quebrado / Com Problema
 
-_Nada ativo._ (Bug com sintoma observável entra aqui; quando resolvido e se foi grave, vira FIX-N em DECISIONS.)
+### Props de item Magistral não ficam travadas no máximo
+
+**Sintoma:** ao gerar uma build aleatória (🎲), itens Magistrais aparecem com props em valores **abaixo do máximo**. No jogo — e conforme o próprio `README.md` («Props travadas no valor máximo, selecionáveis mas não editáveis») — item Magistral sempre tem a prop no valor máximo.
+
+**Causa raiz:** a trava nunca foi implementada. O comportamento correto só *parecia* funcionar porque o valor inicial já era o máximo e ninguém o alterava. Três pontos:
+
+| Onde | O que faz hoje | O que deveria fazer |
+|---|---|---|
+| `logic.js` › `randomBuild()`, ~L1005 e ~L1013 | `randomInRange(p.mn, p.mx, p.u)` sem olhar `chosen.leg` | se o item é `leg`, usar `p.mx` direto |
+| `logic.js` › `setPropValue()`, ~L797 | clampa em `[mn, mx]` para qualquer item — deixa **baixar** a prop de um Magistral pelos steppers ▲▼ | se o item é `leg`, ignorar a alteração e manter `mx` |
+| `App.jsx` › card de gear | usa `isLeg` só para cor e tag «MAGISTRAL» | renderizar o valor como texto travado, sem input nem steppers |
+
+Note que `logic.js` › `selectProp()` (~L761) já acerta por outro caminho: o padrão dele é `propDef.mx` para todo item, Magistral ou não.
+
+**Correção proposta (ainda não aplicada):** um helper único — `isLegendarySlot(build, slotName)` — consultado nos três pontos. Mudança pequena e cirúrgica; merece spec própria, com build e conferência visual depois.
+
+**Descoberto em:** 2026-07-22, por leitura do código a partir de um relato de memória do usuário. Nunca havia sido registrado — a ferramenta é anterior à adoção do KCM.
 
 ---
 
 ## ⏳ Pendente de Aplicação (guias prontos, não aplicados ainda)
 
-Os itens abaixo têm código completo no arquivo `GUIA_CORRECOES_FASE3.md`. Precisam ser aplicados manualmente ao `App.jsx`:
+> ⚠️ **O `GUIA_CORRECOES_FASE3.md` não existe mais** — não está na pasta local nem no repositório, e não será recuperado (confirmado pelo usuário em 2026-07-22). O código destes quatro itens **precisa ser reescrito do zero**. Não perca tempo procurando o arquivo. Daqui em diante correção de código sai por spec aplicada pelo Claude Code, não por guia para colar à mão — foi justamente esse formato que deixou a Fase 3 parada desde junho (DEC-007).
+
+Os quatro itens que continuam pendentes:
 
 - **Tooltip `wrapperStyle` prop**: assinatura e span do Tooltip precisam aceitar `wrapperStyle`
 - **TechRow independente por modo**: 3-col → full-width uniforme; 2-col → side-by-side em grid
