@@ -1,0 +1,171 @@
+PS C:\Users\alexk> cd teste
+PS C:\Users\alexk\teste> npm run dev
+
+> got-legends-build-planner@1.0.0 dev
+> vite
+
+
+  VITE v5.4.21  ready in 2300 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+23:08:48 [vite] Internal server error: C:\Users\alexk\teste\src\App.jsx: Identifier 'BookmarkTab' has already been declared. (1740:9)
+
+  1738 |
+  1739 | // ─── BookmarkTab — aba lateral para abrir/fechar builds ──────
+> 1740 | function BookmarkTab({ open, onToggle, lang }) {
+       |          ^
+  1741 |   return (
+  1742 |     <Tooltip text={open
+  1743 |       ? (lang === 'en' ? 'Close saved builds panel' : 'Fechar painel de builds salvas')
+  Plugin: vite:react-babel
+  File: C:/Users/alexk/teste/src/App.jsx:1740:9
+  1738|
+  1739|  // ─── BookmarkTab — aba lateral para abrir/fechar builds ──────
+  1740|  function BookmarkTab({ open, onToggle, lang }) {
+     |           ^
+  1741|    return (
+  1742|      <Tooltip text={open
+      at constructor (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:6599:19)
+      at ScopeHandler.checkRedeclarationInScope (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:1619:19)
+      at ScopeHandler.declareName (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:1585:12)
+      at JSXParserMixin.registerFunctionStatementId (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13466:16)
+      at JSXParserMixin.parseFunction (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13450:12)
+      at JSXParserMixin.parseFunctionStatement (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13125:17)
+      at JSXParserMixin.parseStatementContent (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12791:21)
+      at JSXParserMixin.parseStatementLike (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseModuleItem (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12744:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13316:36)
+      at JSXParserMixin.parseBlockBody (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseProgram (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12622:10)
+      at JSXParserMixin.parseTopLevel (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12612:25)
+      at JSXParserMixin.parse (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:14488:25)
+      at parse (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (C:\Users\alexk\teste\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (C:\Users\alexk\teste\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (C:\Users\alexk\teste\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (C:\Users\alexk\teste\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (C:\Users\alexk\teste\node_modules\gensync\index.js:261:32)
+      at C:\Users\alexk\teste\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\Users\alexk\teste\node_modules\gensync\index.js:223:11)
+      at C:\Users\alexk\teste\node_modules\gensync\index.js:189:28
+      at C:\Users\alexk\teste\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at C:\Users\alexk\teste\node_modules\gensync\index.js:113:33
+      at step (C:\Users\alexk\teste\node_modules\gensync\index.js:287:14)
+      at C:\Users\alexk\teste\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\Users\alexk\teste\node_modules\gensync\index.js:223:11)
+23:08:48 [vite] Pre-transform error: C:\Users\alexk\teste\src\App.jsx: Identifier 'BookmarkTab' has already been declared. (1740:9)
+
+  1738 |
+  1739 | // ─── BookmarkTab — aba lateral para abrir/fechar builds ──────
+> 1740 | function BookmarkTab({ open, onToggle, lang }) {
+       |          ^
+  1741 |   return (
+  1742 |     <Tooltip text={open
+  1743 |       ? (lang === 'en' ? 'Close saved builds panel' : 'Fechar painel de builds salvas')
+23:09:00 [vite] Internal server error: C:\Users\alexk\teste\src\App.jsx: Identifier 'BookmarkTab' has already been declared. (1740:9)
+
+  1738 |
+  1739 | // ─── BookmarkTab — aba lateral para abrir/fechar builds ──────
+> 1740 | function BookmarkTab({ open, onToggle, lang }) {
+       |          ^
+  1741 |   return (
+  1742 |     <Tooltip text={open
+  1743 |       ? (lang === 'en' ? 'Close saved builds panel' : 'Fechar painel de builds salvas')
+  Plugin: vite:react-babel
+  File: C:/Users/alexk/teste/src/App.jsx:1740:9
+  1738|
+  1739|  // ─── BookmarkTab — aba lateral para abrir/fechar builds ──────
+  1740|  function BookmarkTab({ open, onToggle, lang }) {
+     |           ^
+  1741|    return (
+  1742|      <Tooltip text={open
+      at constructor (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:6599:19)
+      at ScopeHandler.checkRedeclarationInScope (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:1619:19)
+      at ScopeHandler.declareName (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:1585:12)
+      at JSXParserMixin.registerFunctionStatementId (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13466:16)
+      at JSXParserMixin.parseFunction (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13450:12)
+      at JSXParserMixin.parseFunctionStatement (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13125:17)
+      at JSXParserMixin.parseStatementContent (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12791:21)
+      at JSXParserMixin.parseStatementLike (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseModuleItem (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12744:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13316:36)
+      at JSXParserMixin.parseBlockBody (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseProgram (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12622:10)
+      at JSXParserMixin.parseTopLevel (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12612:25)
+      at JSXParserMixin.parse (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:14488:25)
+      at parse (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (C:\Users\alexk\teste\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (C:\Users\alexk\teste\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (C:\Users\alexk\teste\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (C:\Users\alexk\teste\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (C:\Users\alexk\teste\node_modules\gensync\index.js:261:32)
+      at C:\Users\alexk\teste\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\Users\alexk\teste\node_modules\gensync\index.js:223:11)
+      at C:\Users\alexk\teste\node_modules\gensync\index.js:189:28
+      at C:\Users\alexk\teste\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at C:\Users\alexk\teste\node_modules\gensync\index.js:113:33
+      at step (C:\Users\alexk\teste\node_modules\gensync\index.js:287:14)
+      at C:\Users\alexk\teste\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\Users\alexk\teste\node_modules\gensync\index.js:223:11)
+23:09:10 [vite] Internal server error: C:\Users\alexk\teste\src\App.jsx: Identifier 'BookmarkTab' has already been declared. (1740:9)
+
+  1738 |
+  1739 | // ─── BookmarkTab — aba lateral para abrir/fechar builds ──────
+> 1740 | function BookmarkTab({ open, onToggle, lang }) {
+       |          ^
+  1741 |   return (
+  1742 |     <Tooltip text={open
+  1743 |       ? (lang === 'en' ? 'Close saved builds panel' : 'Fechar painel de builds salvas')
+  Plugin: vite:react-babel
+  File: C:/Users/alexk/teste/src/App.jsx:1740:9
+  1738|
+  1739|  // ─── BookmarkTab — aba lateral para abrir/fechar builds ──────
+  1740|  function BookmarkTab({ open, onToggle, lang }) {
+     |           ^
+  1741|    return (
+  1742|      <Tooltip text={open
+      at constructor (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:365:19)
+      at JSXParserMixin.raise (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:6599:19)
+      at ScopeHandler.checkRedeclarationInScope (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:1619:19)
+      at ScopeHandler.declareName (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:1585:12)
+      at JSXParserMixin.registerFunctionStatementId (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13466:16)
+      at JSXParserMixin.parseFunction (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13450:12)
+      at JSXParserMixin.parseFunctionStatement (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13125:17)
+      at JSXParserMixin.parseStatementContent (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12791:21)
+      at JSXParserMixin.parseStatementLike (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12767:17)
+      at JSXParserMixin.parseModuleItem (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12744:17)
+      at JSXParserMixin.parseBlockOrModuleBlockBody (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13316:36)
+      at JSXParserMixin.parseBlockBody (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:13309:10)
+      at JSXParserMixin.parseProgram (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12622:10)
+      at JSXParserMixin.parseTopLevel (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:12612:25)
+      at JSXParserMixin.parse (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:14488:25)
+      at parse (C:\Users\alexk\teste\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (C:\Users\alexk\teste\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (C:\Users\alexk\teste\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (C:\Users\alexk\teste\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (C:\Users\alexk\teste\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (C:\Users\alexk\teste\node_modules\gensync\index.js:261:32)
+      at C:\Users\alexk\teste\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\Users\alexk\teste\node_modules\gensync\index.js:223:11)
+      at C:\Users\alexk\teste\node_modules\gensync\index.js:189:28
+      at C:\Users\alexk\teste\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at C:\Users\alexk\teste\node_modules\gensync\index.js:113:33
+      at step (C:\Users\alexk\teste\node_modules\gensync\index.js:287:14)
+      at C:\Users\alexk\teste\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\Users\alexk\teste\node_modules\gensync\index.js:223:11) (x2)
