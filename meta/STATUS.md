@@ -109,3 +109,4 @@ Os três itens que continuam pendentes — todos de layout, nenhum de cálculo:
 7. Não-regressão: modos `Build` e `Detailed` inalterados (sem bloco de estatísticas, como esperado); `HP` e `Resolve/Determinação` presentes em PT e EN no modo Estatístico — OK
 8. Painel lateral: nenhuma mudança de comportamento — os mesmos valores que apareceram no texto já apareciam no painel antes da spec — OK
 Commit de código `1f1f470` (`fix(export): corrige estatisticas undefined no texto exportado`) enviado à `v2-planner`.
+**Próximo passo:** dos itens pendentes de layout (Tooltip `wrapperStyle`, TechRow por modo, Contador de Magistrais) ou a Fase 3 (`generateBuildImage`), todos precisam de código reescrito do zero — nenhum guia sobrevive. Escolher um, escrever a spec correspondente e aplicar via `/apply-spec`.
