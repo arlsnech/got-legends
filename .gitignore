@@ -1,7 +1,20 @@
+# .gitignore — GoT Legends Build Planner
+# NAO ignore .claude/, meta/ nem logs/ — sao versionados de proposito.
+
+# Dependencias e build
 node_modules/
 dist/
+
+# Ambiente
 .env
 .env.local
+
+# Logs de ferramenta (NAO confundir com logs/ de sessao, que sao versionados)
 *.log
+
+# Lixo de SO / editor
 .DS_Store
 Thumbs.db
+*.swp
+.vscode/
+.idea/
