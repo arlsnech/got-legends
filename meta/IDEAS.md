@@ -108,8 +108,8 @@ Cinco arquivos de conversas antigas foram recuperados em 2026-07-22 e preservado
 | `GOT_Build.md` | 40 KB | ✅ lido por inteiro em 2026-07-22 |
 | `GOT_Build_-_Joker.md` | 15 KB | ✅ extraído em 2026-07-23 (spec0008) — arquivo removido |
 | `GOT_Build_-_Alex.md` | 61 KB | ✅ extraído em 2026-07-23 (spec0009) — arquivo removido |
-| `GOT_Build_-_Origem.md` | 197 KB | ⏳ próximo |
-| `GOT_Build_-_TOhno.md` | 267 KB | ⏳ — talvez 2 sessões |
+| `GOT_Build_-_Origem.md` | 197 KB | ✅ extraído em 2026-07-23 (spec0010) — arquivo removido |
+| `GOT_Build_-_TOhno.md` | 267 KB | ⏳ próximo — talvez 2 sessões |
 
 **Critério:** não são fatos. São pedidos históricos, muitos já atendidos, alguns contraditórios entre si, com cronologia desconhecida. Nada entra nos `meta/` sem conferência contra o código atual.
 
@@ -122,6 +122,17 @@ Os três pedidos do arquivo já estão no código; nada dele ficou aberto. Virar
 Os cinco pedidos do arquivo estão todos no código. Viraram FIX-008, DEC-014, DEC-015, DEC-016 e DEC-017. Se reaparecerem em outro arquivo antigo, são ruído: correção do `classBinding` injetando props de sub-tipo · perk de desbloqueio obrigatório (Versátil, Zarabatana, Pacote de Bombas, Remédio Proibido) · remoção do seletor de classe vinculada · munições por classe · o `ENAMETOOLONG` do `gh-pages`.
 
 **O critério aguentou o arquivo maior, e uma pergunta nova apareceu:** *"isso está registrado?"* pegou o FIX-008 e as decisões, mas quem pegou as munições foi *"o que este código faz que nenhum `meta/` menciona?"*. São perguntas diferentes — a primeira parte do arquivo antigo, a segunda parte do código. Para o `Origem` (197 KB) e o `TOhno` (267 KB), vale rodar as duas.
+
+### Já extraído do `GOT_Build_-_Origem.md` (2026-07-23) — **não reabrir**
+Viraram DEC-018 (tabela canônica de restrição de classe), FIX-009 (Picada Celestial, corrigido), DEC-019 (ranks de fã fora da ferramenta), DEC-020 (Flecha Perfurante por classe, não por técnica), as armadilhas 11 e 12 do `CONTEXT.md` e a seção 8 do `HISTORY.md`. Já conferido como **atendido** no código de hoje, não reabrir: um item por linha nas vantagens de classe · rótulo "Vantagem I/II/III" · 2 vantagens por equipamento (slot de 120 Ki) · Magistral com propriedade **selecionável** e valor travado no máximo · técnica bloqueada quando os Magistrais estão no limite · CDR das duas Armas Fantasma calculado em separado · cores de classe (Caçadora azul, Assassino verde) · Fúria de Hachiman com 3 golpes base · tooltip de técnica sem o payload interno (`legendarySlot +1`, `+stat`) · munição e descrições em EN no modo inglês.
+
+**Terceira pergunta, que só apareceu neste arquivo:** *"o que a ferramenta já teve e não tem mais?"* Os dumps de interface colados pelo autor são fotografias de versões que não existem mais em lugar nenhum — as intermediárias se perderam. Foi assim que os botões de aleatório granulares apareceram. Para o `TOhno`, vale ler os dumps de tela com essa pergunta em mãos.
+
+### 2026-07-23 — Botões de build aleatória granulares *(possível regressão)*
+O dump da v1.1 no arquivo de origem mostra **três** botões — `🎲 Tudo`, `🎲 Classe`, `🎲 Gear` — e o `App.jsx` de hoje tem só um. O pedido original ia além: aleatório em cadeia, com botão por equipamento, por propriedade e até por valor de propriedade. Como as versões intermediárias se perderam, não dá para saber em qual reescrita os três viraram um, nem se foi decisão. **Antes de reimplementar, vale perguntar ao autor se a simplificação foi intencional.**
+
+### 2026-07-23 — Flecha Perfurante condicionada à técnica
+Completar o pedido original do bloco 13: a munição exclusiva só aparece quando a técnica que a concede está equipada. Hoje aparece sempre para a classe primária (DEC-020). Precisa de dado novo em `data.js` — o vínculo técnica → munição não existe — e de passar as técnicas até `formatAmmoForClass`, que hoje é função pura de exibição. Melhoria, não defeito.
 
 ### Já verificado no `GOT_Build.md` — **não reabrir**
 Estes pedidos antigos já estão atendidos no código de hoje: estrela do Magistral no fim do nome · ícones dos amuletos (`defense-charm`, `assassin-charm`, `utility-charm`, `hunter-charm`, `benkeis-last-stand`, `shoguns-fortitude`, `lady-sanjos-surprise`) · `half-bow` renomeado para `shortbow` · círculos de Determinação só quando ativos.

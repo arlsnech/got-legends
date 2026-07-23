@@ -77,9 +77,9 @@ O que resta do guia é a **Fase 3** (`generateBuildImage` via Canvas, ~470 linha
 > O item "aplicar as 4 correções pendentes do `GUIA_CORRECOES_FASE3.md`" **saiu daqui em 2026-07-23**: as três de layout foram aplicadas pela spec0006 e a quarta pela spec0004. Estava contradizendo a seção «⏳ Pendente de Aplicação», que já dizia que não havia pendência.
 
 - [ ] Implementar `generateBuildImage` (Fase 3)
-- [ ] **`picada_celestial` fora de `REQUIRED_PERKS`** — o item carrega o perk `desbloq_ron_pc` ("Desbloqueio do Ronin") no próprio pool e está disponível ao Ronin (`by:["assassin","ronin"]`), mas a tabela não tem entrada para ele: o Ronin equipa a Picada Celestial sem o perk travar, ao contrário do que acontece na Zarabatana. Inconsistência interna do `data.js`, verificada em 2026-07-23. Correção provável: uma linha `picada_celestial: { ronin: 'desbloq_ron_pc' }`. Ver DEC-014.
+- [x] ~~`picada_celestial` fora de `REQUIRED_PERKS`~~ — **corrigido em 2026-07-23** (FIX-009). A regra foi confirmada pela fonte no bloco 27 do arquivo de origem, e virou a DEC-018.
 - [ ] **Limpar o código morto do vínculo de classe** — `onLinkedClass` declarado e nunca usado em `App.jsx`; `setCharmLinkedClass` importado lá e exportado em `logic.js` sem consumidor. Resíduo da remoção do seletor (DEC-015). Cuidado: o campo `linkedClass` do estado **fica** — quem some é só a função de troca.
-- [ ] Verificar se `visao_sugaru` (Visão de Sugaru, arco longo Magistral) deveria ter perk de desbloqueio — ao contrário do `arco_ricocheteador`, que reusa `PERKS_ARCO_LONGO` e por isso tem `versatil`, o pool do Sugaru não traz nenhum perk de desbloqueio. Pode ser fiel ao jogo ou pode ser omissão de dado; **conferir no jogo antes de mexer.**
+- [x] ~~Verificar se `visao_sugaru` deveria ter perk de desbloqueio~~ — **respondido em 2026-07-23: não deveria, e o dado está certo.** O pool dela é o do Arco Longo menos Disparo Arremessante, Certeiro, Olho de Águia e Versátil; sem Versátil no pool, qualquer classe a equipa sem custo. Ver DEC-018.
 - [ ] Verificar IDs reais de amuletos em `data.js` vs entradas em `icons.js` (alguns podem não bater)
 - [ ] Verificar IDs de técnicas do Assassino (comentados em `icons.js` como pendentes)
 - [ ] Adicionar técnicas do Assassino faltantes em `TECH_ICON` (sumica_toxico, supergolpe, etc.)
@@ -200,3 +200,22 @@ Três achados novos foram para o backlog: `picada_celestial` fora de `REQUIRED_P
 Sem mudança de código nesta sessão — `npm run build` não foi necessário. `meta/legacy/GOT_Build_-_Alex.md` removido da árvore; segue no histórico do Git.
 
 **Próximo passo:** extração 3/4 — `meta/legacy/GOT_Build_-_Origem.md` (197 KB). A linha dele já saiu do `.flatdropignore` nesta spec.
+
+---
+
+**2026-07-23 — extração retroativa 3/4: `GOT_Build_-_Origem.md`.**
+
+A conversa de origem do projeto: 35 blocos, 18 rodadas, da planilha do Google até a publicação. Diferente das duas anteriores, o valor não estava só no que virou código — estava nas **regras que o autor ditou** e que nunca foram escritas em lugar nenhum.
+
+- **DEC-018 — a tabela canônica de restrição de classe das armas de longo alcance.** Marcar exclusividade errada foi o erro mais repetido da fase de origem, e a causa está identificada: a aba de Magistrais da planilha tem colunas por classe que são **recomendação de build**, não permissão de uso. A tabela agora é a referência única.
+- **FIX-009 — Picada Celestial travando o Desbloqueio do Ronin.** Achado na spec0009 como "provável", confirmado pelo bloco 27 e **corrigido nesta sessão** — uma linha em `REQUIRED_PERKS`. Primeira mudança de código desde a spec0006.
+- **DEC-019** — os ranks S/A/B/C/D de tier list são opinião de fã e ficam fora da ferramenta, também porque o *Ghost of Yotei* usa letras para outra coisa.
+- **DEC-020** — a Flecha Perfurante hoje filtra por classe e não por técnica. É metade do pedido original, e a metade que falta foi **abrida pelo próprio autor**; o custo de completar é dado novo em `data.js`, não um ajuste.
+- Três armadilhas novas no `CONTEXT.md` (11 e 12 além da 10 emendada), incluindo a que mais custou tempo na origem: **CDR de Arma Fantasma não empilha entre as duas armas.**
+- `meta/HISTORY.md` ganhou a seção «Origem do projeto», que até agora não existia em nenhum arquivo.
+
+**Achado que não fecha nesta sessão:** os botões de build aleatória **granulares** (🎲 Tudo · 🎲 Classe · 🎲 Gear) aparecem no dump da v1.1 dentro do arquivo de origem e **não existem no `App.jsx` de hoje** — só o 🎲 global sobrou. Como as versões intermediárias se perderam, não dá para dizer em qual reescrita sumiram. Foi para o `IDEAS.md` como possível regressão, não como bug: pode ter sido simplificação deliberada que ninguém registrou.
+
+**Mount enxugado:** o `.flatdropignore` passou a excluir também `meta/specs/`. As specs aplicadas já não precisam subir — o efeito delas vive nos `meta/` e o corpo vive no Git. São ~126 KB por pacote.
+
+**Próximo passo:** extração 4/4 — `meta/legacy/GOT_Build_-_TOhno.md` (267 KB), o último e o maior. A linha dele já saiu do `.flatdropignore` nesta spec. Com as specs e os `src/v*` fora do pacote, ele cabe com folga.

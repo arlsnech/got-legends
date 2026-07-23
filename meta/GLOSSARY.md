@@ -17,6 +17,8 @@
 - **CDR** — Cooldown Reduction; redução do tempo de recarga de habilidades ou GWs.
 - **Propriedade (Prop)** — atributo numérico de um item (P1 ou P2). Ex: "Dano Corpo a Corpo: +12%".
 - **Tier** — nível da árvore de vantagens de classe (I, II, III). Cada tier tem 4 opções, o jogador escolhe 1.
+- **Classe primária de uma arma** — a classe "dona" do equipamento. Recebe a munição entre parênteses e não paga perk de desbloqueio. Ver DEC-018 para a tabela canônica.
+- **Tier list (S/A/B/C/D)** — ranking de Magistrais feito pela comunidade. **Não é dado do jogo** e não aparece na ferramenta, de propósito. Vive só na planilha. Ver DEC-019.
 
 ---
 

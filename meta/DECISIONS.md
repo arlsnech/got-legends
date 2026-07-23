@@ -539,3 +539,80 @@ Explodir a munição em campos por classe dentro de `data.js`. Rejeitada: multip
 
 ### Consequência aberta
 A convenção é **implícita no dado** — é uma string, e nada valida seu formato. Uma linha escrita fora do padrão (parêntese em outro lugar, espaço a mais) não casa com nenhuma das duas expressões regulares e passa adiante inalterada, sem erro. Ver armadilha 9 no `CONTEXT.md`.
+
+---
+
+## DEC-018 — Regras canônicas de restrição de classe das armas de longo alcance
+
+**Data do registro:** 2026-07-23 · **Status:** aceita · **Fonte:** `meta/legacy/GOT_Build_-_Origem.md`, blocos 21 e 27
+
+### Por que isto existe
+Foi o erro que mais voltou na origem do projeto. Marcar equipamento como "exclusivo desta classe" errado aconteceu pelo menos três vezes, e a causa foi identificada pelo autor: a planilha tem, na aba de Magistrais, quatro colunas por classe com marcações cruzadas — e essas colunas são **recomendação de build**, não permissão de uso. Ler aquilo como restrição de classe produz um `data.js` errado que parece plausível.
+
+### A tabela canônica
+Ditada pelo autor no bloco 27, contra o jogo. **É esta a referência; nada de reinferir da planilha.**
+
+| Equipamento | Quem equipa |
+|---|---|
+| Arco Curto · Espírito Imponderável | qualquer classe, sem custo |
+| Arco Longo · Arco Ricocheteador | qualquer classe — as não-Caçadoras gastam **Versátil** |
+| Visão de Sugaru | qualquer classe, **sem custo** (ver abaixo) |
+| Zarabatana · Picada Celestial | Assassino; **Ronin com perk de desbloqueio** |
+| Pacote de Bombas | Ronin; **Assassino com perk** |
+| Remédio Proibido | Ronin; **Assassino e Samurai com perk** |
+| Katanas, Amuletos, AF I e AF II Magistrais | **todas** as classes |
+
+Repare no par que não é simétrico: o Pacote de Bombas libera para o Assassino, mas a versão Magistral dele — o Remédio Proibido — libera para **Assassino e Samurai**. Não é erro de digitação.
+
+### A Visão de Sugaru é o caso especial
+Ela é um **Arco Longo**, e mesmo assim não exige Versátil. O motivo é de dado, não de mecânica: o pool dela é o do Arco Longo **menos** Disparo Arremessante, Certeiro, Olho de Águia e Versátil (bloco 21). Sem Versátil no pool, não há o que travar — e é assim no jogo. O Arco Ricocheteador, ao contrário, herda o pool do Arco Longo **inteiro**, e por isso exige Versátil.
+
+**Consequência prática:** ausência de perk de desbloqueio no pool de um item não é omissão de dado. Antes de "consertar", cheque contra esta tabela.
+
+---
+
+## FIX-009 — Picada Celestial não travava o perk de desbloqueio para o Ronin
+
+**Data:** 2026-07-23 · **Gravidade:** baixa (build inválido montável, sem corromper cálculo)
+
+### Sintoma
+O Ronin equipava a Picada Celestial e escolhia livremente as duas vantagens, sem gastar o Desbloqueio do Ronin. Build impossível no jogo. A Zarabatana, mesmo caso, travava corretamente — a diferença entre as duas era visível lado a lado.
+
+### Causa raiz
+`REQUIRED_PERKS` (`data.js`) não tinha entrada para `picada_celestial`. O perk `desbloq_ron_pc` estava no pool do item desde sempre; faltava só a linha da tabela. É exatamente a consequência aberta anotada na DEC-014: **a tabela é lista à mão e não se valida contra o `GEAR`**.
+
+### Correção
+Uma linha em `REQUIRED_PERKS`: `picada_celestial: { ronin: 'desbloq_ron_pc' }`. Nenhuma mudança em `logic.js` nem em `App.jsx` — os seis pontos de integração já existiam e passaram a cobrir o item sozinhos.
+
+### Como foi encontrado
+Não por relato de uso: apareceu na extração retroativa da spec0009, ao conferir `REQUIRED_PERKS` contra os pools de perk do `GEAR`. Ficou no backlog como "provável" até o bloco 27 do arquivo de origem confirmar a regra pela voz do autor. **A varredura que o achou vale repetir**: cruzar toda tabela de domínio escrita à mão contra o dado que ela indexa.
+
+---
+
+## DEC-019 — Os ranks S/A/B/C/D/E não entram na ferramenta
+
+**Data do registro:** 2026-07-23 · **Status:** aceita, em vigor · **Fonte:** `GOT_Build_-_Origem.md`, bloco 15
+
+As planilhas da comunidade trazem uma tier list por letra (S, A, B…) para os itens Magistrais, e uma versão antiga da ferramenta chegou a exibi-la ao lado do nome do item (`⭐ Espírito Imponderável [A]`).
+
+**Foi removida.** Dois motivos, ambos do autor: a nota é **opinião de fã, não dado do jogo** — não aparece em lugar nenhum na tela do Tsushima; e o *Ghost of Yotei* usa um sistema de ranking por letra para outra coisa, então exibir letras aqui induz erro em quem joga os dois. A tier list continua existindo na planilha, que é onde uma opinião curada tem lugar.
+
+**Regra que fica:** a ferramenta mostra o que o jogo mostra. Dado derivado da comunidade — tier list, recomendação de build, meta — fica fora, mesmo quando é bom.
+
+---
+
+## DEC-020 — A Flecha Perfurante é filtrada por classe, não por técnica
+
+**Data do registro:** 2026-07-23 · **Status:** aceita, deliberadamente parcial · **Fonte:** `GOT_Build_-_Origem.md` bloco 13 e `GOT_Build_-_Alex.md` bloco 1
+
+### O pedido original
+No bloco 13 o autor foi específico: a Flecha Perfurante deveria aparecer **só para a Caçadora e só quando a técnica de Flecha Perfurante estivesse equipada**.
+
+### O que foi implementado
+Só a primeira metade. `formatAmmoForClass` (DEC-017) esconde a linha para quem não é a classe primária, mas não olha as técnicas do build: com a Caçadora, a Flecha Perfurante aparece sempre.
+
+### Por que isso está certo por enquanto
+Não é esquecimento. Na conversa do Alex o próprio autor abriu a porta — *"se for muito complicado pode só deixar mesmo a flecha aparecendo para o caçador, pois já ajuda para o jogador saber quanto que teria sem ter que equipar a técnica"*. A versão simplificada informa o teto de munição sem obrigar o jogador a montar a build inteira para ver o número.
+
+### O custo de completar
+`formatAmmoForClass` hoje é função pura de `(ammoStr, classId, item)` e vive na camada de exibição. Condicionar por técnica exige passar o build (ou as técnicas) até ela e mapear qual técnica libera qual munição — dado que **não existe hoje** em `data.js`. Ou seja: não é ajuste de uma linha, é dado novo mais acoplamento novo. Está no `IDEAS.md` como melhoria, não como defeito.

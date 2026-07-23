@@ -181,3 +181,26 @@ const IMG_ICON_ULT  = 48     // ícone supremo no header
 ```
 
 **Código Base64:** `encodeBuild(build, name)` → base64 do JSON serializado via `serializeBuild`. `decodeBuild(code)` → decodifica e valida estrutura.
+
+---
+
+## 8. Origem do projeto — da planilha à ferramenta
+
+*(Consolidado em 2026-07-23 a partir de `meta/legacy/GOT_Build_-_Origem.md`, extraído e removido pela spec0010.)*
+
+**O projeto não começou como uma ferramenta.** Começou como uma planilha do Google, montada a partir de material da comunidade — a *NEW GoT: Legends Data Sheet (4.12.22)*, a wiki do Ghost franchise, o `ghostoftsushimalegends.com` e outros compilados. O pedido original foi de **engenharia de dados**: normalizar, eliminar duplicata, separar propriedades de vantagens, e traduzir de verdade em vez de literalmente (*Resolve* → Determinação, *Stagger* → Quebra de Postura, *Perks* → Vantagens).
+
+**O dado é do autor, não da comunidade.** O passo decisivo foi o autor abrir o jogo em PT-BR e corrigir a planilha contra a tela: nomes traduzidos oficialmente, faixas de propriedade, quais props valem para P1 e P2, munições, e as restrições de classe. Daí em diante a planilha passou a ser a fonte, e as planilhas da comunidade viraram material de conferência. É por isso que o rodapé da ferramenta diz *"Dados verificados no jogo (PT-BR)"*, e é por isso que divergência entre `data.js` e um site externo se resolve a favor do `data.js`.
+
+**Créditos herdados:** DoctorKoolman · Boneofimba · berrek45 · tenshimkii · comunidade GoT Legends. Estão no rodapé da ferramenta desde a v1.0.
+
+**A ferramenta nasceu depois, e de propósito.** O autor cogitou construir o planejador dentro da própria planilha e descartou: deixaria o arquivo pesado e o resultado seria pior. A decisão foi exportar para JSON e construir em React — com um alvo declarado, os planejadores de build de outros jogos (MugenMonkey da série Souls, o do Fallout 4 no GitHub Pages), mais **a coisa que nenhum deles faz: a tabela de estatísticas já calculada e visível ao lado da build.** Esse continua sendo o diferencial do projeto.
+
+**Linha do tempo aproximada:** scaffold do Vite em **abril de 2026**; `data.js` → `logic.js` → `App.jsx`, construídos nessa ordem e a pedido, um de cada vez; v1.0.0-beta em **junho de 2026**.
+
+### O que a fase de origem ensinou
+
+- **Reescrever o arquivo inteiro corrompe.** A queixa que mais se repete no arquivo é a mesma: pedir uma correção e receber de volta um arquivo com outras coisas mudadas — inclusive o `data.js` corrompido, com item marcado como exclusivo de classe sem motivo. O próprio autor diagnosticou a saída — *"seria melhor se a ferramenta desde o começo fosse dividida em várias partes, e você só fosse corrigindo as partes necessárias"* — e é literalmente o que o fluxo de specs por âncora faz hoje. A DEC-007 tem raiz aqui, não no kit.
+- **As versões intermediárias se perderam.** O autor registra que *"a versão 1 do JSX foi sobrescrita e não salvei, e isso ocorreu para todas as versões"*. Sobraram duas cópias, e é dessa perda que vem o hábito de guardar snapshots (`src/v1..v4`) e, mais tarde, a DEC-012.
+- **Ambiente Windows, três tropeços registrados:** o PowerShell recusa `&&` como separador (`O token '&&' não é um separador de instruções válido`); a política de Controle de Aplicativo do Windows bloqueou o binding nativo do rolldown, derrubando o scaffold do Vite mais novo; e o `gh-pages` estoura o limite de linha de comando (DEC-016).
+- **Publicação:** GitHub Pages exigiu empurrar o `dist/` à mão para a `gh-pages`; o Vercel serviu **página em branco** por caminho-base — daí o `base` controlado por `VITE_BASE_URL` no `vite.config.js` mais o `vercel.json` e o `netlify.toml`; o Netlify funcionou de primeira e virou o canal principal. Uma tentativa de **Cloudflare Pages** ficou inacabada quando a conversa terminou — o último commit da `main` antes da adoção do KCM (`63fb3a6`) adicionou um `_redirects` para ela.

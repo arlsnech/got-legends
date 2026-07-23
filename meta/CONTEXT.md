@@ -142,7 +142,11 @@ Dois tipos de ícones com lógica diferente:
 
 9. **A string de munição tem formato significativo** — `"Flecha Flamejante: 2 (5)"` não é texto livre: o número entre parênteses é a quantidade da classe primária da arma, e `"Flecha Perfurante: (6)"` (sem número externo) some da tela para as outras classes. Quem editar `ammo` em `data.js` precisa manter o padrão `Label: X (Y)` — `formatAmmoForClass` casa por regex e **deixa passar sem erro** a linha que não casar, exibindo-a crua para todas as classes. Ver DEC-017.
 
-10. **`REQUIRED_PERKS` é uma lista à mão** — o perk de desbloqueio obrigatório só trava se o item estiver nessa tabela de `data.js`. Item que ganhe perk de desbloqueio no `GEAR` e não entre aqui não trava nada, e nada acusa. Ver DEC-014.
+10. **`REQUIRED_PERKS` é uma lista à mão** — o perk de desbloqueio obrigatório só trava se o item estiver nessa tabela de `data.js`. Item que ganhe perk de desbloqueio no `GEAR` e não entre aqui não trava nada, e nada acusa. Ver DEC-014 e FIX-009, que foi exatamente esse caso.
+
+11. **Restrição de classe não se infere da planilha** — a aba de Magistrais tem colunas por classe que são **recomendação de build**, não permissão de uso. Lê-las como restrição já produziu `data.js` errado três vezes na origem do projeto. A tabela canônica está na DEC-018 e é a única referência. Corolário: item sem perk de desbloqueio no pool pode estar certo (a Visão de Sugaru é assim de propósito) — cheque a DEC-018 antes de "consertar".
+
+12. **CDR de Arma Fantasma não empilha entre as armas** — propriedade de redução de recarga numa AF vale **só para aquela AF**; a mesma propriedade no Amuleto vale para as duas. Em qualquer dos casos o número é exibido **separado por arma**, nunca somado num total. Errar isso foi o defeito mais repetido da fase de origem.
 
 ---
 
