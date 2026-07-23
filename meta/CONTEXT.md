@@ -140,6 +140,10 @@ Dois tipos de ícones com lógica diferente:
 
 8. **Técnica Magistral não tem flag própria** — é identificada por `tech.fx.some(fx => fx.s === 'legSlots')`, em `countLegBonus`, `checkLegendaryLimit` e `changeClass`. E ela existe **só nos tiers I e III**, nas quatro classes: é dessa simetria que `changeClass` depende para propagar a técnica ao trocar de classe. Acrescentar uma técnica `legSlots` num tier que só uma classe tenha quebra a troca de classe **em silêncio** — sem erro, apenas com um build acima do limite. Ver DEC-013.
 
+9. **A string de munição tem formato significativo** — `"Flecha Flamejante: 2 (5)"` não é texto livre: o número entre parênteses é a quantidade da classe primária da arma, e `"Flecha Perfurante: (6)"` (sem número externo) some da tela para as outras classes. Quem editar `ammo` em `data.js` precisa manter o padrão `Label: X (Y)` — `formatAmmoForClass` casa por regex e **deixa passar sem erro** a linha que não casar, exibindo-a crua para todas as classes. Ver DEC-017.
+
+10. **`REQUIRED_PERKS` é uma lista à mão** — o perk de desbloqueio obrigatório só trava se o item estiver nessa tabela de `data.js`. Item que ganhe perk de desbloqueio no `GEAR` e não entre aqui não trava nada, e nada acusa. Ver DEC-014.
+
 ---
 
 ## Contexto de Produto

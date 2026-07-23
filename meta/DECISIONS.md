@@ -393,3 +393,149 @@ A correspondência "mesmo tier na outra classe" só fecha porque as quatro class
 | Assassino | `leg_ass_i` | — | `leg_ass_iii` |
 
 Nenhum tier fica órfão, então o estado inválido não volta por esse caminho. **A guarda é essa tabela, não o código:** se `data.js` algum dia ganhar uma técnica `legSlots` num tier assimétrico entre classes, `newLegTech` vira `undefined`, nada é equipado e o build inválido reaparece — sem erro no console. Quem mexer nas técnicas de `data.js` precisa reler este quadro.
+
+---
+
+## FIX-008 — `resolveCharmClassBinding` injetava props do sub-tipo do amuleto de classe
+
+**Data do registro:** 2026-07-23 · **Data da correção:** desconhecida (anterior à adoção do KCM) · **Gravidade:** alta (stats calculadas em cima de props que o item não deveria ter)
+
+> **Registro retroativo.** O conserto **já está no código** — `src/logic.js` foi conferido nesta data e bate com a versão corrigida. Fonte: `meta/legacy/GOT_Build_-_Alex.md`, blocos 1 e 2, extraído e removido pela `spec0009`.
+
+### Sintoma
+Ao vincular um amuleto Magistral a uma classe, apareciam props que nada tinham a ver com a classe — um magistral de Furtividade vinculado à Caçadora ganhava props de ataque à distância (`rangedDamage`, `drawSpeed`). Alguns perks também duplicavam entre amuletos, com `ritmo_cresc` e `golpes_abenc` reaparecendo onde não deviam.
+
+### Causa raiz
+A função **deduzia** o que era "exclusivo da classe" em vez de saber: procurava o amuleto de classe correspondente em `GEAR`, e considerava exclusivo todo prop dele cujo `sk` não existisse no magistral base.
+
+O raciocínio confunde duas coisas diferentes. Um prop pode faltar no magistral base por ser exclusivo da classe — ou simplesmente por ser do **sub-tipo** do amuleto de classe (`ranged`, `defense`, `utility`). O filtro não distinguia, então tudo que faltava era promovido a exclusivo. Havia ainda uma lista `baseUniversalPerks` escrita à mão para tapar o mesmo buraco do lado dos perks, e o `GEAR.find` tinha um `!g.by.includes('hunter')` como remendo para não pegar o amuleto errado — dois sinais de que a dedução não se sustentava.
+
+### Correção
+Duas tabelas explícitas em `data.js` — `CLASS_EXCLUSIVE_CHARM_PROPS` e `CLASS_EXCLUSIVE_CHARM_PERKS`, indexadas por `classId` — e `resolveCharmClassBinding` passou a **ler** delas em vez de deduzir. Os filtros por `sk`/`id` que sobraram servem só para não duplicar o que o magistral base já tem.
+
+Detalhe deliberado: nas tabelas, todos os props exclusivos têm `sl:["P1","P2"]`, mesmo os que no amuleto de classe original só existem em P2 (`alvos_extr`, `raio_lam`, `raio_raj_ro`). No magistral vinculado a regra é que ficam disponíveis nos dois slots.
+
+### Por que isso vale ficar registrado
+É o caso concreto que originou a DEC-006 (`data.js` 100% explícito) e a armadilha 7 do `CONTEXT.md`. A moral é reaproveitável: **derivar dado de domínio por comparação estrutural é frágil** — a comparação acerta pelo motivo errado até o dia em que não acerta, e falha sem erro, produzindo números plausíveis.
+
+---
+
+## DEC-014 — Perk de desbloqueio obrigatório via tabela `REQUIRED_PERKS`
+
+**Data do registro:** 2026-07-23 · **Data da decisão:** desconhecida (anterior à adoção do KCM) · **Status:** aceita, em vigor no código
+
+> **Registro retroativo.** O comportamento já está implementado e o `meta/STATUS.md` já o lista como funcionando ("perk obrigatório travado 🔒"). Faltava a estrutura e o porquê dela. Fonte: `GOT_Build_-_Alex.md`, blocos 1 e 3.
+
+### Contexto
+Algumas armas de longo alcance pertencem a uma classe e só podem ser usadas pelas outras através de um perk de desbloqueio — Versátil no Arco Longo, Desbloqueio do Ronin na Zarabatana, e assim por diante. Na ferramenta, nada obrigava o jogador a gastar o slot: dava para montar um Samurai com Arco Longo sem Versátil, um build impossível no jogo.
+
+### Decisão
+Uma tabela em `data.js`, **aninhada por classe**:
+
+```js
+export const REQUIRED_PERKS = {
+  arco_longo:         { samurai: 'versatil', ronin: 'versatil', assassin: 'versatil' },
+  arco_ricocheteador: { samurai: 'versatil', ronin: 'versatil', assassin: 'versatil' },
+  zarabatana:         { ronin: 'desbloq_ron' },
+  pacote_bombas:      { assassin: 'desbloq_ass' },
+  remedio_proibido:   { assassin: 'desbloq_ass_rp', samurai: 'desbloq_sam_rp' },
+};
+```
+
+**A forma `{ itemId: { classId: perkId } }` não é decorativa.** A alternativa natural — `{ classes: [...], perkId }` — foi descartada porque o `remedio_proibido` tem **dois perks de desbloqueio distintos**, um para Assassino e outro para Samurai. Uma lista de classes com um perk só não os diferencia.
+
+### Alcance no código
+Seis pontos, todos conferidos em 2026-07-23:
+
+| Onde | O quê |
+|---|---|
+| `logic.js` · `getRequiredPerkId(itemId, classId)` | helper único; devolve `null` quando não há obrigatoriedade |
+| `logic.js` · `selectItem` | pré-preenche `perk1` ao equipar o item |
+| `logic.js` · `selectPerk` | ignora silenciosamente qualquer interação com `perk1` travado |
+| `logic.js` · `changeClass` | troca o perk obrigatório ao mudar de classe, ou libera o slot |
+| `logic.js` · `randomBuild` | o 🎲 respeita o perk obrigatório e sorteia só o `perk2` |
+| `App.jsx` · `PerkRow` (`forcedPerkId`) | select desabilitado, borda em `T.leg`, selo 🔒 Obrigatório |
+
+### Consequência aberta
+A tabela é uma lista à mão e **não se valida sozinha contra `GEAR`**. Um item que ganhe perk de desbloqueio em `data.js` e não entre aqui simplesmente não trava nada — sem erro. Já há um caso assim; ver o backlog do `STATUS.md`.
+
+---
+
+## DEC-015 — O vínculo de classe do amuleto Magistral é automático, não escolhido
+
+**Data do registro:** 2026-07-23 · **Data da decisão:** desconhecida (anterior à adoção do KCM) · **Status:** aceita, em vigor no código
+
+> **Registro retroativo.** Fonte: `GOT_Build_-_Alex.md`, blocos 1 e 3.
+
+### Contexto
+Amuleto Magistral com `classBinding` tinha, no card do slot, um `<select>` "Vincular à classe" com as quatro classes. Mas `linkedClass` já era mantido igual à classe ativa em dois lugares — `createEmptyBuild` inicializa com `classId`, `changeClass` atualiza para `newClassId`. O seletor não acrescentava capacidade: só permitia produzir um estado que o jogo não admite (build de Samurai com amuleto vinculado ao Ronin).
+
+### Decisão
+O seletor saiu. O vínculo segue a classe ativa, sempre, e o campo `linkedClass` **permanece no estado do build** — é ele que `getEffectiveCharm(itemId, linkedClass)` consome. Só a interface de escolha deixou de existir.
+
+### O que ficou por fazer
+Duas pontas soltas, ambas conferidas em 2026-07-23 e agora no backlog do `STATUS.md`:
+
+1. **Código morto.** `onLinkedClass` está declarado em `App.jsx` e nunca é usado; `setCharmLinkedClass` continua importado lá e exportado em `logic.js` sem nenhum consumidor.
+2. **Nenhuma indicação visual do vínculo.** A proposta original substituía o `<select>` por um selo "Vinculado a: 🗡️ Samurai". Isso não foi feito — o bloco foi apagado e nada entrou no lugar. Hoje o jogador vê props e perks de classe surgirem no amuleto sem nada na tela explicando de onde vêm.
+
+---
+
+## DEC-016 — Deploy pelo Netlify porque `npm run deploy` quebra no Windows
+
+**Data do registro:** 2026-07-23 · **Data da decisão:** desconhecida (anterior à adoção do KCM) · **Status:** aceita
+
+> **Registro retroativo.** Fonte: `GOT_Build_-_Alex.md`, blocos 4 e 5 — o único trecho do arquivo que não é sobre o produto, e o mais operacional de todos.
+
+### Contexto
+A primeira tentativa de publicar foi por GitHub Pages, com `npm run deploy` (`vite build && npx gh-pages -d dist`). O build passou; o `gh-pages` morreu:
+
+```
+Error: spawn ENAMETOOLONG
+    at ChildProcess.spawn (node:internal/child_process:421:11)
+    ...at Git.rm (gh-pages/lib/git.js:146:15)
+```
+
+Não é erro do projeto. O `gh-pages` monta um `git rm` com todos os arquivos do `dist/` na mesma linha de comando, e o Windows tem teto de comprimento para isso. Com `public/icons/` passando de 120 arquivos, o teto estoura.
+
+A tentativa seguinte — apontar o GitHub Pages para a `main` — serviu `App.jsx` e `data.js` crus ao navegador e produziu **página em branco**, porque JSX não é o que o browser executa; quem produz HTML+JS é o `npm run build`.
+
+### Decisão
+O site vive no **Netlify**, publicado a partir do `dist/`. O Vercel fica como alternativa e o GitHub Pages como via manual (empurrar o conteúdo de `dist/` para a `gh-pages` à mão), não pelo script.
+
+### O que fica em vigor
+- O script `deploy` **continua no `package.json`** e continua quebrado neste ambiente. Ele está no `deny` do `.claude/settings.json` — mas o motivo registrado até hoje era "publica no site real", e o motivo é maior: **ele não funciona aqui.**
+- Página em branco depois de publicar quase sempre significa que foi publicado código-fonte em vez do `dist/`.
+
+---
+
+## DEC-017 — Munições exibidas conforme a classe ativa
+
+**Data do registro:** 2026-07-23 · **Data da decisão:** desconhecida (anterior à adoção do KCM) · **Status:** aceita, em vigor no código
+
+> **Registro retroativo — e o achado principal desta extração.** A funcionalidade está em produção e **não existia em nenhum `meta/`**: busca por "munic" nos oito arquivos de contexto retornava zero. Fonte: `GOT_Build_-_Alex.md`, blocos 1 e 3.
+
+### Contexto
+No jogo, a mesma arma dá quantidades de munição diferentes conforme a classe. O `data.js` já guardava isso numa convenção de string, uma linha por munição:
+
+```
+Flecha Normal: 15
+Flecha Flamejante: 2 (5)
+Flecha Perfurante: (6)
+```
+
+O número **fora** dos parênteses é o das classes secundárias; o **entre** parênteses é o da classe primária da arma. Só o número entre parênteses significa munição que **apenas** a classe primária tem.
+
+### Decisão
+A convenção fica no dado e a interpretação é feita na exibição, por duas funções em `App.jsx`:
+
+- **`getPrimaryClass(item)`** — `item.by[0]` quando há restrição de classe; `hunter` para item `ranged` com `by: null` (os arcos abertos são, na prática, arma de Caçadora); `null` nos demais.
+- **`formatAmmoForClass(ammoStr, classId, item)`** — por linha: `X (Y)` mostra `Y` para a primária e `X` para as outras; `(Y)` mostra `Y` para a primária e **omite a linha inteira** para as outras; linha sem parênteses vale para todos.
+
+Nenhuma mudança em `logic.js` nem no motor de stats — munição é informativa e não entra em `computeStats`.
+
+### Alternativa considerada
+Explodir a munição em campos por classe dentro de `data.js`. Rejeitada: multiplicaria o dado por quatro para representar uma diferença que quase sempre é de um número só, e a convenção `X (Y)` já vinha pronta do material de origem.
+
+### Consequência aberta
+A convenção é **implícita no dado** — é uma string, e nada valida seu formato. Uma linha escrita fora do padrão (parêntese em outro lugar, espaço a mais) não casa com nenhuma das duas expressões regulares e passa adiante inalterada, sem erro. Ver armadilha 9 no `CONTEXT.md`.

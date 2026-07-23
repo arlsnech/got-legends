@@ -40,6 +40,9 @@
 - **`computeStats(build)`** — função principal de `logic.js` que calcula todas as estatísticas da build. Retorna o objeto `stats`.
 - **`getStatGroups(stats, classId, lang)`** — agrupa as stats calculadas em seções para exibição. Atenção: `classId` é obrigatório — sem ele, grupos de classe errados são incluídos.
 - **`getEffectiveCharm(itemId, linkedClass)`** — retorna o item de amuleto com props/perks de classe já injetados. Nunca ler amuleto magistral com `classBinding` direto do `GEAR`.
+- **`CLASS_EXCLUSIVE_CHARM_PROPS` / `_PERKS`** — tabelas de `data.js`, indexadas por `classId`, com o que um amuleto Magistral vinculado ganha da classe. São a fonte de verdade: `resolveCharmClassBinding` lê delas, não deduz por comparação. Ver FIX-008.
+- **Perk de desbloqueio** — perk que uma classe não-primária precisa gastar para usar uma arma de outra classe (Versátil no Arco Longo, Desbloqueio do Ronin na Zarabatana). Fica travado no slot Vantagem I com o selo 🔒. Definido em `REQUIRED_PERKS` (`data.js`). Ver DEC-014.
+- **Classe primária (de uma arma)** — a classe "dona" do equipamento, que recebe a quantidade de munição entre parênteses. Calculada por `getPrimaryClass(item)`: `item.by[0]`, ou `hunter` para arma de longo alcance sem restrição. Ver DEC-017.
 
 ---
 
@@ -47,7 +50,7 @@
 
 - **`npm run dev`** — inicia servidor de desenvolvimento Vite em `localhost:5173`
 - **`npm run build`** — gera build de produção em `dist/`
-- **`npm run deploy`** — faz build e publica no GitHub Pages via `gh-pages`
+- **`npm run deploy`** — faz build e chama `gh-pages -d dist`. **Quebra neste ambiente** com `ENAMETOOLONG` (limite de linha de comando do Windows); está no `deny` do `.claude/settings.json`. O site é publicado pelo Netlify a partir do `dist/`. Ver DEC-016.
 - **`GUIA_CORRECOES_FASE3.md`** — arquivo de guia com 4 correções pendentes + código completo da Fase 3
 - **`GUIA_COMPLETO.md`** — arquivo de guia anterior com correções de layout e HpResolveBar
 - **spec** — arquivo em `meta/specs/` com o texto exato de uma alteração de documento e a âncora onde ela entra. O chat autora, o Claude Code posiciona. Nome: `AAMMDD-specNNNN-desc.md`. É artefato versionado; não se apaga depois de aplicada.

@@ -12,10 +12,10 @@ logs/
 # O que interessa deles ja esta consolidado em meta/HISTORY.md e meta/DECISIONS.md.
 # src/v4/App.jsx e byte a byte igual ao src/App.jsx atual — subir os dois e desperdicio puro.
 # GUIA_COMPLETO_v4.md NAO entra aqui: continua subindo (e guia de aplicacao, ainda pendente).
-# src/v1/
-# src/v2/
-# src/v3/
-# src/v4/App.jsx
+src/v1/
+src/v2/
+src/v3/
+src/v4/App.jsx
 
 # Material legado recuperado em 2026-07-22/23 (DEC-012).
 # Fica no Git para nunca mais se perder, mas fora do upload ao Projeto:
@@ -30,7 +30,6 @@ INSTRUCOES-DO-PROJETO.md
 logs/
 INSTRUCOES-DO-PROJETO.md
 meta/legacy/GOT_Build.md
-meta/legacy/GOT_Build_-_Origem.md
 meta/legacy/GOT_Build_-_TOhno.md
 meta/legacy/GUIA_COMPLETO_v4.md
 meta/legacy/GUIA_CORRECOES_FASE3.md

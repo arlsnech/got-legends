@@ -99,6 +99,7 @@
 - Motor de cálculo de stats em tempo real (`computeStats` em `logic.js`)
 - Propriedades P1/P2 editáveis com steppers e validação de range
 - Perks com perk obrigatório travado (🔒) para itens com restrição de classe
+- Munições exibidas conforme a classe ativa: a classe primária da arma vê a quantidade entre parênteses; munição exclusiva dela some para as demais *(registrado retroativamente em 2026-07-23 — DEC-017; a data desta linha é a da versão, não a do registro)*
 - CDR de GW calculado individualmente por arma
 - Slots magistrais com limite dinâmico (base 1 + bônus de técnica Magistral)
 - Troca de classe preservando itens compatíveis e técnicas magistrais equivalentes

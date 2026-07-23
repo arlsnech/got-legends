@@ -18,7 +18,8 @@
 - Vantagens I, II, III por tier (1 por tier, comportamento rádio)
 - 5 slots de gear: Katana, Longo Alcance, Amuleto, GW I, GW II
 - Props P1/P2 com valores numéricos editáveis (steppers ▲▼ + input)
-- Perks por slot com perk obrigatório travado (🔒) quando aplicável
+- Perks por slot com perk obrigatório travado (🔒) quando aplicável — tabela `REQUIRED_PERKS` (DEC-014)
+- Munições exibidas conforme a classe ativa: quantidade da classe primária entre parênteses, linha exclusiva omitida para as demais (DEC-017)
 - Amuletos magistrais com `classBinding` — props/perks de classe injetados em runtime
 - Cálculo de stats em tempo real (`computeStats` via `useMemo`)
 - CDR de Armas Fantasma calculado individualmente (GW1 ≠ GW2 ≠ global do amuleto)
@@ -73,11 +74,16 @@ O que resta do guia é a **Fase 3** (`generateBuildImage` via Canvas, ~470 linha
 
 ## 📋 Backlog (curto prazo — acionáveis na próxima sessão)
 
-- [ ] Aplicar as 4 correções pendentes do `GUIA_CORRECOES_FASE3.md`
+> O item "aplicar as 4 correções pendentes do `GUIA_CORRECOES_FASE3.md`" **saiu daqui em 2026-07-23**: as três de layout foram aplicadas pela spec0006 e a quarta pela spec0004. Estava contradizendo a seção «⏳ Pendente de Aplicação», que já dizia que não havia pendência.
+
 - [ ] Implementar `generateBuildImage` (Fase 3)
+- [ ] **`picada_celestial` fora de `REQUIRED_PERKS`** — o item carrega o perk `desbloq_ron_pc` ("Desbloqueio do Ronin") no próprio pool e está disponível ao Ronin (`by:["assassin","ronin"]`), mas a tabela não tem entrada para ele: o Ronin equipa a Picada Celestial sem o perk travar, ao contrário do que acontece na Zarabatana. Inconsistência interna do `data.js`, verificada em 2026-07-23. Correção provável: uma linha `picada_celestial: { ronin: 'desbloq_ron_pc' }`. Ver DEC-014.
+- [ ] **Limpar o código morto do vínculo de classe** — `onLinkedClass` declarado e nunca usado em `App.jsx`; `setCharmLinkedClass` importado lá e exportado em `logic.js` sem consumidor. Resíduo da remoção do seletor (DEC-015). Cuidado: o campo `linkedClass` do estado **fica** — quem some é só a função de troca.
+- [ ] Verificar se `visao_sugaru` (Visão de Sugaru, arco longo Magistral) deveria ter perk de desbloqueio — ao contrário do `arco_ricocheteador`, que reusa `PERKS_ARCO_LONGO` e por isso tem `versatil`, o pool do Sugaru não traz nenhum perk de desbloqueio. Pode ser fiel ao jogo ou pode ser omissão de dado; **conferir no jogo antes de mexer.**
 - [ ] Verificar IDs reais de amuletos em `data.js` vs entradas em `icons.js` (alguns podem não bater)
 - [ ] Verificar IDs de técnicas do Assassino (comentados em `icons.js` como pendentes)
 - [ ] Adicionar técnicas do Assassino faltantes em `TECH_ICON` (sumica_toxico, supergolpe, etc.)
+- [ ] Apagar as duas cópias soltas de `GUIA_COMPLETO*.md` que ficaram **fora do repositório** (`got-legends/GUIA_COMPLETO.md` e `got-legends/notas-arquivadas/GUIA_COMPLETO_v4.md`). São byte-idênticas — md5 conferido em 2026-07-23 — à versionada em `meta/legacy/GUIA_COMPLETO_v4.md`. Pela DEC-012, cópia fora do repo é cópia em risco, e estas três divergirem seria pior do que não existirem.
 
 ---
 
@@ -172,3 +178,25 @@ Sem mudança de código nesta sessão — `npm run build` não foi necessário. 
 **Descoberto de quebra:** a orientação da DEC-012 de reincluir material legado no mount com `!meta/legacy/<arquivo>` **não funciona** — a sintaxe `.gitignore` não reinclui arquivo cujo diretório-pai está excluído. O `.flatdropignore` passou a enumerar os arquivos legados um a um. Ver o item de 2026-07-23 em «Feedback para o Kit» no `IDEAS.md`.
 
 **Próximo passo:** extração 2/4 — `meta/legacy/GOT_Build_-_Alex.md` (61 KB). A linha dele já saiu do `.flatdropignore` nesta spec; basta regerar o pacote FlatDrop antes de abrir a próxima conversa.
+
+---
+
+**2026-07-23 — extração retroativa 2/4: `GOT_Build_-_Alex.md`.**
+
+Arquivo lido por inteiro (5 blocos, 61 KB) e conferido contra o código de hoje. Como no Joker, **nenhum pedido ficou aberto**. O saldo, porém, foi bem maior:
+
+- **DEC-017 — munições por classe.** O achado principal: a funcionalidade está em produção (`getPrimaryClass` + `formatAmmoForClass` no `App.jsx`) e a busca por "munic" nos oito `meta/` retornava **zero**. Uma funcionalidade inteira que um refactor apagaria sem que nada acusasse.
+- **FIX-008** — `resolveCharmClassBinding` deduzia os props "exclusivos de classe" por comparação com o amuleto de classe, e por isso injetava props do **sub-tipo** (ranged) em magistrais que não os tinham. Corrigido com tabelas explícitas em `data.js`. É o caso concreto que originou a DEC-006.
+- **DEC-014** — estrutura e razão da tabela `REQUIRED_PERKS` (perk de desbloqueio travado 🔒). O formato aninhado por classe existe porque o `remedio_proibido` tem dois perks de desbloqueio diferentes.
+- **DEC-015** — o vínculo de classe do amuleto Magistral é automático; o seletor foi removido. Deixou código morto e a tela sem nenhuma indicação do vínculo.
+- **DEC-016** — o motivo real de o site viver no Netlify: `npm run deploy` quebra neste ambiente com `ENAMETOOLONG` (limite de linha de comando do Windows com 120+ ícones no `dist/`). O `deny` no `.claude/settings.json` registrava só "publica no site real".
+
+Conferido de passagem e **em ordem**: `REQUIRED_PERKS` aponta para perks que existem (`versatil`, `desbloq_ron`, `desbloq_ass`, `desbloq_ass_rp`, `desbloq_sam_rp`); `getPrimaryClass` bate com o `by` real de todos os itens de longo alcance; as seis integrações de `getRequiredPerkId` estão todas no lugar.
+
+Três achados novos foram para o backlog: `picada_celestial` fora de `REQUIRED_PERKS`, o código morto do vínculo e a dúvida do `visao_sugaru`.
+
+**Também absorvido nesta sessão:** os dez relatórios de sessão em `.txt` do mount foram lidos e conferidos. Tudo neles já estava registrado, **menos** três coisas, agora no backlog e no IDEAS: as cópias soltas de `GUIA_COMPLETO*.md` fora do repo, a decisão em aberto sobre versionar o `.claude/launch.json`, e o registro de que os nomes do legado foram normalizados (espaço → underscore) ao serem movidos. Com isso os `.txt` podem ser arquivados.
+
+Sem mudança de código nesta sessão — `npm run build` não foi necessário. `meta/legacy/GOT_Build_-_Alex.md` removido da árvore; segue no histórico do Git.
+
+**Próximo passo:** extração 3/4 — `meta/legacy/GOT_Build_-_Origem.md` (197 KB). A linha dele já saiu do `.flatdropignore` nesta spec.

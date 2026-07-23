@@ -37,6 +37,12 @@ Grupos de stats com hover que expande a descrição do stat (o que ele represent
 ### 2026-06-24 — Undo/Redo
 A arquitetura imutável do `build` state (funções sempre retornam novo objeto) já facilita muito. Um array de snapshots + índice atual habilitaria Ctrl+Z nativo.
 
+### 2026-07-23 — Selo "Vinculado a: <classe>" no amuleto Magistral
+Quando o seletor de classe vinculada foi removido (DEC-015), nada entrou no lugar. O jogador vê props e perks de classe aparecerem no amuleto sem nada na tela dizendo de onde vêm. A proposta original era um selo estático com o emoji e o nome da classe ativa — display puro, sem lógica, já que `linkedClass` sempre acompanha `classId`. Baixo custo, e fecha uma pergunta silenciosa da interface.
+
+### 2026-07-23 — Versionar o `.claude/launch.json`
+O Claude Code precisou criá-lo para subir o dev server nas conferências visuais das specs 0003 e 0004, e o apagou nas duas vezes por não estar no `.gitignore` nem previsto em spec. Versioná-lo tornaria a conferência visual barata e repetível — hoje ela custa um arquivo recriado a cada sessão. A recomendação partiu do próprio Code, duas vezes; nunca foi decidida.
+
 ### 2026-06-24 — PWA / Offline
 Como não há backend, o app funciona offline se instalado como PWA. Adicionar `manifest.json` e service worker básico.
 
@@ -101,8 +107,8 @@ Cinco arquivos de conversas antigas foram recuperados em 2026-07-22 e preservado
 |---|---|---|
 | `GOT_Build.md` | 40 KB | ✅ lido por inteiro em 2026-07-22 |
 | `GOT_Build_-_Joker.md` | 15 KB | ✅ extraído em 2026-07-23 (spec0008) — arquivo removido |
-| `GOT_Build_-_Alex.md` | 61 KB | ⏳ próximo |
-| `GOT_Build_-_Origem.md` | 197 KB | ⏳ |
+| `GOT_Build_-_Alex.md` | 61 KB | ✅ extraído em 2026-07-23 (spec0009) — arquivo removido |
+| `GOT_Build_-_Origem.md` | 197 KB | ⏳ próximo |
 | `GOT_Build_-_TOhno.md` | 267 KB | ⏳ — talvez 2 sessões |
 
 **Critério:** não são fatos. São pedidos históricos, muitos já atendidos, alguns contraditórios entre si, com cronologia desconhecida. Nada entra nos `meta/` sem conferência contra o código atual.
@@ -111,6 +117,11 @@ Cinco arquivos de conversas antigas foram recuperados em 2026-07-22 e preservado
 Os três pedidos do arquivo já estão no código; nada dele ficou aberto. Viraram FIX-007 (props de Magistral não sorteadas no 🎲) e DEC-013 (troca de classe propaga a técnica Magistral). O bloco 4 contém uma correção **rejeitada pelo autor** — remover o Magistral excedente ao trocar de classe: se ela reaparecer em algum guia antigo, é ruído, não pendência.
 
 **Calibração do critério, para os próximos arquivos:** o valor do Joker não foi encontrar código faltando — foi encontrar **código sem registro**. Dois consertos em vigor há semanas não existiam em nenhum `meta/`, e um deles estava a um passo de ser lido como já coberto pelo FIX-006. Ler o arquivo perguntando "isso está no código?" acha pouco; perguntar "isso está *registrado*?" acha o que interessa.
+
+### Já extraído do `GOT_Build_-_Alex.md` (2026-07-23) — **não reabrir**
+Os cinco pedidos do arquivo estão todos no código. Viraram FIX-008, DEC-014, DEC-015, DEC-016 e DEC-017. Se reaparecerem em outro arquivo antigo, são ruído: correção do `classBinding` injetando props de sub-tipo · perk de desbloqueio obrigatório (Versátil, Zarabatana, Pacote de Bombas, Remédio Proibido) · remoção do seletor de classe vinculada · munições por classe · o `ENAMETOOLONG` do `gh-pages`.
+
+**O critério aguentou o arquivo maior, e uma pergunta nova apareceu:** *"isso está registrado?"* pegou o FIX-008 e as decisões, mas quem pegou as munições foi *"o que este código faz que nenhum `meta/` menciona?"*. São perguntas diferentes — a primeira parte do arquivo antigo, a segunda parte do código. Para o `Origem` (197 KB) e o `TOhno` (267 KB), vale rodar as duas.
 
 ### Já verificado no `GOT_Build.md` — **não reabrir**
 Estes pedidos antigos já estão atendidos no código de hoje: estrela do Magistral no fim do nome · ícones dos amuletos (`defense-charm`, `assassin-charm`, `utility-charm`, `hunter-charm`, `benkeis-last-stand`, `shoguns-fortitude`, `lady-sanjos-surprise`) · `half-bow` renomeado para `shortbow` · círculos de Determinação só quando ativos.
