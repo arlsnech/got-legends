@@ -272,3 +272,48 @@ Quatro pontos em `src/logic.js`:
 
 ### Consequência aberta
 O saneamento acontece **na leitura**. Um arquivo `.json` antigo no disco continua com o valor errado gravado até ser carregado e salvo de novo. Isso é intencional: a ferramenta não reescreve arquivos do usuário sozinha.
+
+---
+
+## DEC-011 — A extração retroativa vem antes da Fase 3
+
+**Data:** 2026-07-23 · **Status:** aceita
+
+### Contexto
+Em 2026-07-22 reapareceram o `GUIA_CORRECOES_FASE3.md` — que continha a Fase 3 inteira e havia sido dado como perdido — e cinco arquivos de conversas antigas (~580 KB) anteriores à adoção do KCM. Com o guia recuperado, a Fase 3 passou a ser executável de imediato: o código do `generateBuildImage` está escrito.
+
+### Decisão
+Ainda assim, a Fase 3 **espera** a extração retroativa das conversas antigas.
+
+O motivo é de requisito, não de organização. O prompt v7 registrado em `GOT_Build.md` mostra o autor perguntando explicitamente se os ícones das vantagens de classe entrariam na imagem gerada, e registrando preocupação de que tivessem sido esquecidos no layout proposto. Ou seja: as conversas contêm requisito da Fase 3 que o guia pode não ter absorvido. Construir 470 linhas de Canvas antes de ler isso é aceitar alta chance de refazer.
+
+A extração deixou de ser um resgate de conteúdo perdido — o guia voltou — e virou levantamento de requisito.
+
+### Método
+Uma sessão por arquivo, do menor para o maior: `Joker` (15 KB) → `Alex` (61 KB) → `Origem` (197 KB) → `TOhno` (267 KB, provavelmente duas sessões). Cada sessão lê um arquivo, separa o que é pedido ainda aberto, ideia não implementada, decisão com motivo, e ruído; entrega UMA spec que anexa aos `meta/`; e só então o arquivo é apagado. `GOT_Build.md` já foi lido por inteiro em 2026-07-22.
+
+### Alternativas consideradas
+- **Fase 3 primeiro.** Fecharia o item mais visível do backlog, mas com risco de refação por requisito não lido.
+- **Extração em uma sessão só.** Inviável: 580 KB não cabem numa janela junto com a produção de spec.
+
+### Consequências
+A Fase 3 fica adiada por várias sessões. Em troca, o backlog visível já está zerado pelas specs 0004–0006, então o adiamento não deixa nenhum defeito na tela.
+
+---
+
+## DEC-012 — Material legado passa a viver no repositório, fora do mount
+
+**Data:** 2026-07-23 · **Status:** aceita
+
+### Contexto
+O `GUIA_CORRECOES_FASE3.md` se perdeu por viver apenas fora do repositório. O `meta/STATUS.md` chegou a registrar que ele "não será recuperado" e a orientar que o código de quatro correções fosse **reescrito do zero** — uma instrução ativa e errada, baseada num arquivo que existia. Ele reapareceu por acaso.
+
+### Decisão
+Todo material legado — os guias de aplicação e as cinco conversas antigas — passa a ser **versionado** em `meta/legacy/`, e o `.flatdropignore` o mantém **fora** do upload ao Projeto do Claude.
+
+É exatamente para isso que os dois arquivos de ignore existem separados: o Git guarda para sempre; o flatdrop decide o que vale o peso da janela de contexto. São ~660 KB que só interessam quando a extração estiver em pauta, e podem ser reincluídos pontualmente com `!meta/legacy/<arquivo>`.
+
+### Consequências
+O material não se perde mais, e a pasta some da árvore de trabalho quando for apagada — porque o histórico já o guarda. O custo é um repositório maior; é texto, o Git lida bem.
+
+**Regra que fica:** artefato do projeto que só existe fora do repositório é artefato em risco. Se importa, entra no Git; se pesa, sai do flatdrop. As duas coisas são independentes.

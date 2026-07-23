@@ -141,3 +141,18 @@ Commit de código `a278783` (`fix(ui): remove spinners nativos e adota - e + nos
 14. Mobile (`inputmode="decimal"`): não emulado nesta sessão; presente no código, conferido no `git diff`
 Nenhum erro no console do navegador durante os testes. Commit de código `6b13fd9` (`fix(ui): aplica as tres correcoes de layout pendentes do guia`) enviado à `v2-planner`.
 **Próximo passo:** Fase 3 (`generateBuildImage` via Canvas) — depende de extrair da conversa antiga a discussão de requisito da imagem (quais ícones entram) antes de escrever a spec.
+
+---
+
+**2026-07-23 — encerramento da sessão de infraestrutura.**
+
+A conversa que produziu as specs 0001–0007 foi encerrada por peso de contexto. O que ela fechou: adoção do kit KCM v1.73 com adaptação (DEC-007, DEC-008), instalação do fluxo chat ↔ Claude Code, criação da branch `v2-planner` com o estado real da ferramenta em segurança, FIX-006 (props de Magistral) e FIX-005 (estatísticas `undefined`, diagnosticado em junho e aplicado só agora).
+
+Recuperado nesta sessão: o `GUIA_CORRECOES_FASE3.md`, dado como perdido, e cinco conversas antigas. Ambos agora versionados em `meta/legacy/` (DEC-012).
+
+**Próximo passo, em ordem:**
+1. Aplicar a `spec0006` se ainda estiver pendente — fecha as três correções de layout, todas visíveis na tela. Conferir com atenção o item 6 do roteiro dela: os modos 3-col e 2-col precisam ficar certos **ao mesmo tempo**; o defeito histórico é consertar um e quebrar o outro.
+2. Extração retroativa, começando por `meta/legacy/GOT_Build_-_Joker.md` (DEC-011).
+3. Fase 3 (`generateBuildImage`), depois da extração e informada por ela.
+
+Há um `HANDOFF-BRIEF.md` gerado para arrancar a próxima conversa. Ele é atalho, não memória — **este arquivo e os demais `meta/` continuam sendo a fonte de verdade.**

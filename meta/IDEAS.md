@@ -90,3 +90,33 @@ Como não há backend, o app funciona offline se instalado como PWA. Adicionar `
 - *(2026-07-22)* O `gitignore__template-update` só cobre lixo de SO/editor e **não traz `node_modules/` nem `dist/`**. Aplicado ao pé da letra por cima de um `.gitignore` de stack, seria regressão grave. Deveria vir marcado no manifesto como **aditivo**, não como substituto.
 - *(2026-07-22)* O `CEREBRO__template-update.md` **se contradiz**: a seção «Convenções» pede commits "no imperativo curto em PT-BR" e a seção «Commit pronto ao final» pede Conventional Commits sem acento.
 - *(2026-07-22)* Falta ao kit uma classe de artefato para **"guia de aplicação"** (os `GUIA_*.md` deste projeto): não é log, não é doc de contexto, não é spec. O parente próximo é `meta/specs/`, mas o kit não faz essa ponte — e é justamente o formato que deixou a Fase 3 parada desde junho esperando aplicação manual.
+
+---
+
+## 🗄️ Extração retroativa — fila de leitura
+
+Cinco arquivos de conversas antigas foram recuperados em 2026-07-22 e preservados em `meta/legacy/` (DEC-012). Documentam a origem do projeto, antes do KCM. Contêm pedidos, bugs e ideias que **nunca foram registrados em lugar nenhum**. Ver DEC-011 para o método e o porquê da ordem.
+
+| Arquivo | Tamanho | Estado |
+|---|---|---|
+| `GOT_Build.md` | 40 KB | ✅ lido por inteiro em 2026-07-22 |
+| `GOT_Build_-_Joker.md` | 15 KB | ⏳ próximo |
+| `GOT_Build_-_Alex.md` | 61 KB | ⏳ |
+| `GOT_Build_-_Origem.md` | 197 KB | ⏳ |
+| `GOT_Build_-_TOhno.md` | 267 KB | ⏳ — talvez 2 sessões |
+
+**Critério:** não são fatos. São pedidos históricos, muitos já atendidos, alguns contraditórios entre si, com cronologia desconhecida. Nada entra nos `meta/` sem conferência contra o código atual.
+
+### Já verificado no `GOT_Build.md` — **não reabrir**
+Estes pedidos antigos já estão atendidos no código de hoje: estrela do Magistral no fim do nome · ícones dos amuletos (`defense-charm`, `assassin-charm`, `utility-charm`, `hunter-charm`, `benkeis-last-stand`, `shoguns-fortitude`, `lady-sanjos-surprise`) · `half-bow` renomeado para `shortbow` · círculos de Determinação só quando ativos.
+
+### Pergunta antiga ainda em aberto
+Nos prompts antigos o autor cogitou **remover o modo Estatístico** caso desse trabalho demais. Ele agora funciona (FIX-005 aplicado na spec0004), mas a pergunta nunca foi formalmente encerrada. Vale confirmar com o usuário em vez de assumir que a correção respondeu por ela.
+
+---
+
+## 📌 Feedback para o Kit de Contexto — leva de 2026-07-23
+
+- O `_UPDATE-PROMPT.md` não trata o caso do `INSTRUCOES-DO-PROJETO.md` **não ser um arquivo do repo**. Neste projeto ele vive nas Instruções do Projeto do claude.ai; não há "vivo" no mount para comparar. O procedimento correto — pegar o template, especializar, respeitar o teto e entregar pronto para colar — deveria estar escrito, em vez de o assistente pedir que o usuário cole o texto atual só para poder comparar.
+- Falta ao kit uma **classe de artefato para material legado**: guias de aplicação, conversas antigas, snapshots de versão. Não é log, não é doc de contexto, não é spec. Este projeto resolveu com `meta/legacy/` + `.flatdropignore` (DEC-012) e a solução parece generalizável: **versionado sempre, no mount só quando em pauta**.
+- O kit não diz em lugar nenhum que **uma entrada de FIX não deve ser criada a partir de código ainda não aplicado**. Este projeto perdeu um mês com FIX-005 registrado como resolvido enquanto o conserto vivia só num guia. A regra deveria estar no CEREBRO, junto das regras de higiene.
