@@ -427,6 +427,7 @@ export const REQUIRED_PERKS = {
   arco_longo:         { samurai: 'versatil', ronin: 'versatil', assassin: 'versatil' },
   arco_ricocheteador: { samurai: 'versatil', ronin: 'versatil', assassin: 'versatil' },
   zarabatana:         { ronin: 'desbloq_ron' },
+  picada_celestial:   { ronin: 'desbloq_ron_pc' },
   pacote_bombas:      { assassin: 'desbloq_ass' },
   remedio_proibido:   { assassin: 'desbloq_ass_rp', samurai: 'desbloq_sam_rp' },
 };
