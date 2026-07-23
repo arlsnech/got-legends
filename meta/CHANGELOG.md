@@ -34,6 +34,10 @@
 - Roda do mouse sobre o campo de valor focado alterava a propriedade em silêncio
 
 ### Modificado (interface)
+- Vantagens de classe: caixas com largura uniforme no modo 3 colunas e lado a lado no modo 2 colunas, agora de forma independente entre os modos — corrige um defeito em que ajustar um dos layouts quebrava o outro
+- Contador de Magistrais: nome por extenso ("Magistrais" / "Legendary Slots"), afastado da barra de HP, estrelas maiores com vazias em tom apagado
+- `Tooltip` passa a aceitar `wrapperStyle`, permitindo que quem o usa controle a largura do wrapper (usos existentes ficam idênticos)
+- Campo de valor das propriedades migrado de `type="number"` para `type="text"` + `inputmode="decimal"`, conforme a orientação do GOV.UK Design System; as setas do teclado (↑ ↓) passam a ser tratadas pelo próprio componente
 - Campo de valor das propriedades: as setinhas nativas do `type="number"` foram escondidas — eram redundantes com os botões de passo e reservavam uma faixa que descentrava o número
 - Botões de passo passam de ▼ ▲ para **−** e **+**, seguindo a recomendação da Nielsen Norman Group para steppers horizontais (▲▼ são a convenção de steppers verticais; ◀▶ sugeririam navegar entre itens, não alterar um valor)
 

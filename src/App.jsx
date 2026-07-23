@@ -56,7 +56,7 @@ const cls_emoji = { samurai:'⚔️', hunter:'🏹', ronin:'🐕', assassin:'�
 const TOOLTIP_W = 300   // largura máxima do tooltip
 const TOOLTIP_H = 100   // altura estimada (conservador)
 
-function Tooltip({ text, children }) {
+function Tooltip({ text, children, wrapperStyle }) {
   const [vis, setVis] = useState(false)
   const [pos, setPos] = useState({ x: 0, y: 0, flipX: false, flipY: false })
 
@@ -81,7 +81,8 @@ function Tooltip({ text, children }) {
   if (!text) return children
 
   return (
-    <span style={{ display: 'inline-block', cursor: 'help' }}
+    <span
+      style={{ display: 'inline-block', cursor: 'help', ...wrapperStyle }}
       onMouseEnter={show}
       onMouseLeave={() => setVis(false)}>
       {children}
@@ -344,14 +345,18 @@ function PropInput({ item, propState, onPropChange, onValueChange, slot, propSlo
                 style={btnSmall}
               >−</button>
               <input
-                type="number"
+                type="text"
+                inputMode="decimal"
                 value={shown}
-                min={minDisplay}
-                max={maxDisplay}
                 onChange={e => setDraft(e.target.value)}
                 onBlur={commit}
-                onKeyDown={e => { if (e.key === 'Enter' || e.key === 'Tab') commit() }}
-                onWheel={e => e.currentTarget.blur()}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === 'Tab') { commit(); return }
+                  // O type="text" não incrementa sozinho — reproduzimos o passo
+                  // com as setas do teclado, que o type="number" dava nativamente.
+                  if (e.key === 'ArrowUp')   { e.preventDefault(); step(1) }
+                  if (e.key === 'ArrowDown') { e.preventDefault(); step(-1) }
+                }}
                 style={{
                   width: 46, textAlign: 'center', background: T.panel,
                   border: `1px solid ${T.borderHov}`, borderRadius: 6,
@@ -798,7 +803,7 @@ function TechniquesPanel({ build, setBuild, lang, layoutMode }) {
     return legUsed <= newLimit
   }
 
-  const TechRow = ({ tech, selected, onToggle, blocked }) => {
+  const TechRow = ({ tech, selected, onToggle, blocked, layoutMode: rowLayoutMode }) => {
     const desc    = lang === 'en' ? (tech.dEN || tech.dPT) : tech.dPT
     const name    = lang === 'en' ? (tech.nEN || tech.nPT) : tech.nPT
     const isLeg   = name.toLowerCase() === 'magistral' || name.toLowerCase() === 'legendary'
@@ -807,13 +812,22 @@ function TechniquesPanel({ build, setBuild, lang, layoutMode }) {
     const isBlocked = blocked && isAct
     const iconUrl = getTechIconUrl(tech.id, build.classId)
 
+    /*
+      wrapperStyle do Tooltip — é o que torna os dois modos independentes:
+      - three-col: bloco 100% → o botão ocupa a coluna inteira (larguras uniformes)
+      - two-col:   inline-block 100% → os botões fluem lado a lado dentro do grid
+    */
+    const tooltipWrapperStyle = rowLayoutMode === 'two-col'
+      ? { display: 'inline-block', width: '100%' }
+      : { display: 'block', width: '100%' }
+
     return (
-      // div de bloco garante que cada TechRow ocupa linha inteira
-      // independente de qualquer ancestor inline-block (ex: Tooltip)
-      <div style={{ display: 'block', width: '100%', marginBottom: 4 }}>
-        <Tooltip text={isBlocked
-          ? (lang === 'en' ? 'Unequip a Legendary item first' : 'Desequipe um item Magistral primeiro')
-          : desc}>
+      <div style={{ marginBottom: 4 }}>
+        <Tooltip
+          wrapperStyle={tooltipWrapperStyle}
+          text={isBlocked
+            ? (lang === 'en' ? 'Unequip a Legendary item first' : 'Desequipe um item Magistral primeiro')
+            : desc}>
           <button
             onClick={onToggle}
             style={{
@@ -982,22 +996,37 @@ function TechniquesPanel({ build, setBuild, lang, layoutMode }) {
                   }}>✕</button>
               )}
             </div>
-            {techs.map(t => (
-              <TechRow
-                key={t.id}
-                tech={t}
-                selected={build.techs[tier]}
-                onToggle={() => {
-                  const incoming = build.techs[tier] === t.id ? null : t.id
-                  if (!canChangeTech(tier, incoming)) return
-                  setBuild(prev => ({
-                    ...prev,
-                    techs: { ...prev.techs, [tier]: prev.techs[tier] === t.id ? null : t.id },
-                  }))
-                }}
-                blocked={!canChangeTech(tier, build.techs[tier] === t.id ? null : t.id)}
-              />
-            ))}
+            {/*
+              Container dos TechRows:
+              - two-col:   grid lado a lado (minmax 140px evita quebra de nome)
+              - three-col: coluna simples, um embaixo do outro
+            */}
+            <div style={layoutMode === 'two-col' ? {
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+              gap: 4,
+            } : {
+              display: 'flex',
+              flexDirection: 'column',
+            }}>
+              {techs.map(t => (
+                <TechRow
+                  key={t.id}
+                  tech={t}
+                  selected={build.techs[tier]}
+                  layoutMode={layoutMode}
+                  onToggle={() => {
+                    const incoming = build.techs[tier] === t.id ? null : t.id
+                    if (!canChangeTech(tier, incoming)) return
+                    setBuild(prev => ({
+                      ...prev,
+                      techs: { ...prev.techs, [tier]: prev.techs[tier] === t.id ? null : t.id },
+                    }))
+                  }}
+                  blocked={!canChangeTech(tier, build.techs[tier] === t.id ? null : t.id)}
+                />
+              ))}
+            </div>
           </div>
         )
       })}
@@ -2405,25 +2434,28 @@ export default function App() {
         {/* Separador visual */}
         <div style={{ width: 1, height: 28, background: T.border, flexShrink: 0 }} />
 
-        {/* Grupo 2: Contador de magistrais — com padding generoso em ambos os lados */}
+        {/* Grupo 2: Contador de magistrais — nome por extenso, afastado do HP */}
         <div style={{
           flexShrink: 0,
-          paddingLeft: 20, paddingRight: 20,
-          fontSize: 11, color: T.muted,
+          paddingLeft: 32, paddingRight: 32,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
         }}>
-          <span style={{ letterSpacing: 1 }}>
+          {/* Estrelas */}
+          <span style={{ fontSize: 14, letterSpacing: 3, color: T.leg, lineHeight: 1 }}>
             {'★'.repeat(legInfo.used)}
-            {'☆'.repeat(Math.max(0, legInfo.limit - legInfo.used))}
+            <span style={{ color: T.dim }}>
+              {'☆'.repeat(Math.max(0, legInfo.limit - legInfo.used))}
+            </span>
           </span>
-          {' '}
+          {/* Texto completo, nos dois idiomas */}
           <span style={{
             fontSize: 10,
             color: legInfo.used >= legInfo.limit ? T.leg : T.muted,
-            fontWeight: legInfo.used >= legInfo.limit ? 700 : 400,
+            fontWeight: legInfo.used >= legInfo.limit ? 700 : 500,
+            whiteSpace: 'nowrap',
           }}>
-            {lang === 'en'
-              ? `${legInfo.used}/${legInfo.limit} Leg.`
-              : `${legInfo.used}/${legInfo.limit} Mag.`}
+            {legInfo.used}/{legInfo.limit}{' '}
+            {lang === 'en' ? 'Legendary Slots' : 'Magistrais'}
           </span>
         </div>
 

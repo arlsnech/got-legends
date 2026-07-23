@@ -63,11 +63,9 @@ _Nada ativo._ (Bug com sintoma observável entra aqui; quando resolvido e se foi
 >
 > **Não aplique o guia à mão.** Ele continua sendo o formato que deixou este trabalho parado desde junho (DEC-007). O caminho é ler o guia como fonte e converter cada correção em spec, conferindo cada bloco ANTES contra o `App.jsx` de hoje — o arquivo mudou desde que o guia foi escrito, e um bloco que não bate mais é um bloco que precisa ser reescrito, não colado.
 
-Os três itens que continuam pendentes — todos de layout, nenhum de cálculo:
+_Nenhum item pendente de aplicação._ Os três que restavam — `wrapperStyle` no Tooltip, `TechRow` independente por modo e o contador de Magistrais por extenso — foram aplicados pela spec0006 em 2026-07-22, a partir do `GUIA_CORRECOES_FASE3.md` recuperado. Os três blocos ANTES do guia foram conferidos contra o `App.jsx` antes de virarem spec e batiam exatamente.
 
-- **Tooltip `wrapperStyle` prop**: assinatura e span do Tooltip precisam aceitar `wrapperStyle`
-- **TechRow independente por modo**: 3-col → full-width uniforme; 2-col → side-by-side em grid
-- **Contador de Magistrais**: texto completo ("Legendary Slots" / "Magistrais"), padding maior, estrelas maiores
+O que resta do guia é a **Fase 3** (`generateBuildImage` via Canvas, ~470 linhas, seção a partir da linha 420). Ela está fora desta leva de propósito: as conversas antigas recuperadas contêm a discussão de requisito da imagem — em especial quais ícones entram —, e construir a Fase 3 antes de extrair isso arrisca construí-la errada.
 
 > O quarto item — o fix das estatísticas de `generateBuildText` — **saiu desta lista em 2026-07-22**: foi de fato aplicado pela spec0004. Ver FIX-005.
 
