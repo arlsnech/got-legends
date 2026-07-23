@@ -31,6 +31,11 @@
 ### Corrigido
 - Props de item Magistral saíam abaixo do máximo na build aleatória (FIX-006). Builds salvos ou compartilhados com o valor errado são saneados ao carregar
 - Estatísticas do texto exportado saíam como `undefined` (FIX-005 — diagnosticado em junho, aplicado só agora). Junto com isso: os rótulos das estatísticas passam a respeitar o idioma EN, e o grupo de estatísticas específico da classe volta a aparecer no texto
+- Roda do mouse sobre o campo de valor focado alterava a propriedade em silêncio
+
+### Modificado (interface)
+- Campo de valor das propriedades: as setinhas nativas do `type="number"` foram escondidas — eram redundantes com os botões de passo e reservavam uma faixa que descentrava o número
+- Botões de passo passam de ▼ ▲ para **−** e **+**, seguindo a recomendação da Nielsen Norman Group para steppers horizontais (▲▼ são a convenção de steppers verticais; ◀▶ sugeririam navegar entre itens, não alterar um valor)
 
 ### Pendente de aplicação (código precisa ser reescrito — guia original perdido)
 - `Tooltip` com prop `wrapperStyle` para controle de layout

@@ -59,7 +59,9 @@ _Nada ativo._ (Bug com sintoma observável entra aqui; quando resolvido e se foi
 
 ## ⏳ Pendente de Aplicação (guias prontos, não aplicados ainda)
 
-> ⚠️ **O `GUIA_CORRECOES_FASE3.md` não existe mais** — não está na pasta local nem no repositório, e não será recuperado (confirmado pelo usuário em 2026-07-22). O código destes quatro itens **precisa ser reescrito do zero**. Não perca tempo procurando o arquivo. Daqui em diante correção de código sai por spec aplicada pelo Claude Code, não por guia para colar à mão — foi justamente esse formato que deixou a Fase 3 parada desde junho (DEC-007).
+> ✅ **O `GUIA_CORRECOES_FASE3.md` foi encontrado** (2026-07-22, fora do repositório — o aviso anterior, de que teria se perdido, estava errado). São 35 KB contendo o ANTES/DEPOIS das três correções restantes **e** o código completo da Fase 3 (`generateBuildImage` via Canvas, ~470 linhas), além do trecho da FIX-005 que a spec0004 já aplicou por outro caminho.
+>
+> **Não aplique o guia à mão.** Ele continua sendo o formato que deixou este trabalho parado desde junho (DEC-007). O caminho é ler o guia como fonte e converter cada correção em spec, conferindo cada bloco ANTES contra o `App.jsx` de hoje — o arquivo mudou desde que o guia foi escrito, e um bloco que não bate mais é um bloco que precisa ser reescrito, não colado.
 
 Os três itens que continuam pendentes — todos de layout, nenhum de cálculo:
 

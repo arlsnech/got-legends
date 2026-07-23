@@ -338,7 +338,11 @@ function PropInput({ item, propState, onPropChange, onValueChange, slot, propSlo
             </div>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-              <button onClick={() => step(-1)} style={btnSmall}>▼</button>
+              <button
+                onClick={() => step(-1)}
+                aria-label={lang === 'en' ? 'Decrease value' : 'Diminuir valor'}
+                style={btnSmall}
+              >−</button>
               <input
                 type="number"
                 value={shown}
@@ -347,14 +351,19 @@ function PropInput({ item, propState, onPropChange, onValueChange, slot, propSlo
                 onChange={e => setDraft(e.target.value)}
                 onBlur={commit}
                 onKeyDown={e => { if (e.key === 'Enter' || e.key === 'Tab') commit() }}
+                onWheel={e => e.currentTarget.blur()}
                 style={{
-                  width: 52, textAlign: 'center', background: T.panel,
+                  width: 46, textAlign: 'center', background: T.panel,
                   border: `1px solid ${T.borderHov}`, borderRadius: 6,
-                  color: T.text, fontSize: 12, padding: '4px 2px',
+                  color: T.text, fontSize: 12, padding: '4px 6px',
                 }}
               />
               <span style={{ fontSize: 11, color: T.muted }}>{propDef.u}</span>
-              <button onClick={() => step(1)} style={btnSmall}>▲</button>
+              <button
+                onClick={() => step(1)}
+                aria-label={lang === 'en' ? 'Increase value' : 'Aumentar valor'}
+                style={btnSmall}
+              >+</button>
             </div>
           )
         )}
@@ -365,7 +374,8 @@ function PropInput({ item, propState, onPropChange, onValueChange, slot, propSlo
 
 const btnSmall = {
   background: T.card, border: `1px solid ${T.border}`, color: T.text,
-  borderRadius: 4, width: 22, height: 22, cursor: 'pointer', fontSize: 10,
+  borderRadius: 4, width: 22, height: 22, cursor: 'pointer',
+  fontSize: 14, fontWeight: 600, lineHeight: 1, paddingBottom: 1,
   display: 'flex', alignItems: 'center', justifyContent: 'center',
 }
 

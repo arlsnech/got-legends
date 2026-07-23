@@ -9,3 +9,20 @@ body {
   color: #dde0ef;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
+
+/* Esconde as setinhas nativas do <input type="number">.
+   O PropInput já tem botões de passo próprios, fora do campo; as nativas
+   eram redundantes e reservavam uma faixa à direita que descentrava o número.
+   Mantemos type="number" pelo teclado numérico no mobile e pela validação
+   de min/max — só a decoração sai. */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
