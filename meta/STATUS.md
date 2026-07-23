@@ -112,3 +112,16 @@ Os três itens que continuam pendentes — todos de layout, nenhum de cálculo:
 8. Painel lateral: nenhuma mudança de comportamento — os mesmos valores que apareceram no texto já apareciam no painel antes da spec — OK
 Commit de código `1f1f470` (`fix(export): corrige estatisticas undefined no texto exportado`) enviado à `v2-planner`.
 **Próximo passo:** dos itens pendentes de layout (Tooltip `wrapperStyle`, TechRow por modo, Contador de Magistrais) ou a Fase 3 (`generateBuildImage`), todos precisam de código reescrito do zero — nenhum guia sobrevive. Escolher um, escrever a spec correspondente e aplicar via `/apply-spec`.
+
+**spec0005 aplicada em 2026-07-22.** As cinco âncoras (`src/index.css` ×1, `src/App.jsx` ×4, `STATUS.md` ×1, `CHANGELOG.md` ×1) foram encontradas exatamente e substituídas. `npm run build` passou (33 módulos, 282,98 kB / 81,93 kB gzip, 3,87 s) antes do commit de código. Conferência visual feita com dev server + browser automation, item comum (Katana Pétrea, propriedade Dano Corpo a Corpo):
+1. Nenhuma seta nativa visível no campo, em nenhum estado — OK
+2. Número centrado, sem folga assimétrica à direita — OK
+3. Botões `−` à esquerda e `+` à direita, mesmo tamanho, legíveis — OK
+4. `+` no valor 12 (máximo da faixa 5–12%) manteve 12; `−` desceu para 11 — parada nos limites OK
+5. Digitação de `8` + Tab confirmou o novo valor — OK
+6. Campo focado em 11, roda do mouse não alterou o valor (ficou em 11) — bug silencioso corrigido, OK
+7. Item Magistral (`Mão de Yoshitsune`): habilidade segue como caixa âmbar de texto, sem campo e sem botões — OK, nada mudou
+8. Tema claro: `−` e `+` continuam legíveis — OK
+9. Layout 2 colunas: a linha da propriedade não quebrou nem estourou — OK
+Commit de código `a278783` (`fix(ui): remove spinners nativos e adota - e + nos botoes de passo`) enviado à `v2-planner`.
+**Próximo passo:** escolher entre os itens pendentes de layout (Tooltip `wrapperStyle`, TechRow por modo, Contador de Magistrais) ou a Fase 3 (`generateBuildImage`) como próxima spec.
