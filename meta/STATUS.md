@@ -123,3 +123,21 @@ Commit de código `1f1f470` (`fix(export): corrige estatisticas undefined no tex
 9. Layout 2 colunas: a linha da propriedade não quebrou nem estourou — OK
 Commit de código `a278783` (`fix(ui): remove spinners nativos e adota - e + nos botoes de passo`) enviado à `v2-planner`.
 **Próximo passo:** escolher entre os itens pendentes de layout (Tooltip `wrapperStyle`, TechRow por modo, Contador de Magistrais) ou a Fase 3 (`generateBuildImage`) como próxima spec.
+
+**spec0006 aplicada em 2026-07-22.** As quatro âncoras de código no `App.jsx` (assinatura e span do `Tooltip`, assinatura e wrapper do `TechRow`, container em grid do 2-col, contador de Magistrais) e as duas âncoras de documento (`STATUS.md`, `CHANGELOG.md`) foram encontradas exatamente e substituídas; o clamp em `logic.js` `setPropValue` (linhas 864-866) foi conferido antes de remover `min`/`max` do input, como a spec pediu. `npm run build` passou (33 módulos, 283,47 kB / 82,03 kB gzip, 8,87 s) antes do commit de código. Conferência visual feita com dev server + browser automation, build Samurai (Katana Aquática, propriedade Ganho de Determinação C/C 5–25%):
+1. Vantagens de classe em 3 colunas: todas as caixas com a mesma largura, incluindo o nome longo "Fúria de Hachiman (300%)" sem quebra de linha — OK
+2. Habilidades de classe em 3 colunas: seguem uma por linha, sem mudança — OK
+3. Nomes longos sem quebra indevida — OK
+4. Vantagens de classe em 2 colunas: lado a lado em grid — OK
+5. Habilidades de classe em 2 colunas: seguem lado a lado, sem regressão — OK
+6. Independência entre os modos: os itens 1 e 4 valem ao mesmo tempo (testados em sessões separadas de toggle) — OK
+7. Contador de Magistrais: texto "0/1 Magistrais" por extenso, não "Mag." — OK
+8. Distância do contador em relação à barra de HP: padding 32px + separador visual, visivelmente mais afastado — OK
+9. Estrelas cheias/vazias: só testado com `used=0` (estrela vazia em `T.dim`); a cor `T.leg` da estrela cheia foi conferida no código, não visualmente com uma Magistral equipada
+10. Setas nativas do campo numérico: continuam ausentes — OK
+11. Setas do teclado (↑/↓): alteram o valor de 1 em 1 e param nos limites (25→22 com 3 toques; 25→5 com toques repetidos, parou em 5) — OK
+12. Limite por digitação: `99` fora da faixa 5–25, ao sair do campo corrigiu para 25 (o máximo) — OK
+13. Roda do mouse: não testada nesta sessão (comportamento decorre de `type="text"` não ter spinner nativo, já coberto pelo item 10)
+14. Mobile (`inputmode="decimal"`): não emulado nesta sessão; presente no código, conferido no `git diff`
+Nenhum erro no console do navegador durante os testes. Commit de código `6b13fd9` (`fix(ui): aplica as tres correcoes de layout pendentes do guia`) enviado à `v2-planner`.
+**Próximo passo:** Fase 3 (`generateBuildImage` via Canvas) — depende de extrair da conversa antiga a discussão de requisito da imagem (quais ícones entram) antes de escrever a spec.
