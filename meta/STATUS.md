@@ -156,3 +156,19 @@ Recuperado nesta sessão: o `GUIA_CORRECOES_FASE3.md`, dado como perdido, e cinc
 3. Fase 3 (`generateBuildImage`), depois da extração e informada por ela.
 
 Há um `HANDOFF-BRIEF.md` gerado para arrancar a próxima conversa. Ele é atalho, não memória — **este arquivo e os demais `meta/` continuam sendo a fonte de verdade.**
+
+---
+
+**2026-07-23 — extração retroativa 1/4: `GOT_Build_-_Joker.md`.**
+
+Arquivo lido por inteiro (6 blocos, 3 prompts) e conferido contra o código de hoje. **Nenhum pedido ficou aberto** — os três já estão implementados. O que faltava era registro:
+
+- **FIX-007** — props de item Magistral não eram sorteadas no 🎲 (filtro `!chosen.leg` em `randomBuild`). Bug **diferente** do FIX-006, nas mesmas linhas: aquele é valor abaixo do máximo, este é prop nenhuma. Corrigido há semanas, nunca registrado.
+- **DEC-013** — ao trocar de classe, a técnica Magistral equivalente entra equipada, em vez de o Magistral excedente ser removido. A alternativa de remover o item foi **explicitamente rejeitada** pelo autor; ficou registrada para não voltar como sugestão.
+- Conferida a invariante de que a DEC-013 depende: as quatro classes têm técnica `legSlots` nos tiers I e III, e só neles. Virou armadilha 8 no `CONTEXT.md`.
+
+Sem mudança de código nesta sessão — `npm run build` não foi necessário. `meta/legacy/GOT_Build_-_Joker.md` removido da árvore; segue no histórico do Git.
+
+**Descoberto de quebra:** a orientação da DEC-012 de reincluir material legado no mount com `!meta/legacy/<arquivo>` **não funciona** — a sintaxe `.gitignore` não reinclui arquivo cujo diretório-pai está excluído. O `.flatdropignore` passou a enumerar os arquivos legados um a um. Ver o item de 2026-07-23 em «Feedback para o Kit» no `IDEAS.md`.
+
+**Próximo passo:** extração 2/4 — `meta/legacy/GOT_Build_-_Alex.md` (61 KB). A linha dele já saiu do `.flatdropignore` nesta spec; basta regerar o pacote FlatDrop antes de abrir a próxima conversa.

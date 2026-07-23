@@ -138,6 +138,8 @@ Dois tipos de ícones com lógica diferente:
 
 7. **Amuletos magistrais com `classBinding: true`** — as props e perks de classe são injetados em runtime por `resolveCharmClassBinding`. Nunca leia as props do item direto do `GEAR` — sempre use `getEffectiveCharm(itemId, linkedClass)`.
 
+8. **Técnica Magistral não tem flag própria** — é identificada por `tech.fx.some(fx => fx.s === 'legSlots')`, em `countLegBonus`, `checkLegendaryLimit` e `changeClass`. E ela existe **só nos tiers I e III**, nas quatro classes: é dessa simetria que `changeClass` depende para propagar a técnica ao trocar de classe. Acrescentar uma técnica `legSlots` num tier que só uma classe tenha quebra a troca de classe **em silêncio** — sem erro, apenas com um build acima do limite. Ver DEC-013.
+
 ---
 
 ## Contexto de Produto

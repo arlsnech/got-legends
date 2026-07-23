@@ -20,5 +20,19 @@ logs/
 # Material legado recuperado em 2026-07-22/23 (DEC-012).
 # Fica no Git para nunca mais se perder, mas fora do upload ao Projeto:
 # sao ~660 KB que so interessam quando a extracao retroativa estiver em pauta.
-# Para trabalhar um deles, reinclua pontualmente: !meta/legacy/<arquivo>
-meta/legacy/
+# ATENCAO: "!meta/legacy/<arquivo>" NAO funciona. A sintaxe .gitignore nao reinclui
+# arquivo cujo diretorio-pai esteja excluido. Por isso os legados sao enumerados um a
+# um no bloco flatdrop-editor abaixo: para subir um deles, comente a linha dele la.
+
+INSTRUCOES-DO-PROJETO.md
+
+# >>> flatdrop-editor
+logs/
+INSTRUCOES-DO-PROJETO.md
+meta/legacy/GOT_Build.md
+meta/legacy/GOT_Build_-_Origem.md
+meta/legacy/GOT_Build_-_TOhno.md
+meta/legacy/GUIA_COMPLETO_v4.md
+meta/legacy/GUIA_CORRECOES_FASE3.md
+meta/legacy/README.md
+# <<<

@@ -100,12 +100,17 @@ Cinco arquivos de conversas antigas foram recuperados em 2026-07-22 e preservado
 | Arquivo | Tamanho | Estado |
 |---|---|---|
 | `GOT_Build.md` | 40 KB | ✅ lido por inteiro em 2026-07-22 |
-| `GOT_Build_-_Joker.md` | 15 KB | ⏳ próximo |
-| `GOT_Build_-_Alex.md` | 61 KB | ⏳ |
+| `GOT_Build_-_Joker.md` | 15 KB | ✅ extraído em 2026-07-23 (spec0008) — arquivo removido |
+| `GOT_Build_-_Alex.md` | 61 KB | ⏳ próximo |
 | `GOT_Build_-_Origem.md` | 197 KB | ⏳ |
 | `GOT_Build_-_TOhno.md` | 267 KB | ⏳ — talvez 2 sessões |
 
 **Critério:** não são fatos. São pedidos históricos, muitos já atendidos, alguns contraditórios entre si, com cronologia desconhecida. Nada entra nos `meta/` sem conferência contra o código atual.
+
+### Já extraído do `GOT_Build_-_Joker.md` (2026-07-23) — **não reabrir**
+Os três pedidos do arquivo já estão no código; nada dele ficou aberto. Viraram FIX-007 (props de Magistral não sorteadas no 🎲) e DEC-013 (troca de classe propaga a técnica Magistral). O bloco 4 contém uma correção **rejeitada pelo autor** — remover o Magistral excedente ao trocar de classe: se ela reaparecer em algum guia antigo, é ruído, não pendência.
+
+**Calibração do critério, para os próximos arquivos:** o valor do Joker não foi encontrar código faltando — foi encontrar **código sem registro**. Dois consertos em vigor há semanas não existiam em nenhum `meta/`, e um deles estava a um passo de ser lido como já coberto pelo FIX-006. Ler o arquivo perguntando "isso está no código?" acha pouco; perguntar "isso está *registrado*?" acha o que interessa.
 
 ### Já verificado no `GOT_Build.md` — **não reabrir**
 Estes pedidos antigos já estão atendidos no código de hoje: estrela do Magistral no fim do nome · ícones dos amuletos (`defense-charm`, `assassin-charm`, `utility-charm`, `hunter-charm`, `benkeis-last-stand`, `shoguns-fortitude`, `lady-sanjos-surprise`) · `half-bow` renomeado para `shortbow` · círculos de Determinação só quando ativos.
@@ -120,3 +125,5 @@ Nos prompts antigos o autor cogitou **remover o modo Estatístico** caso desse t
 - O `_UPDATE-PROMPT.md` não trata o caso do `INSTRUCOES-DO-PROJETO.md` **não ser um arquivo do repo**. Neste projeto ele vive nas Instruções do Projeto do claude.ai; não há "vivo" no mount para comparar. O procedimento correto — pegar o template, especializar, respeitar o teto e entregar pronto para colar — deveria estar escrito, em vez de o assistente pedir que o usuário cole o texto atual só para poder comparar.
 - Falta ao kit uma **classe de artefato para material legado**: guias de aplicação, conversas antigas, snapshots de versão. Não é log, não é doc de contexto, não é spec. Este projeto resolveu com `meta/legacy/` + `.flatdropignore` (DEC-012) e a solução parece generalizável: **versionado sempre, no mount só quando em pauta**.
 - O kit não diz em lugar nenhum que **uma entrada de FIX não deve ser criada a partir de código ainda não aplicado**. Este projeto perdeu um mês com FIX-005 registrado como resolvido enquanto o conserto vivia só num guia. A regra deveria estar no CEREBRO, junto das regras de higiene.
+- *(2026-07-23 — FlatDrop, bug de comportamento)* **A reinclusão com `!` não funciona quando a pasta inteira está ignorada.** A `spec0007` escreveu `meta/legacy/` no `.flatdropignore` e recomendou reincluir um arquivo com `!meta/legacy/<arquivo>`. A recomendação está **errada**, e a sintaxe `.gitignore` explica por quê: *não é possível reincluir um arquivo se um diretório-pai dele estiver excluído* — o motor nem chega a avaliar os arquivos de dentro da pasta podada. Não é bug do FlatDrop; é uma regra da sintaxe que ele herda. **O que o FlatDrop poderia fazer:** avisar quando um `!` for anulado por uma exclusão de pasta, em vez de ignorá-lo em silêncio — foi exatamente o silêncio que custou tempo aqui. **Contorno adotado:** enumerar os arquivos legados um a um, em vez da pasta, e comentar a linha do que se quer no mount.
+- *(2026-07-23 — FlatDrop, sugestão)* O bloco gerenciado `# >>> flatdrop-editor … # <<<` fica **no fim** do arquivo, e em `.gitignore` **o último padrão que casa é o que vale**. Toda regra manual escrita acima dele pode ser anulada pelo bloco, sem aviso. Vale documentar essa precedência no próprio cabeçalho do bloco, ou colocá-lo no topo.

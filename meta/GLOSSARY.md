@@ -7,6 +7,7 @@
 ## Conceitos do jogo (tradução PT-BR usada no projeto)
 
 - **Magistral** — item Legendary; nível máximo de qualidade de equipamento. Em EN: *Legendary*.
+- **Técnica Magistral** — vantagem de classe que concede `+1 legSlots`, elevando o limite de itens Magistrais equipáveis. Existe nos tiers I e III das quatro classes. Não tem flag própria: é reconhecida pelo efeito `legSlots` no array `fx`. Ver DEC-013.
 - **Vantagem** — Perk; modificador passivo equipado num item ou técnica. Em EN: *Perk*.
 - **Determinação** — Resolve; recurso que permite usar a habilidade suprema. Em EN: *Resolve*.
 - **Arma Fantasma (AF)** — Ghost Weapon; habilidade ativa de combate (kunai, bomba etc.). Em EN: *Ghost Weapon (GW)*.
