@@ -148,6 +148,8 @@ Dois tipos de ícones com lógica diferente:
 
 12. **CDR de Arma Fantasma não empilha entre as armas** — propriedade de redução de recarga numa AF vale **só para aquela AF**; a mesma propriedade no Amuleto vale para as duas. Em qualquer dos casos o número é exibido **separado por arma**, nunca somado num total. Errar isso foi o defeito mais repetido da fase de origem.
 
+13. **3 colunas e 2 colunas não compartilham estilo** — os dois modos pedem comportamentos **opostos** para habilidades e vantagens de classe (empilhadas no 3-col, lado a lado no 2-col). Estilo aplicado sem olhar o `layoutMode` conserta um e quebra o outro — aconteceu três vezes seguidas. Mexeu num, confira o outro **na mesma sessão**. Ver DEC-023.
+
 ---
 
 ## Contexto de Produto

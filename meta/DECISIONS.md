@@ -616,3 +616,62 @@ Não é esquecimento. Na conversa do Alex o próprio autor abriu a porta — *"s
 
 ### O custo de completar
 `formatAmmoForClass` hoje é função pura de `(ammoStr, classId, item)` e vive na camada de exibição. Condicionar por técnica exige passar o build (ou as técnicas) até ela e mapear qual técnica libera qual munição — dado que **não existe hoje** em `data.js`. Ou seja: não é ajuste de uma linha, é dado novo mais acoplamento novo. Está no `IDEAS.md` como melhoria, não como defeito.
+
+---
+
+## DEC-021 — A Fase 3 gera a imagem com Canvas API pura, sem dependência externa
+
+**Data do registro:** 2026-07-24 · **Status:** aceita, ainda não executada · **Fonte:** `meta/legacy/GOT_Build_-_TOhno.md`, bloco 3
+
+### A decisão
+Ao planejar a exportação em imagem, o autor foi direto: *"api do canvas sem dependências externas"*. Isso **descarta** `html2canvas`, `dom-to-image`, `satori` e qualquer biblioteca de captura de DOM. A imagem é desenhada à mão no `<canvas>`, com o mesmo dado que o `generateBuildText` já usa.
+
+### Por que isso importa mais do que parece
+Capturar o DOM seria muito mais rápido de escrever — e produziria uma foto da tela, não um artefato próprio. O que o autor pediu é outra coisa: um **layout em colunas com caixas e formatação**, dimensionado para caber num post, não um recorte da interface. Um `html2canvas` entregaria a coisa errada com menos esforço, e é exatamente por isso que a restrição está registrada.
+
+Efeito colateral bem-vindo: o `package.json` continua com duas dependências de runtime (React e ReactDOM) e nenhuma para a Fase 3.
+
+### Consequência
+`generateBuildImage` precisa carregar os ícones como `Image()` e esperá-los antes de desenhar — trabalho assíncrono que a versão em texto não tem. O esqueleto já escrito para isso está no `meta/legacy/GUIA_CORRECOES_FASE3.md` (~470 linhas); ver a nota operacional no fim do `ROADMAP.md`.
+
+---
+
+## DEC-022 — Os três modos de exportação e a regra do que cada um mostra
+
+**Data do registro:** 2026-07-24 · **Status:** aceita, em vigor no texto e válida para a imagem · **Fonte:** `GOT_Build_-_TOhno.md`, blocos 1, 5 e 16
+
+### Os três modos
+São cumulativos, do mais enxuto ao mais completo — e **os três botões de imagem espelham exatamente os três de texto**, mesmo conteúdo, mesma regra:
+
+| Modo | O que sai |
+|---|---|
+| **Build** | nomes apenas: habilidade, vantagens, equipamentos, propriedades com valor, perks. Sem descrição. |
+| **Detalhado** | tudo do Build **mais** a descrição de cada item, e a recarga já calculada com as propriedades da build. |
+| **Estatístico** | tudo do Detalhado **mais** o bloco de estatísticas ao final. |
+
+### A regra que quase se perde num refactor
+No bloco de estatísticas, **só aparecem as estatísticas modificadas pela build** — *exceto HP e Determinação, que aparecem sempre*, mesmo em seus valores base. O autor pediu isso explicitamente e repetiu depois: *"sobre aqueles estatísticos que só aparecem quando influenciados, HP e Determinação sempre deverão aparecer ok?!"*
+
+Hoje isso vive como uma condição e um comentário dentro de `generateBuildText`. É uma regra de produto, não um detalhe de implementação: **vale igual para a imagem da Fase 3.**
+
+### Código de compartilhamento
+O Base64 vai na **última linha** do texto e é **opcional**, ligado por um interruptor no `SettingsModal`. A razão de ser opcional é de uso, não técnica: o código é longo e nem toda conversa comporta.
+
+---
+
+## DEC-023 — Os modos de 3 e 2 colunas têm estilos independentes, de propósito
+
+**Data do registro:** 2026-07-24 · **Status:** aceita, em vigor · **Fonte:** `GOT_Build_-_TOhno.md`, blocos 11, 13 e 16
+
+### Contexto
+As duas disposições **não são a mesma tela em larguras diferentes**. O autor especificou comportamentos opostos para os mesmos elementos:
+
+| | 3 colunas | 2 colunas |
+|---|---|---|
+| Habilidades de classe | uma embaixo da outra | **lado a lado**, sem quebra de linha no nome |
+| Vantagens de classe | uma embaixo da outra, caixas de **largura uniforme** | **lado a lado**, em grade |
+
+### Por que isto é uma decisão e não um detalhe
+Levou três rodadas para ficar de pé, e todas as três falharam da mesma maneira: **arrumar um modo quebrava o outro**. Foi o próprio autor quem nomeou a causa — o estilo estava sendo aplicado sem distinguir o modo, quando os dois precisavam de tratamento separado. Daí o `layoutMode` chegar até o `TechRow`.
+
+**Regra que fica:** mexeu no layout de um modo, confira o outro na mesma sessão. É o defeito de repetição mais provável deste arquivo, e a razão de a spec0006 ter um item de conferência só para isso.

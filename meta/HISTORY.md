@@ -204,3 +204,21 @@ const IMG_ICON_ULT  = 48     // ícone supremo no header
 - **As versões intermediárias se perderam.** O autor registra que *"a versão 1 do JSX foi sobrescrita e não salvei, e isso ocorreu para todas as versões"*. Sobraram duas cópias, e é dessa perda que vem o hábito de guardar snapshots (`src/v1..v4`) e, mais tarde, a DEC-012.
 - **Ambiente Windows, três tropeços registrados:** o PowerShell recusa `&&` como separador (`O token '&&' não é um separador de instruções válido`); a política de Controle de Aplicativo do Windows bloqueou o binding nativo do rolldown, derrubando o scaffold do Vite mais novo; e o `gh-pages` estoura o limite de linha de comando (DEC-016).
 - **Publicação:** GitHub Pages exigiu empurrar o `dist/` à mão para a `gh-pages`; o Vercel serviu **página em branco** por caminho-base — daí o `base` controlado por `VITE_BASE_URL` no `vite.config.js` mais o `vercel.json` e o `netlify.toml`; o Netlify funcionou de primeira e virou o canal principal. Uma tentativa de **Cloudflare Pages** ficou inacabada quando a conversa terminou — o último commit da `main` antes da adoção do KCM (`63fb3a6`) adicionou um `_redirects` para ela.
+
+---
+
+## 9. A fase da interface — de onde vem a tela de hoje
+
+*(Consolidado em 2026-07-24 a partir de `meta/legacy/GOT_Build_-_TOhno.md`, extraído e removido pela spec0011.)*
+
+Se a fase de origem produziu o **dado** e o motor de cálculo, esta produziu a **tela**. Quase tudo que se vê hoje nasceu aqui, e nesta ordem:
+
+1. **O layout de 3 colunas.** A queixa que abriu a conversa foi de ergonomia: com tudo numa coluna só, montar uma build exigia rolar demais e sobrava espaço lateral sem uso. Daí técnicas à esquerda, equipamentos ao centro, estatísticas à direita, cada coluna com rolagem própria. O modo de 2 colunas veio junto, e a insistência de que os dois se comportassem de forma **independente** virou a DEC-023.
+2. **A barra lateral de builds salvas.** Antes, cada build salva empurrava o resto da tela para baixo. A solução pedida foi uma gaveta sobreposta, aberta por uma aba tipo marcador de livro — a `BookmarkTab` + `SaveDrawer` de hoje. Junto vieram detalhes que continuam valendo: lixeira em vez de "x" para limpar tudo (um "x" parece "fechar"), e o aviso de "salvo" ocupando **altura fixa**, para não deslocar nada ao aparecer.
+3. **HP e Determinação como no jogo.** Barra vermelha com os círculos de Determinação por cima. Duas regras saíram de tentativa e erro: a barra só cresce com bônus real — nada de "preenchimento escuro" prometendo espaço vazio — e o número acompanha o crescimento em vez de ser encoberto. As constantes `HP_BAR_WIDTH`, `HP_BASE_WIDTH` e afins existem porque o autor quis poder ajustar cada proporção sem mexer nas outras.
+4. **Os ícones do jogo.** Chegaram por **swiezdo**, que compartilhou a coleção — o crédito está no `SettingsModal` desde então. Aqui nasceu uma das armadilhas mais citadas do projeto: os SVG de técnica saíam brancos por causa do filtro de tema, e a solução foi PNG **sem filtro nenhum**. O ícone da habilidade suprema, que não é escolha do jogador, virou cabeçalho fixo no topo da coluna de estatísticas — e substituiu o título "📊 Estatísticas", que deixou de fazer falta.
+5. **O painel de exportação.** Seis botões numa linha, em dois quadros nomeados — Texto e Print — com espaço entre eles para não se apertar sem querer. As dicas flutuantes precisaram aprender a virar de lado: nas bordas da tela, apareciam cortadas.
+
+**A Fase 2 foi entregue aqui; a Fase 3, planejada.** O `generateBuildText` funciona desde então. O `generateBuildImage` foi arquitetado e escrito num guia — as ~470 linhas de Canvas do `GUIA_CORRECOES_FASE3.md` — e nunca inserido no `App.jsx`. É o que a Fase 3 do `ROADMAP.md` retoma.
+
+**Rastro de defeito, para reconhecer se voltar:** a exportação em texto saiu com `undefined` no bloco de estatísticas na primeira versão (virou FIX-005), e as caixas de vantagem encolhiam ao ter valor selecionado, ficando de tamanho diferente das de propriedade. Os dois são sintomas da mesma época — arquivos grandes reescritos inteiros, o problema que a DEC-007 existe para evitar.

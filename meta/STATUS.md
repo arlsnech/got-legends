@@ -219,3 +219,27 @@ A conversa de origem do projeto: 35 blocos, 18 rodadas, da planilha do Google at
 **Mount enxugado:** o `.flatdropignore` passou a excluir também `meta/specs/`. As specs aplicadas já não precisam subir — o efeito delas vive nos `meta/` e o corpo vive no Git. São ~126 KB por pacote.
 
 **Próximo passo:** extração 4/4 — `meta/legacy/GOT_Build_-_TOhno.md` (267 KB), o último e o maior. A linha dele já saiu do `.flatdropignore` nesta spec. Com as specs e os `src/v*` fora do pacote, ele cabe com folga.
+
+---
+
+**2026-07-24 — extração retroativa 4/4: `GOT_Build_-_TOhno.md`. A DEC-011 está cumprida.**
+
+A conversa que construiu a interface atual: 18 blocos, 10 rodadas. **Nenhum pedido ficou por implementar** — layout de 3 e 2 colunas, gaveta de builds, HP e Determinação, ícones do jogo, painel de exportação com seis botões, dicas que viram nas bordas, modal de configurações com o interruptor do código Base64: tudo conferido no `App.jsx` de hoje e tudo no lugar.
+
+O saldo veio de outro lugar: **os requisitos da fase que ainda não começou.**
+
+- **DEC-021** — a Fase 3 usa **Canvas API pura, sem dependência externa**. Ditado pelo autor e nunca registrado. Importa porque `html2canvas` seria mais fácil e entregaria a coisa errada: uma foto da tela, não o layout em colunas que foi pedido.
+- **DEC-022** — os três modos de exportação e a regra que os rege: só as estatísticas modificadas, **exceto HP e Determinação, que aparecem sempre**. Hoje isso vive como um comentário dentro do `generateBuildText`. É regra de produto e vale igual para a imagem.
+- **DEC-023** — 3 colunas e 2 colunas têm estilos **independentes de propósito**. Levou três rodadas, e as três falharam do mesmo jeito: arrumar um modo quebrava o outro. Virou a armadilha 13 do `CONTEXT.md`.
+- O **`ROADMAP.md` da Fase 3 foi completado** com o que faltava, incluindo os **ícones das vantagens de classe** — o autor perguntou por eles duas vezes, temendo que fossem esquecidos — e a nota operacional de reincluir o `GUIA_CORRECOES_FASE3.md` no mount antes de abrir a fase. Saiu de lá o item obsoleto de "aplicar as correções pendentes", que já não existiam.
+- `meta/HISTORY.md` ganhou a seção 9, com a genealogia da tela e o crédito a **swiezdo** pelos ícones.
+
+**Segunda regressão provável, da mesma família da anterior:** o painel de estatísticas tinha um seletor **"Só alteradas"** — aparece no dump da v1.1 e não existe no `App.jsx` de hoje, que mostra tudo e apenas destaca o que mudou. Junto com os botões de 🎲 granulares, são dois recursos que sumiram sem registro na época dos arquivos reescritos por inteiro. Ambos estão no `IDEAS.md`; nenhum é bug até o autor dizer que não foi de propósito.
+
+### A extração retroativa terminou
+
+Quatro conversas, quatro sessões, saldo final: **FIX-007, FIX-008, FIX-009** e **DEC-013 a DEC-023**, mais nove armadilhas novas no `CONTEXT.md`, duas seções no `HISTORY.md` e uma correção de código. Nenhum pedido em aberto foi encontrado — o que estava perdido era **registro**, não trabalho.
+
+`meta/legacy/` fica com o `GOT_Build.md` (índice, já lido) e os dois guias, que não são conversa e continuam servindo: o `GUIA_CORRECOES_FASE3.md` guarda o código da Fase 3.
+
+**Próximo passo: Fase 3 (`generateBuildImage`)** — agora com o roteiro completo no `ROADMAP.md`. Antes de abrir a sessão, reinclua `meta/legacy/GUIA_CORRECOES_FASE3.md` no `.flatdropignore`.

@@ -38,14 +38,18 @@
 
 **Critério de conclusão:** 3 modos gerando PNGs com ícones, layout em colunas e paleta de cores da classe ativa.
 
-- [ ] Aplicar correções pendentes do `GUIA_CORRECOES_FASE3.md`
-- [ ] `generateBuildImage` com Canvas API (código em guia, pendente de inserção no App.jsx)
+- [ ] `generateBuildImage` com **Canvas API pura, sem dependência externa** (DEC-021). Nada de `html2canvas` ou similar: a imagem é um artefato próprio, não uma foto da tela. Esqueleto de ~470 linhas pronto no `GUIA_CORRECOES_FASE3.md`, pendente de inserção antes do `ExportPanel` e de ligação ao `handleGenImage`.
+- [ ] Os **três modos espelham os de texto** — Build, Detalhado e Estatístico, mesmo conteúdo e mesma regra do `generateBuildText` (DEC-022).
+- [ ] **Estatísticas: só as modificadas — mas HP e Determinação sempre**, mesmo no valor base. Regra de produto, não detalhe (DEC-022).
 - [ ] Header com ícone de classe + nome da build + ícone supremo
-- [ ] Coluna esquerda: habilidade + vantagens com ícones
+- [ ] Coluna esquerda: habilidade + vantagens **com os ícones das vantagens de classe**. *O autor perguntou por estes dois vezes, temendo que fossem esquecidos — não os deixe de fora.*
 - [ ] Coluna direita: gear com ícones, props, perks
 - [ ] Seção stats em grid 3-col (somente modo Estatístico)
+- [ ] **Caixas e formatação por seção**, não texto corrido: o pedido era um layout em colunas que preencha a imagem, não linhas empilhadas
 - [ ] Assinatura discreta no rodapé
 - [ ] Download automático como PNG
+
+> **Antes de abrir a Fase 3:** o código dela mora no `meta/legacy/GUIA_CORRECOES_FASE3.md`, que está fora do pacote FlatDrop. Remova a linha dele do bloco `# >>> flatdrop-editor` no `.flatdropignore` e regere o pacote — senão a sessão começa sem a peça principal. O `GUIA_COMPLETO_v4.md` **não** é necessário para isso.
 
 ---
 

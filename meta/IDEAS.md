@@ -109,7 +109,7 @@ Cinco arquivos de conversas antigas foram recuperados em 2026-07-22 e preservado
 | `GOT_Build_-_Joker.md` | 15 KB | ✅ extraído em 2026-07-23 (spec0008) — arquivo removido |
 | `GOT_Build_-_Alex.md` | 61 KB | ✅ extraído em 2026-07-23 (spec0009) — arquivo removido |
 | `GOT_Build_-_Origem.md` | 197 KB | ✅ extraído em 2026-07-23 (spec0010) — arquivo removido |
-| `GOT_Build_-_TOhno.md` | 267 KB | ⏳ próximo — talvez 2 sessões |
+| `GOT_Build_-_TOhno.md` | 267 KB | ✅ extraído em 2026-07-24 (spec0011) — arquivo removido · **fila encerrada** |
 
 **Critério:** não são fatos. São pedidos históricos, muitos já atendidos, alguns contraditórios entre si, com cronologia desconhecida. Nada entra nos `meta/` sem conferência contra o código atual.
 
@@ -130,6 +130,23 @@ Viraram DEC-018 (tabela canônica de restrição de classe), FIX-009 (Picada Cel
 
 ### 2026-07-23 — Botões de build aleatória granulares *(possível regressão)*
 O dump da v1.1 no arquivo de origem mostra **três** botões — `🎲 Tudo`, `🎲 Classe`, `🎲 Gear` — e o `App.jsx` de hoje tem só um. O pedido original ia além: aleatório em cadeia, com botão por equipamento, por propriedade e até por valor de propriedade. Como as versões intermediárias se perderam, não dá para saber em qual reescrita os três viraram um, nem se foi decisão. **Antes de reimplementar, vale perguntar ao autor se a simplificação foi intencional.**
+
+### Já extraído do `GOT_Build_-_TOhno.md` (2026-07-24) — **não reabrir**
+Nenhum pedido ficou aberto. Viraram DEC-021 (Canvas puro na Fase 3), DEC-022 (os três modos e a regra das estatísticas), DEC-023 (estilos independentes por layout), a armadilha 13 do `CONTEXT.md`, a seção 9 do `HISTORY.md` e o roteiro completo da Fase 3 no `ROADMAP.md`. Já conferido como **atendido** no código de hoje: layout 3-col e 2-col · `BookmarkTab` + `SaveDrawer` com lixeira · aviso de "salvo" com altura fixa · `HpResolveBar` (barra só com bônus, número empurrado) · `UltimateHeader` no lugar do título de estatísticas · seis botões em dois quadros nomeados · dicas com `flipX`/`flipY` nas bordas · `SettingsModal` com layout, créditos e interruptor do Base64 · ícones SVG com filtro por tema e PNG de técnica sem filtro · estrela ★ no fim do nome do Magistral · contador de Magistrais por extenso nos dois idiomas.
+
+### Fechamento do método de extração (DEC-011) — 2026-07-24
+Quatro arquivos, quatro sessões. **Nenhum deles continha pedido por implementar.** O que os quatro continham era registro que nunca foi feito: três FIX, onze DEC, nove armadilhas e duas seções de histórico. Uma única linha de código mudou em todo o processo (FIX-009).
+
+As quatro perguntas que renderam, na ordem em que apareceram:
+1. *Isso está no código?* — quase sempre sim. Sozinha, acha pouco.
+2. *Isso está **registrado**?* — pegou o grosso das decisões.
+3. *O que o código faz que nenhum `meta/` menciona?* — pegou as munições por classe, uma funcionalidade inteira invisível.
+4. *O que a ferramenta já teve e não tem mais?* — pegou as duas regressões prováveis. Só funciona onde há dumps de tela.
+
+**Se um dia houver material antigo de novo, comece pela 3 e pela 4.** As duas primeiras são as intuitivas e as menos produtivas.
+
+### 2026-07-24 — Seletor "Só alteradas" no painel de estatísticas *(possível regressão)*
+O dump da v1.1 mostra um seletor **"Só alteradas"** acima da tabela de estatísticas, e o `App.jsx` de hoje não tem: `StatsPanel` mostra tudo e apenas destaca o que difere da base (`changed = s => s.value !== s.base`). O pedido original é do início do projeto — *"um botão (checkbox) para selecionar se quer ou não ver só as informações da tabela que estão sendo influenciadas pela build"*. Mesma família do sumiço dos botões de 🎲 granulares, e mesma ressalva: **pode ter sido simplificação deliberada.** Perguntar antes de reimplementar. Se for reimplementar, a regra da DEC-022 vale aqui também — HP e Determinação continuam aparecendo com o filtro ligado.
 
 ### 2026-07-23 — Flecha Perfurante condicionada à técnica
 Completar o pedido original do bloco 13: a munição exclusiva só aparece quando a técnica que a concede está equipada. Hoje aparece sempre para a classe primária (DEC-020). Precisa de dado novo em `data.js` — o vínculo técnica → munição não existe — e de passar as técnicas até `formatAmmoForClass`, que hoje é função pura de exibição. Melhoria, não defeito.

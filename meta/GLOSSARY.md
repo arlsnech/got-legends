@@ -40,6 +40,9 @@
 - **`THEME_DARK` / `THEME_LIGHT`** — objetos imutáveis com as paletas. Nunca modificados; só copiados para `T`.
 - **`iconFilter` / `iconFilterDim`** — propriedades de `T` com os filtros CSS corretos para ícones SVG no tema ativo. `iconFilter` = 100% visível; `iconFilterDim` = 45% opacidade.
 - **`computeStats(build)`** — função principal de `logic.js` que calcula todas as estatísticas da build. Retorna o objeto `stats`.
+- **`generateBuildText({ build, stats, lang, buildName, mode, includeShareCode })`** — monta o texto de exportação em um dos três modos (`build`, `detailed`, `stats`). Vive no `App.jsx`. HP e Determinação sempre entram no bloco de estatísticas; o resto só se modificado. Ver DEC-022.
+- **`generateBuildImage`** — contrapartida em imagem dos mesmos três modos, **ainda não implementada** (Fase 3). Canvas API pura, sem dependência externa; esqueleto no `meta/legacy/GUIA_CORRECOES_FASE3.md`. Ver DEC-021.
+- **`layoutMode`** — `'three-col'` ou `'two-col'`. Precisa descer até o `TechRow`: os dois modos têm estilos independentes de propósito. Ver DEC-023.
 - **`getStatGroups(stats, classId, lang)`** — agrupa as stats calculadas em seções para exibição. Atenção: `classId` é obrigatório — sem ele, grupos de classe errados são incluídos.
 - **`getEffectiveCharm(itemId, linkedClass)`** — retorna o item de amuleto com props/perks de classe já injetados. Nunca ler amuleto magistral com `classBinding` direto do `GEAR`.
 - **`CLASS_EXCLUSIVE_CHARM_PROPS` / `_PERKS`** — tabelas de `data.js`, indexadas por `classId`, com o que um amuleto Magistral vinculado ganha da classe. São a fonte de verdade: `resolveCharmClassBinding` lê delas, não deduz por comparação. Ver FIX-008.

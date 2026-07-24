@@ -12,13 +12,11 @@ arquivo específico, reinclua-o pontualmente com `!meta/legacy/<arquivo>`.
 
 | Arquivo | O que é | Estado |
 |---|---|---|
-| `GUIA_CORRECOES_FASE3.md` | 4 correções + Fase 3 completa (Canvas, linhas 420–887) | correções 1–3 viraram a spec0006; a 4 virou a spec0004; **a Fase 3 ainda não foi usada** |
+| `GUIA_CORRECOES_FASE3.md` | 4 correções + Fase 3 completa (Canvas, linhas 420–887) | correções 1–3 viraram a spec0006; a 4 virou a spec0004; **a Fase 3 ainda não foi usada** — não é material extraído, é **insumo ativo** da Fase 3 |
 | `GUIA_COMPLETO_v4.md` | guia de aplicação anterior | não extraído |
 | `GOT_Build.md` | índice dos 7 prompts que originaram a ferramenta | **lido por inteiro** em 2026-07-22 |
-| `GOT_Build_-_Joker.md` | conversa antiga, 15 KB | não extraído — **primeiro alvo** |
-| `GOT_Build_-_Alex.md` | conversa antiga, 61 KB | não extraído |
-| `GOT_Build_-_Origem.md` | conversa antiga, 197 KB | não extraído |
-| `GOT_Build_-_TOhno.md` | conversa antiga, 267 KB | não extraído — provavelmente exige 2 sessões |
+
+As quatro conversas antigas (`GOT_Build_-_Joker.md`, `GOT_Build_-_Alex.md`, `GOT_Build_-_Origem.md`, `GOT_Build_-_TOhno.md`) foram **extraídas pelas specs 0008 a 0011**, entre 2026-07-23 e 2026-07-24, e removidas desta pasta. Seguem recuperáveis pelo histórico do Git.
 
 ## Como ler isto
 
