@@ -12,7 +12,8 @@ meta/specs/
 # Versoes historicas do App: snapshots congelados, ~340 KB de JSX quase identico.
 # O que interessa deles ja esta consolidado em meta/HISTORY.md e meta/DECISIONS.md.
 # src/v4/App.jsx e byte a byte igual ao src/App.jsx atual — subir os dois e desperdicio puro.
-# GUIA_COMPLETO_v4.md NAO entra aqui: continua subindo (e guia de aplicacao, ainda pendente).
+# (Este bloco trata so dos snapshots src/v*. Os arquivos de meta/legacy/ sao
+#  controlados no bloco flatdrop-editor no fim deste arquivo.)
 src/v1/
 src/v2/
 src/v3/
@@ -30,9 +31,5 @@ INSTRUCOES-DO-PROJETO.md
 # >>> flatdrop-editor
 logs/
 INSTRUCOES-DO-PROJETO.md
-meta/legacy/GOT_Build.md
-meta/legacy/GOT_Build_-_TOhno.md
-meta/legacy/GUIA_COMPLETO_v4.md
-meta/legacy/GUIA_CORRECOES_FASE3.md
 meta/legacy/README.md
 # <<<

@@ -78,11 +78,11 @@ O que resta do guia é a **Fase 3** (`generateBuildImage` via Canvas, ~470 linha
 
 - [ ] Implementar `generateBuildImage` (Fase 3)
 - [x] ~~`picada_celestial` fora de `REQUIRED_PERKS`~~ — **corrigido em 2026-07-23** (FIX-009). A regra foi confirmada pela fonte no bloco 27 do arquivo de origem, e virou a DEC-018.
-- [ ] **Limpar o código morto do vínculo de classe** — `onLinkedClass` declarado e nunca usado em `App.jsx`; `setCharmLinkedClass` importado lá e exportado em `logic.js` sem consumidor. Resíduo da remoção do seletor (DEC-015). Cuidado: o campo `linkedClass` do estado **fica** — quem some é só a função de troca.
+- [x] ~~Limpar o código morto do vínculo de classe~~ — **feito em 2026-07-25** (spec0012). Junto saíram outros oito imports órfãos do `App.jsx`. O campo `linkedClass` do estado ficou intacto.
+- [ ] **Decidir o destino de `getAvailableProps` e `getAvailablePerks` em `logic.js`** — não têm consumidor e, como estão, são armadilha: resolvem o item por `id` e por isso devolvem lista errada para amuleto com `classBinding` (armadilha 14). Duas saídas: **remover** as duas, já que ninguém as usa, ou **trocar a assinatura** para receber o item já resolvido e então usá-las no `App.jsx` no lugar do filtro inline. Não decidir também é uma escolha — mas aí a armadilha fica.
+- [ ] **Duplicação de `selectTech` / `selectAbility`** — o `App.jsx` reimplementa inline o toggle que essas duas funções de `logic.js` já fazem, com lógica idêntica. Ao contrário do caso acima, aqui não há motivo: as assinaturas servem. Trocar o inline pela chamada elimina uma fonte de verdade duplicada. Mudança de duas linhas, mas **não embutida na spec0012** por estar fora do escopo dela.
 - [x] ~~Verificar se `visao_sugaru` deveria ter perk de desbloqueio~~ — **respondido em 2026-07-23: não deveria, e o dado está certo.** O pool dela é o do Arco Longo menos Disparo Arremessante, Certeiro, Olho de Águia e Versátil; sem Versátil no pool, qualquer classe a equipa sem custo. Ver DEC-018.
-- [ ] Verificar IDs reais de amuletos em `data.js` vs entradas em `icons.js` (alguns podem não bater)
-- [ ] Verificar IDs de técnicas do Assassino (comentados em `icons.js` como pendentes)
-- [ ] Adicionar técnicas do Assassino faltantes em `TECH_ICON` (sumica_toxico, supergolpe, etc.)
+- [x] ~~Verificar IDs de amuletos, técnicas do Assassino e entradas faltantes em `TECH_ICON`~~ — **os três verificados em 2026-07-25 e todos em ordem.** Cruzamento programático de `data.js` contra `icons.js`: **50 itens de `GEAR` ↔ 50 chaves de `GEAR_ICON`** e **60 chaves de `TECH_ICON` ↔ 60 ids de técnica/habilidade**, sem nenhum órfão nos dois sentidos. `sumico_toxico` e `supergolpe`, citados como faltantes, estão mapeados. Os quatro ids restantes são os supremos (`furia_de_hachiman`, `olho_de_uchitsune`, `sopro_de_izanami`, `golpe_sombrio`), que por decisão usam `CLASS_TECH_FALLBACK`. Eram resquícios da escrita original do `icons.js`.
 - [ ] Apagar as duas cópias soltas de `GUIA_COMPLETO*.md` que ficaram **fora do repositório** (`got-legends/GUIA_COMPLETO.md` e `got-legends/notas-arquivadas/GUIA_COMPLETO_v4.md`). São byte-idênticas — md5 conferido em 2026-07-23 — à versionada em `meta/legacy/GUIA_COMPLETO_v4.md`. Pela DEC-012, cópia fora do repo é cópia em risco, e estas três divergirem seria pior do que não existirem.
 
 ---
@@ -243,3 +243,23 @@ Quatro conversas, quatro sessões, saldo final: **FIX-007, FIX-008, FIX-009** e 
 `meta/legacy/` fica com o `GOT_Build.md` (índice, já lido) e os dois guias, que não são conversa e continuam servindo: o `GUIA_CORRECOES_FASE3.md` guarda o código da Fase 3.
 
 **Próximo passo: Fase 3 (`generateBuildImage`)** — agora com o roteiro completo no `ROADMAP.md`. Antes de abrir a sessão, reinclua `meta/legacy/GUIA_CORRECOES_FASE3.md` no `.flatdropignore`.
+
+---
+
+**2026-07-25 — higiene pré-Fase 3.**
+
+Sessão curta e deliberadamente antes da Fase 3, que vai mexer pesado no `App.jsx`: limpar depois sairia mais caro. O mount desta sessão tinha exatamente o código e nada dos guias, então o encaixe foi natural.
+
+**Código.** Removidos o `onLinkedClass` do `App.jsx` e o `setCharmLinkedClass` do `logic.js`, fechando a ponta solta da DEC-015. Na conferência apareceram mais oito imports órfãos no `App.jsx` — `selectTech`, `selectAbility`, `getAvailableProps`, `getAvailablePerks`, `BASE_HP`, `BASE_RESOLVE`, `BASE_LEG_SLOTS`, `GEAR_ICON`, `TECH_ICON` —, todos aparecendo uma única vez no arquivo, na própria linha do import. Saíram junto. Um comentário obsoleto no `icons.js` (mandava renomear um arquivo já renomeado) também saiu.
+
+**Três itens de backlog fechados sem tocar em código.** Os avisos de que os ids de `icons.js` podiam não bater com os de `data.js` eram resquícios da escrita original: o cruzamento deu **50 ↔ 50** em gear e **60 ↔ 60** em técnicas, sem órfão nenhum dos dois lados.
+
+**Um achado que não é limpeza — armadilha 14.** `getAvailableProps` e `getAvailablePerks` resolvem o item por `id`, e por isso devolveriam lista **incompleta e sem erro** para amuleto com `classBinding`. O `App.jsx` filtra inline justamente para passar o item efetivo. Não têm consumidor hoje; o destino delas foi para o backlog em vez de ser decidido de afogadilho.
+
+**Sobre `meta/legacy/`, agora com quatro arquivos e três destinos diferentes:**
+- `GUIA_CORRECOES_FASE3.md` — **não se extrai, se usa.** É o insumo da Fase 3.
+- `GUIA_COMPLETO_v4.md` — **precisa de uma comparação antes de a Fase 3 começar.** Pelo `GLOSSARY.md` ele cobre o mesmo território do outro guia (layout e `HpResolveBar`), e os dois podem conter versões diferentes do código da Fase 3. Usar o mais antigo sem perceber seria regressão silenciosa. A primeira tarefa da sessão da Fase 3 é dizer qual é o mais recente.
+- `GOT_Build.md` — **vale extrair de verdade.** Foi "lido por inteiro" em 2026-07-22, **antes de o método da DEC-011 existir**, com a pergunta que o próprio projeto registrou como a menos produtiva ("isso está no código?"). O saldo daquela leitura foram quatro itens de UI, contra três FIX e onze DEC vindos dos outros quatro arquivos. E a DEC-011 diz que **é dele** o prompt em que o autor pergunta pelos ícones das vantagens de classe na imagem — ou seja, ele contém requisito da Fase 3. Ler depois de construir a fase é caro.
+- `README.md` — descreve a pasta; não é material de extração.
+
+**Próximo passo:** sessão de preparação da Fase 3 — extrair o `GOT_Build.md` e comparar os dois guias. O `.flatdropignore` já liberou os três nesta spec; basta regerar o pacote.

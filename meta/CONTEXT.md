@@ -150,6 +150,8 @@ Dois tipos de ícones com lógica diferente:
 
 13. **3 colunas e 2 colunas não compartilham estilo** — os dois modos pedem comportamentos **opostos** para habilidades e vantagens de classe (empilhadas no 3-col, lado a lado no 2-col). Estilo aplicado sem olhar o `layoutMode` conserta um e quebra o outro — aconteceu três vezes seguidas. Mexeu num, confira o outro **na mesma sessão**. Ver DEC-023.
 
+14. **`getAvailableProps` e `getAvailablePerks` resolvem o item por `id`** — e por isso **não servem para amuleto com `classBinding`**: devolvem o item cru do `GEAR`, sem os props e perks de classe, e sem erro. É a armadilha 7 disfarçada de utilitário. O `App.jsx` filtra inline justamente para poder passar o item **efetivo**. Nenhum consumidor as usa hoje (verificado em 2026-07-25); antes de usar uma delas em código novo — inclusive na Fase 3 — troque a assinatura para receber o item, não o id.
+
 ---
 
 ## Contexto de Produto

@@ -166,3 +166,21 @@ Nos prompts antigos o autor cogitou **remover o modo Estatístico** caso desse t
 - O kit não diz em lugar nenhum que **uma entrada de FIX não deve ser criada a partir de código ainda não aplicado**. Este projeto perdeu um mês com FIX-005 registrado como resolvido enquanto o conserto vivia só num guia. A regra deveria estar no CEREBRO, junto das regras de higiene.
 - *(2026-07-23 — FlatDrop, bug de comportamento)* **A reinclusão com `!` não funciona quando a pasta inteira está ignorada.** A `spec0007` escreveu `meta/legacy/` no `.flatdropignore` e recomendou reincluir um arquivo com `!meta/legacy/<arquivo>`. A recomendação está **errada**, e a sintaxe `.gitignore` explica por quê: *não é possível reincluir um arquivo se um diretório-pai dele estiver excluído* — o motor nem chega a avaliar os arquivos de dentro da pasta podada. Não é bug do FlatDrop; é uma regra da sintaxe que ele herda. **O que o FlatDrop poderia fazer:** avisar quando um `!` for anulado por uma exclusão de pasta, em vez de ignorá-lo em silêncio — foi exatamente o silêncio que custou tempo aqui. **Contorno adotado:** enumerar os arquivos legados um a um, em vez da pasta, e comentar a linha do que se quer no mount.
 - *(2026-07-23 — FlatDrop, sugestão)* O bloco gerenciado `# >>> flatdrop-editor … # <<<` fica **no fim** do arquivo, e em `.gitignore` **o último padrão que casa é o que vale**. Toda regra manual escrita acima dele pode ser anulada pelo bloco, sem aviso. Vale documentar essa precedência no próprio cabeçalho do bloco, ou colocá-lo no topo.
+
+---
+
+## 🔧 Correções de processo — 2026-07-25
+
+### O chat afirmou "CRLF" no `.flatdropignore` em quatro specs seguidas — e o arquivo é LF
+As specs 0008 a 0011 abriram a parte do `.flatdropignore` com um aviso de que o arquivo tinha quebras CRLF e que era preciso preservá-las. **Está errado:** o relatório de aplicação da spec0010 registra `git ls-files --eol` mostrando LF, e o executor manteve o formato real em vez de seguir a spec. O que induziu ao erro foi ler o `_TREE` e o `_MANIFEST` do pacote FlatDrop, esses **sim** em CRLF, e generalizar para o arquivo vizinho.
+
+**Regra que fica:** o chat não afirma final de linha de arquivo que não pode inspecionar. Se importar, a spec pede ao executor que **verifique e preserve o que houver** — nunca nomeia o formato de cor. Vale para qualquer atributo de arquivo que só o Code enxerga: permissão, encoding, presença de BOM.
+
+### Três perguntas ao autor seguem em aberto
+Nenhuma bloqueia trabalho, e nenhuma deve ser resolvida por suposição. Ficam listadas juntas para não se perderem uma a uma:
+
+1. **Botões de 🎲 granulares** (`Tudo` / `Classe` / `Gear`) — sumiram em alguma reescrita. Foi simplificação deliberada?
+2. **Seletor "Só alteradas"** no painel de estatísticas — mesma pergunta, mesma família.
+3. **Modo Estatístico** — nos prompts antigos o autor cogitou removê-lo caso desse trabalho demais. Ele funciona desde a spec0004, mas a pergunta nunca foi formalmente encerrada.
+
+Se as três forem respondidas com "foi de propósito", os dois itens de possível regressão saem do `IDEAS.md` e viram nota de decisão.

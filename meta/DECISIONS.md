@@ -474,10 +474,9 @@ Amuleto Magistral com `classBinding` tinha, no card do slot, um `<select>` "Vinc
 O seletor saiu. O vínculo segue a classe ativa, sempre, e o campo `linkedClass` **permanece no estado do build** — é ele que `getEffectiveCharm(itemId, linkedClass)` consome. Só a interface de escolha deixou de existir.
 
 ### O que ficou por fazer
-Duas pontas soltas, ambas conferidas em 2026-07-23 e agora no backlog do `STATUS.md`:
 
-1. **Código morto.** `onLinkedClass` está declarado em `App.jsx` e nunca é usado; `setCharmLinkedClass` continua importado lá e exportado em `logic.js` sem nenhum consumidor.
-2. **Nenhuma indicação visual do vínculo.** A proposta original substituía o `<select>` por um selo "Vinculado a: 🗡️ Samurai". Isso não foi feito — o bloco foi apagado e nada entrou no lugar. Hoje o jogador vê props e perks de classe surgirem no amuleto sem nada na tela explicando de onde vêm.
+1. ~~**Código morto.**~~ **Resolvido em 2026-07-25** (spec0012): `onLinkedClass` removido do `App.jsx`, `setCharmLinkedClass` removido do `logic.js`, import limpo. O campo `linkedClass` do estado **permanece** e continua alimentando `getEffectiveCharm` — como esta decisão previa.
+2. **Nenhuma indicação visual do vínculo.** A proposta original substituía o `<select>` por um selo "Vinculado a: 🗡️ Samurai". Isso não foi feito — o bloco foi apagado e nada entrou no lugar. Hoje o jogador vê props e perks de classe surgirem no amuleto sem nada na tela explicando de onde vêm. Continua no `IDEAS.md`.
 
 ---
 

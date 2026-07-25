@@ -9,6 +9,9 @@
 
 ### Adicionado
 - Fase 3 — `generateBuildImage` via Canvas API: código completo entregue em guia, pendente de aplicação em `App.jsx`.
+
+### Removido
+- Código morto do vínculo de classe (`onLinkedClass` no `App.jsx`, `setCharmLinkedClass` no `logic.js`) e nove imports órfãos — resíduo da remoção do seletor de classe vinculada (DEC-015). Sem efeito visível no produto.
 - **Infraestrutura de contexto (KCM v1.73.0)** — sem efeito no produto:
   - `meta/CEREBRO.md` — comportamento do assistente, adaptado a este projeto (DEC-007, DEC-008)
   - `CLAUDE.md` na raiz — guia do Claude Code com build, armadilhas e convenções
