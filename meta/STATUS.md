@@ -76,7 +76,7 @@ O que resta do guia é a **Fase 3** (`generateBuildImage` via Canvas, ~470 linha
 
 > O item "aplicar as 4 correções pendentes do `GUIA_CORRECOES_FASE3.md`" **saiu daqui em 2026-07-23**: as três de layout foram aplicadas pela spec0006 e a quarta pela spec0004. Estava contradizendo a seção «⏳ Pendente de Aplicação», que já dizia que não havia pendência.
 
-- [ ] Implementar `generateBuildImage` (Fase 3)
+- [x] ~~Implementar `generateBuildImage` (Fase 3)~~ — **feito em 2026-07-25** (spec0014), com os oito defeitos da DEC-026 corrigidos.
 - [x] ~~`picada_celestial` fora de `REQUIRED_PERKS`~~ — **corrigido em 2026-07-23** (FIX-009). A regra foi confirmada pela fonte no bloco 27 do arquivo de origem, e virou a DEC-018.
 - [x] ~~Limpar o código morto do vínculo de classe~~ — **feito em 2026-07-25** (spec0012). Junto saíram outros oito imports órfãos do `App.jsx`. O campo `linkedClass` do estado ficou intacto.
 - [ ] **Decidir o destino de `getAvailableProps` e `getAvailablePerks` em `logic.js`** — não têm consumidor e, como estão, são armadilha: resolvem o item por `id` e por isso devolvem lista errada para amuleto com `classBinding` (armadilha 14). Duas saídas: **remover** as duas, já que ninguém as usa, ou **trocar a assinatura** para receber o item já resolvido e então usá-las no `App.jsx` no lugar do filtro inline. Não decidir também é uma escolha — mas aí a armadilha fica.
@@ -285,3 +285,19 @@ Os outros cinco: ícone de classe invisível porque o canvas não herda filtro C
 Sem mudança de código nesta sessão. `meta/legacy/` fica com o `GUIA_CORRECOES_FASE3.md` e o `README.md`.
 
 **Próximo passo: Fase 3.** O rascunho já está no mount; nada a mexer no `.flatdropignore`.
+
+---
+
+**2026-07-25 (3) — Fase 3 entregue. `meta/legacy/` encerrada.**
+
+`generateBuildImage` implementada a partir do plano auditado, e não do guia. Os sete defeitos catalogados na DEC-026 foram corrigidos, e **um oitavo apareceu durante a escrita** — o mais interessante do lote, porque não estava no código novo.
+
+**A arquitetura foi validada antes de virar código.** O layout foi simulado com build cheia e descrições longas: as duas passadas devolvem altura idêntica nos três modos, a passada de medição não pinta nada, e o D2 se mostrou pior do que a auditoria supunha. Com cinco slots preenchidos, o modo **Detalhado** precisa de cerca de **1340 px** contra os **560 fixos** do guia — cortaria quase 60% do conteúdo. A build vazia precisa de ~170 px contra os mesmos 560, ou seja quase 400 px de faixa morta. O corte era a regra, não a exceção.
+
+**FIX-010 — o oitavo defeito, e ele estava na Fase 2.** Ao comparar o código do guia com o `generateBuildText`, os dois liam a recarga das Armas Fantasma de chaves diferentes. `logic.js` decidiu a favor do guia: as chaves são `stats.gw1` / `stats.gw2`, e o `generateBuildText` lia `gw1Cooldown` / `gw2Cooldown` — que não existem. **A recarga nunca apareceu em nenhum texto exportado.** Puxando o fio, o bloco do Supremo tinha o mesmo problema: lia `ult.hits` e `ult.dPT`, que também não existem, então saía só nome e custo. A Caçadora era a única classe completa, por acaso — `ult.targets` existe.
+
+Terceira vez que uma chave errada some com informação em silêncio aqui (FIX-005 foi a primeira). O padrão é sempre o mesmo: **a exportação não tem quem reclame**, porque nada quebra — o texto sai bonito e incompleto.
+
+**`meta/legacy/` encerrada.** O `GUIA_CORRECOES_FASE3.md` era o último arquivo e cumpriu o papel de rascunho: a auditoria dele rendeu sete defeitos catalogados, o oitavo veio da comparação com o código, e o que estava certo foi aproveitado. Pela DEC-025, sai. A pasta e seu `README.md` saem junto — o que aconteceu ali está na DEC-011, na DEC-012, na DEC-025 e na seção 9 do `HISTORY.md`, e o corpo dos arquivos segue no Git.
+
+**Próximo passo — e agora há uma escolha real.** A F4 (polimento e mobile) é a fase seguinte no `ROADMAP.md`. Mas há uma decisão marcada para agora: com a imagem funcionando, dá para comparar os dois formatos do modo Estatístico lado a lado e decidir o destino dele (DEC-024). Vale fazer isso antes de abrir a F4 — é a informação que estava faltando, e ela chegou.

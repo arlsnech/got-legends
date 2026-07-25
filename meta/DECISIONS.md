@@ -770,3 +770,36 @@ A altura final é `max(altura da coluna esquerda, altura da coluna direita) + he
 A auditoria confirmou como corretos: a assinatura `getStatGroups(stats, classId, lang)`; as chaves `stats.maxHP` e `stats.maxResolve`; a escolha de `formatStatValue(valor, unidade)` para as propriedades (`0.12 → "+12%"`); todas as chaves de paleta lidas de `T`, inclusive `T.cls`; o carregamento em paralelo dos ícones com `Promise.all`; a resolução de `null` no `onerror` para que um ícone ausente não derrube o desenho; e a lista de ícones por elemento, incluindo os das vantagens de classe, que era a preocupação registrada no `ROADMAP.md`.
 
 O layout em duas colunas com faixa de estatísticas ao pé também fica: é o que o autor pediu desde o primeiro prompt.
+
+### Desfecho — aplicada em 2026-07-25 pela spec0014
+Os oito defeitos foram corrigidos e a arquitetura de duas passadas foi validada por simulação antes de virar código: as duas passadas devolvem altura idêntica nos três modos, e a passada de medição não pinta nada. O D2 se confirmou pior do que a auditoria supunha — o modo Detalhado de uma build cheia precisa de cerca de 1340 px contra os 560 fixos do guia.
+
+O oitavo defeito não estava na lista original: apareceu ao comparar o código do guia com o `generateBuildText`, e revelou que **quem estava errado era o `generateBuildText`** (FIX-010).
+
+---
+
+## FIX-010 — Recarga das Armas Fantasma e resumo do Supremo sumiam do texto exportado
+
+**Data:** 2026-07-25 · **Gravidade:** média (informação faltando no compartilhamento, sem erro)
+
+### Sintoma
+No texto gerado pelos três botões 📋, a recarga das Armas Fantasma **nunca aparecia**, e o bloco do Supremo mostrava só nome e custo — sem a contagem de golpes, sem o bônus de dano, e sem o Sopro ativo do Ronin. Na interface, as mesmas informações estavam corretas. Nenhum erro no console.
+
+### Causa raiz
+Três chaves inexistentes, lidas como `undefined` e engolidas por guardas `!= null`:
+
+| Lido | Existe? | O que `computeStats` devolve |
+|---|---|---|
+| `stats.gw1Cooldown` / `gw2Cooldown` | não | `stats.gw1` / `stats.gw2` |
+| `ult.hits` | não | `ult.strikes` (Samurai, Assassino) |
+| `ult.dPT` / `ult.dEN` | não | nada — a descrição do Supremo não é campo de `computeUltimate` |
+
+Por coincidência, `ult.targets` **existe**, então a Caçadora era a única classe que saía completa — o que ajudou o defeito a passar despercebido.
+
+### Correção
+As duas chaves de recarga passaram a apontar para `stats.gw1` / `stats.gw2`. O bloco do Supremo passou a usar `ultimateSummary(ult, L)`, que monta o resumo **por classe** — `strikes` para Samurai e Assassino, `targets` para Caçadora, variante ativa para Ronin, mais o bônus de dano e o custo. A mesma função alimenta a imagem da Fase 3, então texto e imagem não podem divergir.
+
+### Como foi encontrado
+Não por relato: apareceu ao auditar o código da Fase 3 do guia e **comparar as duas implementações**. O guia lia `stats.gw1` e o `generateBuildText` lia `stats.gw1Cooldown`; um dos dois tinha de estar errado, e `logic.js` decidiu a favor do guia.
+
+**Regra que fica:** quando duas implementações do mesmo dado divergem, a divergência é o achado. Não escolha a mais recente nem a que parece mais cuidada — vá à fonte. É a terceira vez que uma chave errada some com informação em silêncio neste projeto (FIX-005, e agora as três desta entrada); **a exportação não tem quem reclame**, porque nada quebra: o texto sai bonito e incompleto.

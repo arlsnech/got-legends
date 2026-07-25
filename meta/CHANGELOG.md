@@ -8,7 +8,7 @@
 ## [Não lançado]
 
 ### Adicionado
-- Fase 3 — `generateBuildImage` via Canvas API: código completo entregue em guia, pendente de aplicação em `App.jsx`.
+- **Fase 3 — exportação em imagem.** Os três botões 🖼️ (Build, Detalhado, Estatístico) geram um PNG da build e disparam o download. Canvas puro, sem dependência externa; altura calculada a partir do conteúdo e renderização em 2x. Layout em duas colunas — habilidade e vantagens à esquerda, equipamentos à direita — com faixa de estatísticas no modo Estatístico, ícones do jogo em cada linha e as cores da classe ativa.
 
 ### Removido
 - Código morto do vínculo de classe (`onLinkedClass` no `App.jsx`, `setCharmLinkedClass` no `logic.js`) e nove imports órfãos — resíduo da remoção do seletor de classe vinculada (DEC-015). Sem efeito visível no produto.
@@ -32,6 +32,7 @@
 - `src/v1..v4` e `GUIA_COMPLETO_v4.md` preservados em commit próprio antes da limpeza futura
 
 ### Corrigido
+- No texto exportado, a recarga das Armas Fantasma não aparecia e o Supremo saía sem a contagem de golpes nem o bônus de dano (FIX-010)
 - Picada Celestial não obrigava o Ronin a gastar o perk de desbloqueio, ao contrário da Zarabatana (FIX-009)
 - Props de item Magistral saíam abaixo do máximo na build aleatória (FIX-006). Builds salvos ou compartilhados com o valor errado são saneados ao carregar
 - Estatísticas do texto exportado saíam como `undefined` (FIX-005 — diagnosticado em junho, aplicado só agora). Junto com isso: os rótulos das estatísticas passam a respeitar o idioma EN, e o grupo de estatísticas específico da classe volta a aparecer no texto

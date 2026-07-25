@@ -32,7 +32,7 @@
 
 ---
 
-## 🟡 F3 — Exportação de Imagem *(próxima / em curso)*
+## 🟢 F3 — Exportação de Imagem *(concluída em 2026-07-25)*
 
 **Objetivo:** Usuário consegue baixar um PNG visualmente polido da build para compartilhar em redes sociais, Discord, Reddit etc.
 
@@ -78,7 +78,7 @@
 **Objetivo:** Experiência refinada em mobile e correções de UX baseadas em feedback real de usuários.
 
 - Layout mobile dedicado (1 coluna com tabs entre seções)
-- Altura dinâmica do canvas na geração de imagem
+- ~~Altura dinâmica do canvas na geração de imagem~~ — **feito na F3** (DEC-026, D2): sem isso o modo Detalhado cortava mais da metade do conteúdo, então virou requisito e não polimento
 - URL compartilhável com build encodada na query string (`?b=eyJ...`)
 - Animações de transição suaves entre layouts
 - PWA: `manifest.json` + service worker para uso offline
