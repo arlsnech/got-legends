@@ -152,6 +152,20 @@ Dois tipos de ícones com lógica diferente:
 
 14. **`getAvailableProps` e `getAvailablePerks` resolvem o item por `id`** — e por isso **não servem para amuleto com `classBinding`**: devolvem o item cru do `GEAR`, sem os props e perks de classe, e sem erro. É a armadilha 7 disfarçada de utilitário. O `App.jsx` filtra inline justamente para poder passar o item **efetivo**. Nenhum consumidor as usa hoje (verificado em 2026-07-25); antes de usar uma delas em código novo — inclusive na Fase 3 — troque a assinatura para receber o item, não o id.
 
+15. **O canvas não herda filtro CSS.** Na tela, os SVG de classe ficam brancos por `iconFilter: 'brightness(0) invert(1)'`. `ctx.drawImage` ignora isso: o ícone entra com a cor original e some no fundo escuro. Quem desenhar ícone no canvas precisa aplicar `ctx.filter` à mão e zerá-lo depois — **e nunca no PNG de técnica**, onde o filtro vira retângulo sólido (armadilha 3). A regra da UI vale igual dentro do canvas. Ver DEC-026, defeito D3.
+
+### Onde ficam as larguras das colunas
+
+Numa linha só, no `return` do `App`, dentro do bloco marcado `{/* ══ ÁREA DE 3/2 COLUNAS ══ */}`. Busque por `gridTemplateColumns`:
+
+```js
+gridTemplateColumns: layoutMode === 'three-col'
+  ? '300px 1fr 340px'   // técnicas | equipamentos | estatísticas
+  : '1fr 360px',
+```
+
+Valores conferidos em 2026-07-25. Alterar a coluna de técnicas mexe com a armadilha 13 — confira **os dois modos** na mesma sessão.
+
 ---
 
 ## Contexto de Produto

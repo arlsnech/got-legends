@@ -263,3 +263,25 @@ Sessão curta e deliberadamente antes da Fase 3, que vai mexer pesado no `App.js
 - `README.md` — descreve a pasta; não é material de extração.
 
 **Próximo passo:** sessão de preparação da Fase 3 — extrair o `GOT_Build.md` e comparar os dois guias. O `.flatdropignore` já liberou os três nesta spec; basta regerar o pacote.
+
+---
+
+**2026-07-25 (2) — auditoria dos guias legados e plano refinado da Fase 3.**
+
+Os três insumos subiram e foram lidos. A diretriz do autor fechou a questão de fundo: **guia legado não é estrutura do projeto** — estuda-se, o conteúdo vai para os `meta/` e para os scripts, e o arquivo sai (DEC-025). Dois dos três saíram nesta sessão.
+
+- **`GOT_Build.md` — nada a extrair.** A spec0012 suspeitou que a leitura de 2026-07-22 tivesse sido rasa e recomendou re-extrair. **A suspeita era falsa:** os sete prompts foram comparados um a um com os do `TOhno` e são os mesmos, só que sem as respostas do assistente. É subconjunto estrito de um arquivo já extraído por inteiro. A verificação custou minutos e dispensou uma sessão.
+- **`GUIA_COMPLETO_v4.md` — superado inteiro.** É a rodada v8; o outro é a v10. Suas 6 correções foram consertadas pelas 4 do mais novo, sua Fase 2 já está no código, e sua Fase 3 é esqueleto onde o outro tem implementação. **Codar a partir dele teria sido regressão dupla.** Sobreviveu uma única coisa, e não é código: a localização das larguras de coluna, agora no `CONTEXT.md`.
+- **`GUIA_CORRECOES_FASE3.md` — fica mais uma sessão.** É o mais recente e tem as ~470 linhas da Fase 3.
+
+**A auditoria do código da Fase 3 achou sete defeitos** (DEC-026). Os dois graves não quebram nada visivelmente — produzem imagem plausível e errada, que é a pior falha num recurso feito para ser postado em público:
+- **D1** — o amuleto é lido do `GEAR` cru, então as propriedades de classe de um Magistral com `classBinding` **somem da imagem** enquanto continuam na tela.
+- **D2** — altura fixa, e calibrada ao contrário: o modo **Detalhado**, que desenha todas as descrições, recebe 560 px contra os 820 do Estatístico. O corte é o caso comum, não o extremo.
+
+Os outros cinco: ícone de classe invisível porque o canvas não herda filtro CSS (virou armadilha 15), ausência de renderização em 2x, `toDataURL` no lugar de `toBlob`, rodapé em posição absoluta, e um diagnóstico de CORS que está errado de duas maneiras. A `F3` do `ROADMAP.md` foi reescrita com o plano corrigido, uma lista de conferência visual, e **a altura dinâmica trazida da F4 para cá**.
+
+**Três perguntas antigas encerradas** (DEC-024), com as respostas do autor: os 🎲 granulares e o seletor "Só alteradas" foram tirados **porque davam problema**, e a simplificação agradou — não são regressão. O modo Estatístico fica **adiado de propósito**: a informação que decide chega quando a Fase 3 entregar a versão em imagem, e aí dá para comparar os dois formatos lado a lado.
+
+Sem mudança de código nesta sessão. `meta/legacy/` fica com o `GUIA_CORRECOES_FASE3.md` e o `README.md`.
+
+**Próximo passo: Fase 3.** O rascunho já está no mount; nada a mexer no `.flatdropignore`.

@@ -105,7 +105,7 @@ Cinco arquivos de conversas antigas foram recuperados em 2026-07-22 e preservado
 
 | Arquivo | Tamanho | Estado |
 |---|---|---|
-| `GOT_Build.md` | 40 KB | ✅ lido por inteiro em 2026-07-22 |
+| `GOT_Build.md` | 40 KB | ✅ **verificado em 2026-07-25 como subconjunto estrito do `TOhno`** — mesmos prompts, sem as respostas. Nada a extrair; arquivo removido (spec0013) |
 | `GOT_Build_-_Joker.md` | 15 KB | ✅ extraído em 2026-07-23 (spec0008) — arquivo removido |
 | `GOT_Build_-_Alex.md` | 61 KB | ✅ extraído em 2026-07-23 (spec0009) — arquivo removido |
 | `GOT_Build_-_Origem.md` | 197 KB | ✅ extraído em 2026-07-23 (spec0010) — arquivo removido |
@@ -128,8 +128,8 @@ Viraram DEC-018 (tabela canônica de restrição de classe), FIX-009 (Picada Cel
 
 **Terceira pergunta, que só apareceu neste arquivo:** *"o que a ferramenta já teve e não tem mais?"* Os dumps de interface colados pelo autor são fotografias de versões que não existem mais em lugar nenhum — as intermediárias se perderam. Foi assim que os botões de aleatório granulares apareceram. Para o `TOhno`, vale ler os dumps de tela com essa pergunta em mãos.
 
-### 2026-07-23 — Botões de build aleatória granulares *(possível regressão)*
-O dump da v1.1 no arquivo de origem mostra **três** botões — `🎲 Tudo`, `🎲 Classe`, `🎲 Gear` — e o `App.jsx` de hoje tem só um. O pedido original ia além: aleatório em cadeia, com botão por equipamento, por propriedade e até por valor de propriedade. Como as versões intermediárias se perderam, não dá para saber em qual reescrita os três viraram um, nem se foi decisão. **Antes de reimplementar, vale perguntar ao autor se a simplificação foi intencional.**
+### 2026-07-23 — Aleatório granular *(respondido em 2026-07-25 — não é regressão)*
+Os três botões da v1.1 (`🎲 Tudo`, `🎲 Classe`, `🎲 Gear`) **foram removidos porque davam problema**, e o 🎲 global que sobrou **agradou os usuários** (DEC-024). Fica como ideia, sem urgência: aleatório em cadeia, com botão por equipamento, por propriedade e até por valor de propriedade. Se voltar, volta como recurso novo e com os problemas resolvidos — não como conserto de algo perdido.
 
 ### Já extraído do `GOT_Build_-_TOhno.md` (2026-07-24) — **não reabrir**
 Nenhum pedido ficou aberto. Viraram DEC-021 (Canvas puro na Fase 3), DEC-022 (os três modos e a regra das estatísticas), DEC-023 (estilos independentes por layout), a armadilha 13 do `CONTEXT.md`, a seção 9 do `HISTORY.md` e o roteiro completo da Fase 3 no `ROADMAP.md`. Já conferido como **atendido** no código de hoje: layout 3-col e 2-col · `BookmarkTab` + `SaveDrawer` com lixeira · aviso de "salvo" com altura fixa · `HpResolveBar` (barra só com bônus, número empurrado) · `UltimateHeader` no lugar do título de estatísticas · seis botões em dois quadros nomeados · dicas com `flipX`/`flipY` nas bordas · `SettingsModal` com layout, créditos e interruptor do Base64 · ícones SVG com filtro por tema e PNG de técnica sem filtro · estrela ★ no fim do nome do Magistral · contador de Magistrais por extenso nos dois idiomas.
@@ -145,8 +145,8 @@ As quatro perguntas que renderam, na ordem em que apareceram:
 
 **Se um dia houver material antigo de novo, comece pela 3 e pela 4.** As duas primeiras são as intuitivas e as menos produtivas.
 
-### 2026-07-24 — Seletor "Só alteradas" no painel de estatísticas *(possível regressão)*
-O dump da v1.1 mostra um seletor **"Só alteradas"** acima da tabela de estatísticas, e o `App.jsx` de hoje não tem: `StatsPanel` mostra tudo e apenas destaca o que difere da base (`changed = s => s.value !== s.base`). O pedido original é do início do projeto — *"um botão (checkbox) para selecionar se quer ou não ver só as informações da tabela que estão sendo influenciadas pela build"*. Mesma família do sumiço dos botões de 🎲 granulares, e mesma ressalva: **pode ter sido simplificação deliberada.** Perguntar antes de reimplementar. Se for reimplementar, a regra da DEC-022 vale aqui também — HP e Determinação continuam aparecendo com o filtro ligado.
+### 2026-07-24 — Seletor "Só alteradas" *(respondido em 2026-07-25 — encerrado)*
+Removido por dar problema, e a avaliação do autor de que era inútil se sustenta: na tela o espaço não é escasso, a tabela rola de graça e o destaque visual já mostra o que a build muda. **Não reimplementar.** O conceito não morreu — mudou de lugar: na imagem da Fase 3, onde o espaço é fixo, filtrar é obrigatório (DEC-022). Fica a regra geral, que vale para qualquer filtro futuro: **a utilidade de esconder é proporcional à escassez de espaço.**
 
 ### 2026-07-23 — Flecha Perfurante condicionada à técnica
 Completar o pedido original do bloco 13: a munição exclusiva só aparece quando a técnica que a concede está equipada. Hoje aparece sempre para a classe primária (DEC-020). Precisa de dado novo em `data.js` — o vínculo técnica → munição não existe — e de passar as técnicas até `formatAmmoForClass`, que hoje é função pura de exibição. Melhoria, não defeito.
@@ -176,11 +176,11 @@ As specs 0008 a 0011 abriram a parte do `.flatdropignore` com um aviso de que o 
 
 **Regra que fica:** o chat não afirma final de linha de arquivo que não pode inspecionar. Se importar, a spec pede ao executor que **verifique e preserve o que houver** — nunca nomeia o formato de cor. Vale para qualquer atributo de arquivo que só o Code enxerga: permissão, encoding, presença de BOM.
 
-### Três perguntas ao autor seguem em aberto
-Nenhuma bloqueia trabalho, e nenhuma deve ser resolvida por suposição. Ficam listadas juntas para não se perderem uma a uma:
+### As três perguntas ao autor — respondidas em 2026-07-25
+Todas viraram DEC-024. Duas fecham, uma fica agendada:
 
-1. **Botões de 🎲 granulares** (`Tudo` / `Classe` / `Gear`) — sumiram em alguma reescrita. Foi simplificação deliberada?
-2. **Seletor "Só alteradas"** no painel de estatísticas — mesma pergunta, mesma família.
-3. **Modo Estatístico** — nos prompts antigos o autor cogitou removê-lo caso desse trabalho demais. Ele funciona desde a spec0004, mas a pergunta nunca foi formalmente encerrada.
+1. **🎲 granulares** — tirados por darem problema; a simplificação agradou. Encerrado.
+2. **"Só alteradas"** — tirado por dar problema, e sem utilidade na tela. Encerrado.
+3. **Modo Estatístico** — **adiado de propósito, com data.** Como texto o modo é fraco; como imagem pode ser o principal, já que a tabela calculada é o diferencial do projeto. A decisão acontece quando a Fase 3 permitir comparar os dois formatos lado a lado. Custo de esperar: zero.
 
-Se as três forem respondidas com "foi de propósito", os dois itens de possível regressão saem do `IDEAS.md` e viram nota de decisão.
+**O que isso ensinou:** as três vieram da pergunta *"o que a ferramenta já teve e não tem mais?"*, e nenhuma era defeito. **Recurso ausente não é recurso perdido.** A extração fez certo em registrar sem reimplementar — reimplementar teria trazido de volta exatamente os problemas que os tiraram.

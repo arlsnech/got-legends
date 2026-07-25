@@ -57,7 +57,7 @@
 - **`npm run build`** — gera build de produção em `dist/`
 - **`npm run deploy`** — faz build e chama `gh-pages -d dist`. **Quebra neste ambiente** com `ENAMETOOLONG` (limite de linha de comando do Windows); está no `deny` do `.claude/settings.json`. O site é publicado pelo Netlify a partir do `dist/`. Ver DEC-016.
 - **`GUIA_CORRECOES_FASE3.md`** — arquivo de guia com 4 correções pendentes + código completo da Fase 3
-- **`meta/legacy/GUIA_COMPLETO_v4.md`** — guia anterior, com correções de layout e `HpResolveBar`. Cobre território parecido com o do `GUIA_CORRECOES_FASE3.md`; **antes de usar qualquer um dos dois na Fase 3, confira qual é o mais recente.** Existem duas cópias soltas dele fora do repositório (ver backlog do `STATUS.md`) — a versionada é esta.
+- **`GUIA_COMPLETO_v4.md`** — guia da rodada v8, **removido do repositório em 2026-07-25** (DEC-025) por estar superado inteiro pelo `GUIA_CORRECOES_FASE3.md`. Recuperável pelo histórico do Git. As duas cópias soltas fora do repositório continuam no backlog para apagar.
 - **spec** — arquivo em `meta/specs/` com o texto exato de uma alteração de documento e a âncora onde ela entra. O chat autora, o Claude Code posiciona. Nome: `AAMMDD-specNNNN-desc.md`. É artefato versionado; não se apaga depois de aplicada.
 - **`/apply-spec`** — comando do Claude Code que aplica uma spec (âncora exata, ou PARA e reporta).
 - **`/wrap`** — comando do Claude Code que fecha a sessão: append em STATUS/DECISIONS, build, `git diff`, commit e push.

@@ -674,3 +674,99 @@ As duas disposições **não são a mesma tela em larguras diferentes**. O autor
 Levou três rodadas para ficar de pé, e todas as três falharam da mesma maneira: **arrumar um modo quebrava o outro**. Foi o próprio autor quem nomeou a causa — o estilo estava sendo aplicado sem distinguir o modo, quando os dois precisavam de tratamento separado. Daí o `layoutMode` chegar até o `TechRow`.
 
 **Regra que fica:** mexeu no layout de um modo, confira o outro na mesma sessão. É o defeito de repetição mais provável deste arquivo, e a razão de a spec0006 ter um item de conferência só para isso.
+
+---
+
+## DEC-024 — Três recursos simplificados de propósito: não são regressão
+
+**Data:** 2026-07-25 · **Status:** aceita · **Fonte:** respostas do autor às perguntas abertas desde a spec0010
+
+A extração retroativa encontrou dois recursos que existiram e sumiram, e uma pergunta antiga sem desfecho. Os três foram levados ao autor em vez de reimplementados por suposição. As respostas:
+
+### 1. Botões de 🎲 granulares (`Tudo` / `Classe` / `Gear`) — removidos por darem problema
+Existiram na v1.1. **Foram tirados porque davam problema**, sobrando o 🎲 global. O autor registra que a versão simplificada **agradou os usuários**. Não é regressão: é simplificação que funcionou. A ideia de reintroduzir opções mais específicas — aleatório por equipamento, por propriedade, por valor — continua no `IDEAS.md` como possibilidade, **não** como conserto pendente.
+
+### 2. Seletor "Só alteradas" no painel de estatísticas — removido, e sem utilidade na tela
+Mesma origem: dava problema. A avaliação do autor é que o recurso era inútil, e ela se sustenta. **A utilidade de um filtro é proporcional à escassez de espaço**, e na tela não há escassez: a tabela rola de graça, e o destaque visual (`s.value !== s.base`) já responde "o que a minha build muda" sem esconder nada.
+
+Mas o **conceito** não morreu — mudou de lugar. Na imagem da Fase 3 o espaço é fixo e caro, e ali a regra é obrigatória: só as estatísticas modificadas entram, com HP e Determinação sempre presentes (DEC-022). O filtro vive onde o espaço é escasso; some onde é abundante.
+
+### 3. Modo Estatístico — **decisão adiada de propósito**, e há uma data para ela
+O autor cogitou removê-lo nos prompts antigos e hoje também o percebe como pouco útil. Não foi removido nem confirmado, e o adiamento é deliberado: **a informação que decide chega na Fase 3.**
+
+O raciocínio, para quem retomar: como **texto**, o modo é fraco — uma tabela colada em texto puro num Discord ou Reddit vira ruído, e é justamente esse formato que o autor experimentou. Como **imagem**, é o oposto: grade é exatamente o que imagem faz bem, e a tabela de estatísticas calculada é o diferencial declarado do projeto (`HISTORY.md`, seção 8 — a coisa que nenhum outro planejador faz). O mesmo conteúdo pode ser inútil num meio e ser o principal no outro.
+
+Então: **nada é removido agora.** Quando a Fase 3 entregar a versão em imagem, o autor compara as duas lado a lado e decide — inclusive a hipótese de manter só o botão de imagem do modo Estatístico. Custo de manter até lá: zero, porque o código já existe e funciona desde a FIX-005.
+
+### O que os três têm em comum
+Nenhum foi encontrado como defeito; todos vieram da pergunta *"o que a ferramenta já teve e não tem mais?"*. **Recurso ausente não é recurso perdido.** A extração registrou os três como "possível regressão" e fez certo em não os reimplementar — a resposta do autor mudou a classificação de dois deles em uma frase, e uma reimplementação teria trazido de volta os problemas que os tiraram.
+
+---
+
+## DEC-025 — Guia legado não vive no repositório: é estudado, absorvido e removido
+
+**Data:** 2026-07-25 · **Status:** aceita · **Fonte:** diretriz do autor + comparação dos dois guias
+
+### A diretriz
+Guias de aplicação antigos **não são estrutura do projeto**. Usá-los como estão é ruim de duas maneiras — um estava superado (regressão) e o outro tem defeitos (ver DEC-026). O destino correto de um guia é: estudar, levar o conteúdo para `meta/`, `meta/specs/` e para os scripts, e então **remover**. O Git preserva o corpo; os `meta/` preservam o sentido.
+
+Isso completa a DEC-012, que resolveu *não perder* o material legado. Esta resolve o que fazer **depois** de ele ter servido: material legado é insumo, não acervo.
+
+### A comparação — qual guia era o mais recente
+| | `GUIA_COMPLETO_v4.md` | `GUIA_CORRECOES_FASE3.md` |
+|---|---|---|
+| Origem | rodada **v8** do `TOhno` | rodada **v10**, a última |
+| Correções | 6 (barra de HP, largura da coluna, TechRow, habilidades sem quebra, espaçamento) | 4 — **as que consertaram os defeitos das 6 anteriores** |
+| Fase 2 | código completo | só a correção dos `undefined` |
+| Fase 3 | **esqueleto** | **código completo, ~470 linhas** |
+
+O segundo é o mais novo em todos os eixos: suas quatro correções são o *follow-up* das seis do primeiro, e onde um tem esqueleto o outro tem implementação. **Codar a Fase 3 a partir do `GUIA_COMPLETO_v4.md` teria sido regressão dupla** — esqueleto no lugar de código, e correções antigas no lugar das novas.
+
+### O que sobreviveu do guia superado
+Uma coisa só, e não é código: a localização das larguras de coluna (`gridTemplateColumns`, no bloco `ÁREA DE 3/2 COLUNAS`), conferida em 2026-07-25 como ainda exata. Foi para o `CONTEXT.md`, junto da armadilha 13, que é sobre os mesmos dois modos.
+
+Todo o resto já estava aplicado no código e registrado nos `meta/` — as seis correções, a Fase 2 inteira, e o esqueleto da Fase 3 que o guia mais novo substitui.
+
+### `GOT_Build.md` — verificação que dispensou uma sessão
+A spec0012 recomendou re-extraí-lo com o método da DEC-011, sob a suspeita de que a leitura de 2026-07-22 tivesse sido rasa. **A suspeita foi verificada e é falsa.** Os sete prompts do arquivo foram comparados um a um com os do `GOT_Build_-_TOhno.md`: são **os mesmos prompts, sem as respostas** — o arquivo é a exportação "só prompts" da mesma conversa, e ainda por cima sem o bloco de relatório de erro. É **subconjunto estrito** de um arquivo já extraído por inteiro pela spec0011, com mais contexto.
+
+Não havia o que extrair. A verificação custou minutos; a re-extração teria custado uma sessão.
+
+**Regra que fica:** antes de agendar uma releitura de material legado, **compare-o com o que já foi lido.** Arquivos exportados da mesma origem se repetem, e a suspeita de leitura rasa é barata de testar e cara de assumir.
+
+---
+
+## DEC-026 — O código da Fase 3 no guia é ponto de partida, não entrega
+
+**Data:** 2026-07-25 · **Status:** aceita, orienta a execução da Fase 3
+
+### Por que esta decisão existe
+O `GUIA_CORRECOES_FASE3.md` traz ~470 linhas prontas de `generateBuildImage`. A tentação é aplicá-las e declarar a fase feita. **A auditoria linha a linha encontrou sete defeitos** — e os dois piores não quebram nada visivelmente: produzem uma imagem plausível e errada, que é a pior falha possível num recurso cujo propósito é ser compartilhado publicamente.
+
+A decisão: o guia entra como **rascunho de referência**. A arquitetura de desenho é refeita, e cada defeito abaixo é corrigido antes de a fase ser considerada pronta.
+
+### Os sete defeitos
+
+**D1 — O amuleto é lido do `GEAR` cru.** No laço de desenho dos equipamentos, o código faz `getItem(slotState.itemId)` para os cinco slots, inclusive `charm`, e depois procura as propriedades escolhidas em `item.props`. Para um amuleto Magistral com `classBinding`, as props e perks exclusivos de classe **não existem** no item cru: a busca falha, o `if (!propDef) continue` engole, e a imagem sai **sem as propriedades de classe** — as mesmas que o usuário está vendo na tela naquele instante. É a armadilha 7 acontecendo dentro do recurso novo. **Correção:** usar `getEffectiveCharm(itemId, linkedClass)` para o slot `charm`, como o `App.jsx` já faz.
+
+**D2 — Altura fixa, e calibrada ao contrário.** `IMG_H = mode === 'stats' ? 820 : 560`. Não há medição do conteúdo. O modo **Detalhado** desenha a descrição de cada propriedade e de cada vantagem com quebra de linha — até vinte parágrafos na coluna direita — e recebe a altura **menor** das duas. Ou seja: o modo mais alto do sistema é o que tem menos espaço, e o corte não é caso extremo, é o caso comum. O próprio guia admite ("o canvas pode ficar maior que o conteúdo... no futuro pode-se calcular dinamicamente") e o `ROADMAP.md` já tinha "altura dinâmica" empurrado para a F4. **Correção:** duas passadas — medir e depois desenhar (ver arquitetura abaixo). Isso deixa de ser item de F4 e vira requisito de F3.
+
+**D3 — Ícone de classe fica invisível.** Na tela, os SVG de classe são branqueados por CSS (`iconFilter: 'brightness(0) invert(1)'`). **`ctx.drawImage` não herda filtro CSS.** O ícone entra no canvas com a cor original — escura — sobre o fundo `#07080f`. **Correção:** aplicar `ctx.filter` antes de desenhar o SVG de classe e zerar (`ctx.filter = 'none'`) logo depois. E aqui vale a armadilha 3 sem nenhuma alteração: **filtro em PNG de técnica vira retângulo sólido** — a mesma regra que existe na UI passa a existir dentro do canvas.
+
+**D4 — Sem `devicePixelRatio`.** O canvas é 900 px e o texto varia de 9 a 18 px. Numa tela retina, ou em qualquer visualizador que amplie, o resultado sai borrado — num recurso cujo único propósito é ser postado e ampliado. **Correção:** desenhar em escala 2x (`canvas.width = IMG_W * 2`, `ctx.scale(2, 2)`) e manter todas as coordenadas do layout em unidades lógicas.
+
+**D5 — `toDataURL` em vez de `toBlob`.** Um PNG de 1800×1600 vira uma string base64 de vários megabytes, atribuída ao `href` de uma âncora. **Correção:** `canvas.toBlob()` + `URL.createObjectURL()`, com `URL.revokeObjectURL()` depois do clique.
+
+**D6 — Rodapé em posição absoluta.** A assinatura é desenhada em `IMG_H - 10`. Com altura fixa e conteúdo transbordando, ela cai **por cima** do conteúdo. Resolve-se junto com o D2: o rodapé passa a ser o último elemento medido.
+
+**D7 — O diagnóstico de CORS do guia está errado, e importa.** A nota técnica afirma que, sem headers CORS, "o `drawImage` lança `SecurityError`" e "os ícones ficam `null`, silencioso pelo `onError`". Nenhuma das duas coisas é verdade: `drawImage` não lança por contaminação — quem lança é a **exportação** (`toDataURL` / `toBlob`) —, e `onerror` não captura isso, porque a imagem carregou normalmente. O efeito real de um problema de origem seria **a exportação inteira falhar no último passo**, não uma degradação suave. Como os ícones são servidos pelo próprio Vite (mesma origem), o `crossOrigin = 'anonymous'` é desnecessário. **Correção:** remover o `crossOrigin` e envolver a exportação em `try/catch` com mensagem clara, em vez de confiar numa degradação que não existe.
+
+### Arquitetura decidida — medir, depois desenhar
+As duas passadas usam **o mesmo código de layout**, com um interruptor: na primeira, as funções de escrita apenas acumulam altura; na segunda, escrevem de fato. É o que torna o D2 e o D6 solucionáveis sem manter duas cópias do layout, que divergiriam.
+
+A altura final é `max(altura da coluna esquerda, altura da coluna direita) + header + rodapé`, e o canvas é criado só depois disso.
+
+### O que continua valendo do guia — não jogue fora
+A auditoria confirmou como corretos: a assinatura `getStatGroups(stats, classId, lang)`; as chaves `stats.maxHP` e `stats.maxResolve`; a escolha de `formatStatValue(valor, unidade)` para as propriedades (`0.12 → "+12%"`); todas as chaves de paleta lidas de `T`, inclusive `T.cls`; o carregamento em paralelo dos ícones com `Promise.all`; a resolução de `null` no `onerror` para que um ícone ausente não derrube o desenho; e a lista de ícones por elemento, incluindo os das vantagens de classe, que era a preocupação registrada no `ROADMAP.md`.
+
+O layout em duas colunas com faixa de estatísticas ao pé também fica: é o que o autor pediu desde o primeiro prompt.

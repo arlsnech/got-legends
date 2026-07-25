@@ -38,18 +38,38 @@
 
 **Critério de conclusão:** 3 modos gerando PNGs com ícones, layout em colunas e paleta de cores da classe ativa.
 
-- [ ] `generateBuildImage` com **Canvas API pura, sem dependência externa** (DEC-021). Nada de `html2canvas` ou similar: a imagem é um artefato próprio, não uma foto da tela. Esqueleto de ~470 linhas pronto no `GUIA_CORRECOES_FASE3.md`, pendente de inserção antes do `ExportPanel` e de ligação ao `handleGenImage`.
-- [ ] Os **três modos espelham os de texto** — Build, Detalhado e Estatístico, mesmo conteúdo e mesma regra do `generateBuildText` (DEC-022).
-- [ ] **Estatísticas: só as modificadas — mas HP e Determinação sempre**, mesmo no valor base. Regra de produto, não detalhe (DEC-022).
+> **O código do guia foi auditado em 2026-07-25 e tem sete defeitos** — dois deles produzem imagem plausível e errada. Ele entra como rascunho de referência, não como entrega. Cada item abaixo marcado **[D-n]** corresponde a um defeito descrito na DEC-026.
+
+**Requisitos de produto**
+- [ ] `generateBuildImage` com **Canvas API pura, sem dependência externa** (DEC-021). Nada de `html2canvas`: a imagem é artefato próprio, não foto da tela.
+- [ ] Os **três modos espelham os de texto** — Build, Detalhado e Estatístico, mesma regra do `generateBuildText` (DEC-022).
+- [ ] **Estatísticas: só as modificadas — mas HP e Determinação sempre**, mesmo no valor base (DEC-022).
 - [ ] Header com ícone de classe + nome da build + ícone supremo
-- [ ] Coluna esquerda: habilidade + vantagens **com os ícones das vantagens de classe**. *O autor perguntou por estes dois vezes, temendo que fossem esquecidos — não os deixe de fora.*
+- [ ] Coluna esquerda: habilidade + vantagens **com os ícones das vantagens de classe**. *O autor perguntou por estes dois vezes — não os deixe de fora.*
 - [ ] Coluna direita: gear com ícones, props, perks
-- [ ] Seção stats em grid 3-col (somente modo Estatístico)
-- [ ] **Caixas e formatação por seção**, não texto corrido: o pedido era um layout em colunas que preencha a imagem, não linhas empilhadas
+- [ ] Seção de estatísticas em grade de 3 colunas (somente modo Estatístico)
+- [ ] **Caixas e formatação por seção**, não texto corrido
 - [ ] Assinatura discreta no rodapé
 - [ ] Download automático como PNG
 
-> **Antes de abrir a Fase 3:** o código dela mora no `meta/legacy/GUIA_CORRECOES_FASE3.md`, que está fora do pacote FlatDrop. Remova a linha dele do bloco `# >>> flatdrop-editor` no `.flatdropignore` e regere o pacote — senão a sessão começa sem a peça principal. O `GUIA_COMPLETO_v4.md` **não** é necessário para isso.
+**Correções obrigatórias sobre o código do guia**
+- [ ] **[D1]** Amuleto pelo item **efetivo** — `getEffectiveCharm(itemId, linkedClass)` no slot `charm`. Sem isso, as propriedades de classe do amuleto Magistral **somem da imagem** sem erro (armadilha 7).
+- [ ] **[D2]** **Altura calculada**, em duas passadas: medir o layout, criar o canvas, desenhar. A altura fixa do guia (560 / 820) corta o modo Detalhado no uso comum. *Este item veio da F4 para cá.*
+- [ ] **[D3]** `ctx.filter` à mão no SVG de classe, zerado logo depois — e **nunca** no PNG de técnica (armadilhas 3 e 15).
+- [ ] **[D4]** Renderizar em **2x** (`canvas.width = IMG_W * 2`, `ctx.scale(2,2)`), coordenadas em unidades lógicas.
+- [ ] **[D5]** `toBlob` + `createObjectURL` + `revokeObjectURL`, no lugar de `toDataURL`.
+- [ ] **[D6]** Rodapé como último elemento medido, não em posição absoluta.
+- [ ] **[D7]** Remover `crossOrigin` (ícones são de mesma origem) e envolver a exportação em `try/catch` com mensagem clara.
+
+**Conferência visual mínima** — nenhum destes é opcional:
+- [ ] Build **cheia no modo Detalhado**, com descrições longas: nada cortado no pé da imagem. É o caso que a altura fixa quebrava.
+- [ ] Build **vazia**: sem faixa enorme de espaço morto.
+- [ ] **Amuleto Magistral com `classBinding`**: as propriedades de classe aparecem na imagem exatamente como na tela.
+- [ ] **Tema claro e tema escuro**: ícones e texto legíveis nos dois.
+- [ ] **PT-BR e EN**: rótulos, descrições e nome do arquivo.
+- [ ] Imagem ampliada a 200%: texto nítido, não borrado.
+
+> **Antes de abrir a Fase 3:** o rascunho está em `meta/legacy/GUIA_CORRECOES_FASE3.md`, e ele é o **último** arquivo de `meta/legacy/`. Ele já sobe no pacote atual. Quando a fase entrar, ele sai da árvore (DEC-025) e a pasta se encerra.
 
 ---
 
