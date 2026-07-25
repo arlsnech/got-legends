@@ -916,29 +916,6 @@ export function selectPerk(build, slotName, perkSlot, perkId) {
 }
 
 /**
- * Define a classe vinculada de um amuleto magistral.
- * Limpa P1, P2 (as opções disponíveis mudam com a classe).
- *
- * @param {Object} build
- * @param {string} linkedClass
- * @returns {Object} novo build
- */
-export function setCharmLinkedClass(build, linkedClass) {
-  const slot = build.gear.charm;
-  return {
-    ...build,
-    gear: {
-      ...build.gear,
-      charm: {
-        ...emptySlot(),
-        itemId:      slot.itemId,
-        linkedClass: linkedClass,
-      },
-    },
-  };
-}
-
-/**
  * Seleciona a variante do Sopro de Izanami (Ronin).
  */
 export function selectRoninBreath(build, breathId) {

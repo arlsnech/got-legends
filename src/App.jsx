@@ -1,20 +1,19 @@
 // App.jsx — GoT Legends Build Planner
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { CLASSES } from './data.js'
-import { GEAR_ICON, TECH_ICON, CLASS_ICON, CLASS_TECH_FALLBACK, LOGO_URL, getGearIconUrl, getTechIconUrl } from './icons.js'
+import { CLASS_ICON, CLASS_TECH_FALLBACK, LOGO_URL, getGearIconUrl, getTechIconUrl } from './icons.js'
 import {
   createEmptyBuild, computeStats,
-  selectTech, selectAbility, selectItem, selectProp,
-  setPropValue, selectPerk, setCharmLinkedClass,
-  checkLegendaryLimit, getGearListForClass, getAvailableProps, getRequiredPerkId,
-  getAvailablePerks, getEffectiveCharm, getStatGroups, isStatChanged,
+  selectItem, selectProp,
+  setPropValue, selectPerk,
+  checkLegendaryLimit, getGearListForClass, getRequiredPerkId,
+  getEffectiveCharm, getStatGroups, isStatChanged,
   getClass, getItem,
   formatStatValue, formatPropRange, propValueForDisplay,
   propValueFromDisplay, formatCd,
   encodeBuild, decodeBuild, serializeBuild, deserializeBuild,
   changeClass, randomBuild,
   LABELS_PT, LABELS_EN,
-  BASE_HP, BASE_RESOLVE, BASE_LEG_SLOTS,
 } from './logic.js'
 
 // ─── Temas ──────────────────────────────────────────────
@@ -546,10 +545,6 @@ function GearSlotCard({ slotName, slotState, classId, build, setBuild, stats, la
 
   const onPerkSelect = (perkSlot, perkId) => {
     setBuild(prev => selectPerk(prev, slotName, perkSlot, perkId))
-  }
-
-  const onLinkedClass = (cls) => {
-    setBuild(prev => setCharmLinkedClass(prev, cls))
   }
 
   // Ícone do item atual (para compact e full)

@@ -30,7 +30,7 @@ export const GEAR_ICON = {
   ceifador_demonios:     G + 'demon-cutter-katana.svg',
 
   // ── Longo alcance normais
-  arco_curto:            G + 'shortbow.svg',   // renomeie o arquivo para shortbow.svg
+  arco_curto:            G + 'shortbow.svg',
   arco_longo:            G + 'long-bow.svg',
   zarabatana:            G + 'blowgun.svg',
   pacote_bombas:         G + 'bomb-pack.svg',
