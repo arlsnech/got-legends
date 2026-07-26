@@ -46,6 +46,10 @@
 - **Banda** — faixa de largura total da imagem gerada (cabeçalho, vantagens, equipamentos, estatísticas). Cada uma distribui seus cartões numa grade própria e independe da altura das outras. Ver DEC-027.
 - **Bloco de cartão** — unidade de conteúdo dentro de um cartão da imagem: `label`, `head`, `xp`, `bullet` ou `desc`. O cartão é descrito como uma lista de blocos e renderizado por `paintCardBlocks`; os três modos de exportação diferem só nos blocos que entram.
 - **`paintBand(pen, mp, opts)`** — desenha uma banda: título, divisor e a grade de cartões. Recebe **dois** pintores: o da passada corrente e um de medição, porque a altura da linha precisa ser conhecida antes de pintar a borda do primeiro cartão.
+- **`paintHeader(pen, opts)`** — o cabeçalho da imagem: identidade e sinais vitais à esquerda, Supremo e sua informação à direita. Altura fixa (`IMG_HEADER_H`), então não entra na medição.
+- **`ultimateHeaderLines(ult, cls, L)`** — devolve `{ stats, note }` para o cabeçalho: a linha de números e a modificação textual do Supremo. A `note` escolhe por especificidade — nota de modo, variante ativa do Ronin, e por fim a descrição base do Supremo.
+- **`IMG_FS`** — mapa com todos os tamanhos de fonte da imagem gerada. Texto novo no canvas tira a medida daqui, nunca de um literal.
+- **`cls.ult.cmd`** — campo **opcional** de `data.js` com o comando de ativação do Supremo (ex.: `"L1+R1"`). Quando presente, vira teclas desenhadas no cabeçalho da imagem; quando ausente, nada é desenhado. **Ainda não preenchido** — precisa ser conferido no jogo.
 - **`ultimateSummary(ult, L)`** — resumo do Supremo em uma linha, montado por classe. Usado pelo texto **e** pela imagem, para que não divirjam. Ver FIX-010.
 - **`layoutMode`** — `'three-col'` ou `'two-col'`. Precisa descer até o `TechRow`: os dois modos têm estilos independentes de propósito. Ver DEC-023.
 - **`getStatGroups(stats, classId, lang)`** — agrupa as stats calculadas em seções para exibição. Atenção: `classId` é obrigatório — sem ele, grupos de classe errados são incluídos.

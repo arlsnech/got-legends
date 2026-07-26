@@ -913,3 +913,37 @@ Eles **continuam também na tabela** do modo Estatístico, de propósito: a DEC-
 
 ### Validação
 Simulado antes de virar código, com o método da `spec0014`: as duas passadas devolvem altura idêntica nos três modos e em três preenchimentos (cheio, vazio, parcial), e a passada de medição não pinta nada. A altura passou a acompanhar o conteúdo em vez do modo — build vazia sai com 244 px onde a versão anterior reservava o mesmo de uma build cheia.
+
+---
+
+## DEC-028 — O cabeçalho da imagem: sinais vitais em cor uniforme e o Supremo com informação
+
+**Data:** 2026-07-26 · **Status:** aceita, em vigor
+
+### Cor uniforme na barra e nos círculos — a diferença deliberada
+A topbar da interface distingue base de bônus por cor: os três primeiros círculos de Determinação em dourado e os extras em verde; a barra de HP vermelha até 100 e dourada no excedente. **A imagem não repete isso.** Barra de uma cor, círculos todos iguais.
+
+O motivo não é economia de código, é de leitura. Na tela, o jogador está montando: ele acabou de equipar algo e a cor diferente responde "foi isto que mudou". No print não há esse antes-e-depois — quem recebe a imagem vê um estado pronto, e uma cor diferente no meio da barra vira uma pergunta sem resposta. O número ao lado já diz o total.
+
+**Regra que fica:** distinção visual que só faz sentido durante a edição não deve ser transportada para a exportação. As duas superfícies têm leitores diferentes.
+
+### O Supremo saiu da borda e ganhou o que dizer
+Antes o Supremo era um ícone encostado na borda direita com o nome embaixo, e a faixa de 92 px existia praticamente para acomodar isso. Agora o bloco começa perto do meio e ocupa a metade direita com três informações:
+
+1. **O nome**, na cor da classe.
+2. **A linha de números** — custo, golpes ou alvos com o bônus entre parênteses, multiplicador e percentual de dano.
+3. **A modificação textual**, que é a novidade real.
+
+A terceira escolhe a fonte por especificidade: a nota de modo (a Fúria a 300%), depois a variante ativa do Sopro do Ronin, e por último **a descrição base do Supremo — que existe em `data.js` e não aparecia em lugar nenhum**, nem na imagem nem no texto exportado. O `computeUltimate` nunca a repassou, e ninguém sentiu falta porque não havia onde ela coubesse.
+
+Da descrição base é retirada a frase final de custo (`Custa 3 Determinação`), que já está na linha de números logo acima. A remoção é uma expressão ancorada no fim da string e cobre os dois idiomas — estreita de propósito, porque o dado é do projeto e não muda de forma.
+
+### O comando de ativação fica pronto, mas desligado
+Há um renderizador de teclas — caixinha desenhada com o glifo dentro — e ele lê `cls.ult.cmd`. **O campo não existe em `data.js`**, porque o comando do Supremo não está registrado em lugar nenhum do projeto e não seria honesto inventá-lo. Enquanto não existir, nada é desenhado.
+
+Não há dependência nova: os glifos do PlayStation (`△ ◯ ✕ ☐ R1 L2`) já são usados como **texto** nas descrições de `data.js`. A caixa é desenhada, o glifo é fonte.
+
+Para ligar, basta acrescentar `cmd` ao `ult` da classe em `data.js` — por exemplo `cmd: "L1+R1"`. O valor precisa ser conferido no jogo, como todo dado deste projeto.
+
+### Tipografia num lugar só
+Todos os tamanhos de fonte da imagem passaram para `IMG_FS`. O pedido de "aumentar um pouco as letras" seria, antes, uma caçada por dezenove literais espalhados pelo desenho — e cada um esquecido produziria um desalinhamento sutil. `IMG_SCALE` subiu de 2 para 3 e `IMG_W` de 900 para 1000 pelo mesmo motivo: mais pixels por unidade lógica, e mais largura para o texto maior respirar.

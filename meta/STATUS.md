@@ -337,3 +337,20 @@ Três ganhos além da distribuição:
 Validado por simulação antes de virar spec, com o método da `spec0014`: altura idêntica nas duas passadas nos três modos e em três preenchimentos. A altura passou a acompanhar o **conteúdo** em vez do modo — build vazia sai com 244 px onde antes se reservava o mesmo de uma cheia.
 
 **Próximo passo: F4 — polimento e mobile.** A F3 está fechada, e com ela a última pendência de desenho da exportação.
+
+---
+
+**2026-07-26 (2) — cabeçalho da imagem e tipografia (DEC-028).**
+
+Quatro pedidos do autor sobre a imagem: letras maiores, mais nitidez, ícones maiores, e um cabeçalho que use o espaço.
+
+- **Sinais vitais de verdade.** Barra de HP e círculos de Determinação, como na topbar da ferramenta — mas em **cor uniforme**. A distinção base/bônus da interface responde "foi isto que você acabou de mudar"; num print não há antes-e-depois e ela vira pergunta sem resposta. Virou a armadilha 19: a imagem não é espelho da interface.
+- **O Supremo saiu da borda.** Foi para perto do centro e ganhou a metade direita: nome, linha de números com os bônus entre parênteses, e a **modificação textual** — a nota da Fúria a 300%, a variante ativa do Sopro do Ronin, ou, na falta das duas, **a descrição base do Supremo, que existe em `data.js` e nunca tinha sido exibida em lugar nenhum**, nem na imagem nem no texto.
+- **Tipografia num lugar só.** Os dezenove tamanhos espalhados pelo desenho viraram `IMG_FS`. `IMG_SCALE` subiu para 3 e `IMG_W` para 1000. Virou a armadilha 20.
+- **Um conserto de passagem:** no Ronin, a variante do Sopro sumia do texto exportado quando `activeBreath` não batia com nenhuma opção, em vez de cair na base.
+
+**Pronto e desligado:** o renderizador do comando de ativação do Supremo. Desenha teclas com os glifos que o `data.js` já usa como texto, sem imagem nova, e lê `cls.ult.cmd`. **O campo não existe** — o comando não está registrado no projeto e inventá-lo seria dado não conferido. Uma linha em `data.js` liga a coisa toda.
+
+**Também nesta sessão:** o `meta/specs/260725-spec0015-correcoes-modal-e-imagem.md` estava *untracked* desde a `spec0016` e entrou no commit. Spec é artefato versionado, e aquela ficou de fora por acidente — a `spec0015` é justamente a que registra um diagnóstico errado, e é o tipo de coisa que não deve sumir.
+
+Simulado antes de virar spec: duas passadas com altura idêntica nos três modos, e as seis combinações de Supremo (Samurai comum e a 300%, Caçadora, Assassino com Ofuscado, Ronin com e sem variante) conferidas uma a uma.

@@ -11,6 +11,8 @@
 - **Fase 3 — exportação em imagem.** Os três botões 🖼️ (Build, Detalhado, Estatístico) geram um PNG da build e disparam o download. Canvas puro, sem dependência externa; altura calculada a partir do conteúdo e renderização em 2x. Layout em duas colunas — habilidade e vantagens à esquerda, equipamentos à direita — com faixa de estatísticas no modo Estatístico, ícones do jogo em cada linha e as cores da classe ativa.
 
 ### Modificado
+- **O cabeçalho da imagem passou a mostrar barra de HP e círculos de Determinação de verdade**, como a topbar da ferramenta — em cor uniforme, sem a distinção base/bônus que só faz sentido enquanto se monta. O Supremo saiu da borda para perto do centro e ganhou custo, golpes ou alvos com o bônus, multiplicadores e a **descrição da habilidade**, que existia no dado e nunca tinha sido exibida (DEC-028)
+- **Letras e ícones maiores na imagem gerada**, e resolução de renderização aumentada (DEC-028)
 - **A imagem da build foi redesenhada em bandas.** O layout de duas colunas deixava metade da imagem vazia — as duas nunca podiam ter a mesma altura. Agora são faixas de largura total com cartões em grade: habilidade e vantagens em quatro colunas, equipamentos em duas, estatísticas ao pé. Magistral ganha borda dourada, e o cabeçalho passou a mostrar HP, Determinação e o contador de Magistrais nos três modos (DEC-027)
 - No modo 2 Colunas, os nomes das vantagens de classe não quebram mais em duas linhas: a célula da grade passou de 190 px e o nome ganhou `nowrap`. O comentário anterior afirmava que 140 px já evitavam a quebra — não evitavam.
 
@@ -37,6 +39,7 @@
 
 ### Corrigido
 - No texto exportado, a recarga das Armas Fantasma não aparecia e o Supremo saía sem a contagem de golpes nem o bônus de dano (FIX-010)
+- No Ronin, a variante ativa do Sopro sumia do texto exportado quando `activeBreath` não batia com nenhuma das opções, em vez de cair na variante base
 - Barra de rolagem fantasma no modal de configurações: um retângulo cinza surgia ao passar o cursor sobre as opções e deslocava o conteúdo (FIX-011)
 - Na imagem gerada, os ícones de equipamento saíam na cor original em vez da cor do tema — os de gear sumiam no tema escuro e os de Arma Fantasma no tema claro (FIX-012)
 - Na imagem gerada, os rótulos de tier e de slot saíam por baixo do ícone e do nome da linha seguinte (FIX-013)

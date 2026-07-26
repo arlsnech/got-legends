@@ -160,6 +160,10 @@ Dois tipos de ícones com lógica diferente:
 
 18. **Medir altura não detecta colisão.** A simulação de duas passadas da Fase 3 acerta a altura total e não diz nada sobre elementos que se sobrepõem *dentro* da faixa medida — foi assim que o FIX-013 passou. Conferência de imagem precisa de olho, não só de número.
 
+19. **A imagem não é um espelho da interface.** Onde a tela usa cor para dizer "isto mudou agora" — o dourado do HP bônus, o verde dos círculos extras de Determinação —, a imagem usa cor única: quem recebe um print não viu o antes, e a distinção vira uma pergunta sem resposta. Antes de transportar um detalhe visual da UI para o canvas, pergunte se ele fala com quem está **editando** ou com quem está **lendo**. Ver DEC-028.
+
+20. **Tamanho de fonte da imagem mora em `IMG_FS`.** Dezenove literais espalhados pelo desenho tornavam "aumente um pouco as letras" uma caçada, com desalinhamento garantido no que fosse esquecido. Acrescentou texto novo ao canvas? A medida vem do mapa.
+
 ### Onde ficam as larguras das colunas
 
 Numa linha só, no `return` do `App`, dentro do bloco marcado `{/* ══ ÁREA DE 3/2 COLUNAS ══ */}`. Busque por `gridTemplateColumns`:
