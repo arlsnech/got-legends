@@ -10,6 +10,9 @@
 ### Adicionado
 - **Fase 3 — exportação em imagem.** Os três botões 🖼️ (Build, Detalhado, Estatístico) geram um PNG da build e disparam o download. Canvas puro, sem dependência externa; altura calculada a partir do conteúdo e renderização em 2x. Layout em duas colunas — habilidade e vantagens à esquerda, equipamentos à direita — com faixa de estatísticas no modo Estatístico, ícones do jogo em cada linha e as cores da classe ativa.
 
+### Modificado
+- No modo 2 Colunas, os nomes das vantagens de classe não quebram mais em duas linhas: a célula da grade passou de 190 px e o nome ganhou `nowrap`. O comentário anterior afirmava que 140 px já evitavam a quebra — não evitavam.
+
 ### Removido
 - Código morto do vínculo de classe (`onLinkedClass` no `App.jsx`, `setCharmLinkedClass` no `logic.js`) e nove imports órfãos — resíduo da remoção do seletor de classe vinculada (DEC-015). Sem efeito visível no produto.
 - **Infraestrutura de contexto (KCM v1.73.0)** — sem efeito no produto:
@@ -33,6 +36,9 @@
 
 ### Corrigido
 - No texto exportado, a recarga das Armas Fantasma não aparecia e o Supremo saía sem a contagem de golpes nem o bônus de dano (FIX-010)
+- Barra de rolagem fantasma no modal de configurações: um retângulo cinza surgia ao passar o cursor sobre as opções e deslocava o conteúdo (FIX-011)
+- Na imagem gerada, os ícones de equipamento saíam na cor original em vez da cor do tema — os de gear sumiam no tema escuro e os de Arma Fantasma no tema claro (FIX-012)
+- Na imagem gerada, os rótulos de tier e de slot saíam por baixo do ícone e do nome da linha seguinte (FIX-013)
 - Picada Celestial não obrigava o Ronin a gastar o perk de desbloqueio, ao contrário da Zarabatana (FIX-009)
 - Props de item Magistral saíam abaixo do máximo na build aleatória (FIX-006). Builds salvos ou compartilhados com o valor errado são saneados ao carregar
 - Estatísticas do texto exportado saíam como `undefined` (FIX-005 — diagnosticado em junho, aplicado só agora). Junto com isso: os rótulos das estatísticas passam a respeitar o idioma EN, e o grupo de estatísticas específico da classe volta a aparecer no texto

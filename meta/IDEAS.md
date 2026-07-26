@@ -181,6 +181,17 @@ Todas viraram DEC-024. Duas fecham, uma fica agendada:
 
 1. **🎲 granulares** — tirados por darem problema; a simplificação agradou. Encerrado.
 2. **"Só alteradas"** — tirado por dar problema, e sem utilidade na tela. Encerrado.
-3. **Modo Estatístico** — **adiado de propósito, com data.** Como texto o modo é fraco; como imagem pode ser o principal, já que a tabela calculada é o diferencial do projeto. A decisão acontece quando a Fase 3 permitir comparar os dois formatos lado a lado. Custo de esperar: zero.
+3. **Modo Estatístico** — **encerrado em 2026-07-25: fica.** O autor esclareceu que a dúvida vinha dos defeitos que insistiam nele, não do recurso. Com a Fase 3 entregue e o FIX-005 e o FIX-010 aplicados, os defeitos acabaram e a dúvida com eles.
+
+### 2026-07-25 — Refinar o layout da imagem gerada *(proposta, aguardando direção do autor)*
+A Fase 3 entregou uma imagem correta e **mal distribuída**. Três diagnósticos:
+
+1. **Não preenche o espaço.** As duas colunas têm conteúdos muito diferentes: no modo Build a esquerda tem ~7 linhas e a direita ~30, então a metade inferior esquerda fica vazia. O pedido original dizia, com estas palavras, *"podendo preencher bem o espaço da imagem"*.
+2. **Falta a caixa.** O mesmo pedido dizia *"com caixas e formatação, e não só o texto bruto um atrás do outro"*, e o `ROADMAP.md` da F3 repetia. O que saiu é texto corrido em duas colunas.
+3. **Falta o cabeçalho de estado.** HP, Determinação e o contador de Magistrais são a primeira coisa que a interface mostra e não estão na imagem em modo nenhum.
+
+**Direção proposta — bandas:** habilidade e vantagens numa faixa de largura total abaixo do cabeçalho (quatro cartões lado a lado), equipamentos abaixo em duas colunas de cartões, e a faixa de estatísticas ao pé.
+
+**A bifurcação:** o pedido original descrevia **três colunas** — *"Habilidades e vantagens em uma coluna, equipamentos em outra, e estatísticas em outra"*. Aquilo veio da tela, onde cada coluna rola por conta própria e altura desigual não custa nada; numa imagem de altura fixa, custa. A escolha é do autor.
 
 **O que isso ensinou:** as três vieram da pergunta *"o que a ferramenta já teve e não tem mais?"*, e nenhuma era defeito. **Recurso ausente não é recurso perdido.** A extração fez certo em registrar sem reimplementar — reimplementar teria trazido de volta exatamente os problemas que os tiraram.

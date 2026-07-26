@@ -152,7 +152,13 @@ Dois tipos de ícones com lógica diferente:
 
 14. **`getAvailableProps` e `getAvailablePerks` resolvem o item por `id`** — e por isso **não servem para amuleto com `classBinding`**: devolvem o item cru do `GEAR`, sem os props e perks de classe, e sem erro. É a armadilha 7 disfarçada de utilitário. O `App.jsx` filtra inline justamente para poder passar o item **efetivo**. Nenhum consumidor as usa hoje (verificado em 2026-07-25); antes de usar uma delas em código novo — inclusive na Fase 3 — troque a assinatura para receber o item, não o id.
 
-15. **O canvas não herda filtro CSS.** Na tela, os SVG de classe ficam brancos por `iconFilter: 'brightness(0) invert(1)'`. `ctx.drawImage` ignora isso: o ícone entra com a cor original e some no fundo escuro. Quem desenhar ícone no canvas precisa aplicar `ctx.filter` à mão e zerá-lo depois — **e nunca no PNG de técnica**, onde o filtro vira retângulo sólido (armadilha 3). A regra da UI vale igual dentro do canvas. Ver DEC-026, defeito D3.
+15. **O canvas não herda filtro CSS.** Na tela, os SVG ficam monocromáticos por `filter: T.iconFilter`. `ctx.drawImage` ignora isso: o ícone entra com a cor original do arquivo. **A regra é por tipo de arquivo, e no projeto ela é limpa:** `GEAR_ICON` e `CLASS_ICON` são 100% `.svg` e **levam** o filtro; `TECH_ICON` e `CLASS_TECH_FALLBACK` são 100% `.png` e **não podem** levar — viram retângulo sólido (armadilha 3). Hoje `pen.icon` deriva isso da extensão, marcada no `loadImg`; não volte a decidir por parâmetro em cada chamada. Ver DEC-026 (D3) e FIX-012.
+
+16. **Ícone sem filtro some em um dos temas, e qual deles depende do arquivo.** Os SVG de `icons/gear/` não declaram `fill` (default preto) e os de `icons/ghost_weapons/` declaram `fill="#fff"`. Sem filtro, os primeiros somem no tema escuro e os segundos no claro — o que faz o defeito parecer "alguns ícones estão faltando" e mandar a investigação para o arquivo errado. **Sintoma que varia entre itens não implica causa nos itens:** pode ser uma causa única encontrando uma propriedade que varia. Ver FIX-012.
+
+17. **`transform` num ancestral captura os filhos `position: fixed`.** Elemento fixo se posiciona pela janela e não entra no `overflow` de ninguém — **exceto** se algum ancestral tiver `transform`, `filter` ou `perspective`, que passam a ser o bloco-contenedor dele. Foi o que criou a barra de rolagem fantasma no modal (FIX-011). Centralize sobreposições por **flexbox**, não por `translate(-50%,-50%)`, sempre que houver `Tooltip` ou qualquer flutuante dentro.
+
+18. **Medir altura não detecta colisão.** A simulação de duas passadas da Fase 3 acerta a altura total e não diz nada sobre elementos que se sobrepõem *dentro* da faixa medida — foi assim que o FIX-013 passou. Conferência de imagem precisa de olho, não só de número.
 
 ### Onde ficam as larguras das colunas
 

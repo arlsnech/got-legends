@@ -301,3 +301,22 @@ Terceira vez que uma chave errada some com informação em silêncio aqui (FIX-0
 **`meta/legacy/` encerrada.** O `GUIA_CORRECOES_FASE3.md` era o último arquivo e cumpriu o papel de rascunho: a auditoria dele rendeu sete defeitos catalogados, o oitavo veio da comparação com o código, e o que estava certo foi aproveitado. Pela DEC-025, sai. A pasta e seu `README.md` saem junto — o que aconteceu ali está na DEC-011, na DEC-012, na DEC-025 e na seção 9 do `HISTORY.md`, e o corpo dos arquivos segue no Git.
 
 **Próximo passo — e agora há uma escolha real.** A F4 (polimento e mobile) é a fase seguinte no `ROADMAP.md`. Mas há uma decisão marcada para agora: com a imagem funcionando, dá para comparar os dois formatos do modo Estatístico lado a lado e decidir o destino dele (DEC-024). Vale fazer isso antes de abrir a F4 — é a informação que estava faltando, e ela chegou.
+
+---
+
+**2026-07-25 / 26 — conferência de uso da Fase 3: quatro correções, e um diagnóstico refeito.**
+
+O autor gerou as três imagens e os três textos e relatou o que viu. **O FIX-010 está confirmado em uso**: a recarga das Armas Fantasma aparece (`[90s]`) e o Supremo sai com o resumo por classe (`Alvos: 5 · Custo: 3★`).
+
+Quatro defeitos, todos com causa raiz:
+
+- **FIX-011 — o retângulo no modal.** Era uma barra de rolagem horizontal, e a causa não estava no `Tooltip`: o modal se centralizava com `transform`, e **um ancestral com `transform` vira o bloco-contenedor dos filhos `position: fixed`**. Corrigido com flexbox — o que de quebra conserta o desalinhamento do tooltip, que era o segundo sintoma da mesma causa. Virou a armadilha 17.
+- **FIX-012 — ícones de equipamento invisíveis. Diagnosticado errado na primeira tentativa.** A `spec0015` supôs SVG sem dimensão intrínseca; o portão de diagnóstico da própria spec derrubou a hipótese e a execução parou sem aplicar nada. A causa real era a armadilha 15 — o canvas não herda filtro CSS —, e o que fazia o sintoma variar de slot para slot era a cor nativa de cada arquivo: gear é preto e some no tema escuro, Arma Fantasma é branco e some no claro. Corrigido derivando o filtro da **extensão** do arquivo, não de um parâmetro por chamada.
+- **FIX-013 — rótulos sobrescritos.** Aritmética de linha de base: o ícone é desenhado 14 px acima da base e o avanço depois do rótulo era de 12.
+- **Quebra de nome no 2-col.** O comentário do código afirmava que `minmax(140px)` evitava a quebra; o pior nome do jogo (*Armas Fantasma Melhoradas*, 25 caracteres) precisa de ~190 px.
+
+**A lição da sessão é de método, não de código.** A resposta do FIX-012 estava no `CONTEXT.md` deste projeto, escrita três specs antes, e o diagnóstico não a releu. O que evitou o estrago foi o portão — *diagnostique, e pare se contradisser* —, que existe na spec justamente para hipótese que não pôde ser observada. Virou regra: causa por hipótese vem com teste e com instrução de parada.
+
+**Decisão do autor registrada:** o **modo Estatístico fica**. A dúvida da DEC-024 vinha dos defeitos que insistiam nele, não do recurso — e os defeitos acabaram.
+
+**Em aberto:** o refinamento de layout da imagem. O diagnóstico é que a imagem **não preenche o espaço** — no modo Build a coluna esquerda termina com metade da altura da direita — e que falta a "caixas e formatação" do pedido original. A direção foi apresentada ao autor com duas opções e aguarda escolha; ver o item no `IDEAS.md`.

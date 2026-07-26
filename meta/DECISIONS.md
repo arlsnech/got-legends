@@ -803,3 +803,81 @@ As duas chaves de recarga passaram a apontar para `stats.gw1` / `stats.gw2`. O b
 Não por relato: apareceu ao auditar o código da Fase 3 do guia e **comparar as duas implementações**. O guia lia `stats.gw1` e o `generateBuildText` lia `stats.gw1Cooldown`; um dos dois tinha de estar errado, e `logic.js` decidiu a favor do guia.
 
 **Regra que fica:** quando duas implementações do mesmo dado divergem, a divergência é o achado. Não escolha a mais recente nem a que parece mais cuidada — vá à fonte. É a terceira vez que uma chave errada some com informação em silêncio neste projeto (FIX-005, e agora as três desta entrada); **a exportação não tem quem reclame**, porque nada quebra: o texto sai bonito e incompleto.
+
+---
+
+## FIX-011 — Barra de rolagem fantasma no modal de configurações
+
+**Data:** 2026-07-25 · **Gravidade:** baixa (incômodo visual), **causa alta** (afeta qualquer filho posicionado)
+
+### Sintoma
+Passar o cursor sobre uma opção do modal fazia surgir um retângulo cinza no pé da janela; o conteúdo se deslocava, e voltava ao tirar o cursor. Entrar e sair repetidamente deixava a janela "tremendo".
+
+### Causa raiz
+O retângulo era uma **barra de rolagem horizontal**, e a causa não estava no `Tooltip`.
+
+`position: fixed` normalmente se posiciona pela janela do navegador e não entra no `overflow` de ancestral nenhum. **Mas um ancestral com `transform` vira o bloco-contenedor dos descendentes fixos.** O modal se centralizava com `transform: translate(-50%, -50%)`, então o tooltip — que é `fixed` — passou a contar como conteúdo do modal para efeito de rolagem. Com 360 px de largura e um tooltip de 260 px posicionado por coordenadas de janela, o transbordo horizontal era garantido, e a barra que o navegador cria para ele ocupa altura.
+
+O mesmo mecanismo desalinhava o tooltip: `getBoundingClientRect` devolve coordenadas relativas à **janela**, e elas passaram a ser lidas como relativas ao **modal**.
+
+### Correção
+Centralização por flexbox, num envelope `position: fixed; inset: 0` com `pointerEvents: none`, e o modal como filho com `pointerEvents: auto`. Sem `transform`, o tooltip volta a se posicionar pela janela, não entra no overflow e aparece no lugar certo. `overflowX: hidden` ficou como rede.
+
+### Por que vale registrar
+Duas propriedades inofensivas — `transform` para centralizar e `position: fixed` para flutuar — produzem juntas um terceiro comportamento que nenhuma das duas anuncia. Virou a armadilha 16.
+
+---
+
+## FIX-012 — Ícones de equipamento invisíveis na imagem: filtro de tema não aplicado
+
+**Data:** 2026-07-26 · **Gravidade:** média (imagem incompleta, sem erro)
+
+> **Esta entrada foi diagnosticada errado na primeira tentativa.** A seção final registra o erro, porque ele ensina mais que o conserto.
+
+### Sintoma
+Na imagem gerada em tema claro, Katana e Longo Alcance apareciam com ícone; Amuleto e as duas Armas Fantasma, não. Na interface, todos apareciam. Nenhum erro no console.
+
+### Causa raiz
+Os ícones **estavam sendo desenhados** — na cor errada para o tema. É a armadilha 15 em ação: `ctx.drawImage` não herda filtro CSS, e `paintBuildImage` chamava `pen.icon(..., false)` para os cinco slots de equipamento, enquanto a interface aplica `filter: T.iconFilter` nos dois tamanhos do ícone de gear.
+
+O que fazia o sintoma variar de slot para slot era a cor nativa de cada arquivo:
+
+| Origem | Cor nativa | Sem filtro |
+|---|---|---|
+| `icons/gear/*.svg` (Katana, Longo Alcance, Amuleto) | sem `fill` → preto | somem no tema **escuro** |
+| `icons/ghost_weapons/*.svg` (as duas Armas Fantasma) | `fill="#fff"` → branco | somem no tema **claro** |
+
+O filtro do tema resolve os dois casos de uma vez porque começa por `brightness(0)`: zera qualquer cor de origem para preto, e no tema escuro inverte para branco. Preto ou branco na origem, o resultado é o mesmo.
+
+### Correção
+O filtro deixou de ser um parâmetro em cada chamada e passou a ser **derivado da extensão do arquivo**, marcada no `loadImg`. A separação é perfeita no projeto: `GEAR_ICON` e `CLASS_ICON` são 100% `.svg` e levam filtro; `TECH_ICON` e `CLASS_TECH_FALLBACK` são 100% `.png` e não podem levar (armadilha 3). Os cinco pontos de chamada perderam o argumento e passaram a acertar sozinhos.
+
+Trocar os cinco `false` por `true` também resolveria hoje — e deixaria a decisão copiada em cinco lugares, esperando o próximo ícone acrescentado com o valor errado.
+
+### O diagnóstico errado, e o que ele ensina
+A primeira hipótese, escrita na `spec0015`, foi que os SVG não tinham dimensão intrínseca e por isso não pintavam. A spec exigia **diagnosticar antes de corrigir**, o executor rodou o teste, ele contradisse a hipótese, e a execução parou ali — sem aplicar nada.
+
+O que induziu ao erro foi a leitura de um padrão: nas capturas em tema claro, dois ícones apareciam e três não. "Alguns sim, outros não" parece diferença **entre arquivos**, e daí a hipótese sobre o conteúdo dos arquivos. Era diferença **entre a cor de cada arquivo e o fundo** — a mesma coisa vista do outro lado.
+
+Três coisas valem ficar:
+1. **A resposta já estava no repositório.** A armadilha 15 descreve exatamente este defeito e foi escrita neste mesmo projeto três specs antes. Diagnosticar sem reler as armadilhas foi o erro de método.
+2. **Um sintoma que varia entre itens não implica causa nos itens.** Pode ser uma causa única interagindo com uma propriedade que varia — aqui, um filtro ausente encontrando cores de origem diferentes.
+3. **O portão de diagnóstico pagou por si.** Sem ele, a correção errada teria entrado, não teria consertado nada, e ainda teria acrescentado código inútil ao `loadImg`. Vale repetir o padrão sempre que a causa for hipótese e não observação: descreva o teste, descreva como interpretar cada resultado, e mande parar quando contradisser.
+
+---
+
+## FIX-013 — Rótulos sobrescritos pelo ícone e pelo nome na imagem gerada
+
+**Data:** 2026-07-25 · **Gravidade:** baixa (legibilidade)
+
+### Sintoma
+Na imagem, *Vantagem I/II/III* e os rótulos de slot apareciam por baixo do ícone e do nome da linha seguinte.
+
+### Causa raiz
+Aritmética de linha de base. `fillText` posiciona pela **base**, e o ícone era desenhado a partir de `y − 18 + 4`, ou seja 14 px **acima** da base da própria linha. Com avanço de 12 px depois do rótulo, o topo do ícone caía 2 px acima da base do rótulo e o topo das maiúsculas do nome caía exatamente sobre ela.
+
+### Correção
+Avanço de 20 px depois dos rótulos e de 18 px depois dos divisores de seção — o mínimo para o ícone limpar a linha anterior é 18.
+
+### Nota
+O defeito não apareceu na simulação de altura da `spec0014` porque **as duas passadas concordavam**: a sobreposição é colisão dentro de uma linha, não erro de altura acumulada. Medir bem a altura não diz nada sobre colisão dentro da faixa medida.
