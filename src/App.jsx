@@ -863,6 +863,15 @@ function TechniquesPanel({ build, setBuild, lang, layoutMode }) {
             <span style={{
               fontSize: 12, fontWeight: isAct ? 700 : 400,
               color: isAct ? T.text : T.muted,
+              // No 2-col os botoes ficam lado a lado numa grade: quebrar o
+              // nome no meio nao faz sentido. A reticencia so aparece em
+              // janela muito estreita — a celula de 190px cobre o pior nome.
+              ...(rowLayoutMode === 'two-col' ? {
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                minWidth: 0,
+              } : {}),
             }}>
               {name}
               {isBlocked && ' 🔒'}
@@ -998,7 +1007,11 @@ function TechniquesPanel({ build, setBuild, lang, layoutMode }) {
             */}
             <div style={layoutMode === 'two-col' ? {
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+              // 190px cabe o nome mais longo do jogo ("Armas Fantasma
+              // Melhoradas", 25 caracteres) em uma linha, ja descontando
+              // padding, icone e gap. O `1fr` faz as celulas esticarem, entao
+              // nao sobra buraco quando cabem menos por linha.
+              gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))',
               gap: 4,
             } : {
               display: 'flex',
@@ -1961,8 +1974,18 @@ function loadImg(src) {
   if (!src) return Promise.resolve(null)
   return new Promise(resolve => {
     const img = new Image()
-    img.onload  = () => resolve(img)
-    img.onerror = () => resolve(null)
+    img.onload  = () => {
+      // Marca o tipo AQUI, que e onde a URL esta a mao. A regra de filtro do
+      // canvas e por tipo de arquivo, nao por slot: SVG e monocromatico e
+      // precisa do filtro do tema; PNG ja vem colorido e nao pode receber.
+      // Ver FIX-012 e as armadilhas 3 e 15.
+      img.isSvgIcon = /\.svg(\?|#|$)/i.test(src)
+      resolve(img)
+    }
+    img.onerror = () => {
+      console.warn('[imagem da build] icone nao carregou:', src)
+      resolve(null)
+    }
     img.src = src
   })
 }
@@ -2052,6 +2075,13 @@ async function loadBuildIcons(build) {
   const results = await Promise.all(keys.map(k => jobs[k]))
   const out     = {}
   keys.forEach((k, i) => { out[k] = results[i] })
+
+  // Icone ausente nao derruba o desenho — mas some sem dizer nada, e foi
+  // justamente o silencio que fez o FIX-012 ser diagnosticado errado da
+  // primeira vez. Avisar no console custa nada.
+  const missing = keys.filter(k => !out[k])
+  if (missing.length) console.warn('[imagem da build] sem icone:', missing.join(', '))
+
   return out
 }
 
@@ -2104,11 +2134,18 @@ function makePainter(ctx, draw) {
      * escuro (armadilha 15 / DEC-026, D3). E o filtro vale SÓ para os SVG de
      * classe: em PNG de técnica ele vira retângulo sólido (armadilha 3).
      */
-    icon(img, x, yTop, size, invert = false) {
+    icon(img, x, yTop, size) {
       if (!draw || !img) return
-      if (invert && T.iconFilter) ctx.filter = T.iconFilter
+      // O filtro vem do TIPO do arquivo, marcado no loadImg — nao de um
+      // parametro em cada chamada. Um booleano por ponto de chamada foi o que
+      // deixou os cinco icones de equipamento sem filtro por engano, enquanto
+      // a interface aplicava. Ver FIX-012.
+      //   SVG (gear, classe) → monocromatico, precisa do filtro do tema
+      //   PNG (tecnica, supremo) → colorido; com filtro vira retangulo solido
+      const invert = img.isSvgIcon && !!T.iconFilter
+      if (invert) ctx.filter = T.iconFilter
       ctx.drawImage(img, x, yTop, size, size)
-      if (invert && T.iconFilter) ctx.filter = 'none'
+      if (invert) ctx.filter = 'none'
     },
 
     rect(x, y, w, h, color) {
@@ -2169,7 +2206,7 @@ function paintBuildImage(ctx, draw, { build, stats, lang, buildName, mode, icons
   pen.rect(0, IMG_HEADER_H - 1, IMG_W, 1, CLS + '55')
 
   // Ícone de classe: SVG, precisa do filtro do tema
-  pen.icon(icons.cls, IMG_PAD, (IMG_HEADER_H - 28) / 2, 28, true)
+  pen.icon(icons.cls, IMG_PAD, (IMG_HEADER_H - 28) / 2, 28)
 
   const clsName = L ? (cls.nEN || cls.nPT) : cls.nPT
   const title   = buildName?.trim() || clsName
@@ -2183,7 +2220,7 @@ function paintBuildImage(ctx, draw, { build, stats, lang, buildName, mode, icons
 
   // Supremo, à direita: PNG — NUNCA com filtro (armadilha 3)
   const ultX = IMG_W - IMG_PAD - IMG_ICON_ULT
-  pen.icon(icons.supreme, ultX, 6, IMG_ICON_ULT, false)
+  pen.icon(icons.supreme, ultX, 6, IMG_ICON_ULT)
   if (stats?.ultimate) {
     const uName = L ? (stats.ultimate.nEN || stats.ultimate.nPT) : stats.ultimate.nPT
     pen.centered(uName, ultX + IMG_ICON_ULT / 2, 6 + IMG_ICON_ULT + 13,
@@ -2197,7 +2234,9 @@ function paintBuildImage(ctx, draw, { build, stats, lang, buildName, mode, icons
     { font: `700 10px ${IMG_FONT}`, color: T.muted, lineH: 15 })
   ly += 15
   pen.divider(leftX, ly, colX - IMG_PAD, T.border)
-  ly += 14
+  // 18 e o minimo para o icone da linha seguinte nao encostar no divisor:
+  // ele e desenhado 14px acima da base. Ver FIX-013.
+  ly += 18
 
   const textX = leftX + IMG_ICON_SMALL + 8
   const textW = leftW - IMG_ICON_SMALL - 8
@@ -2206,7 +2245,7 @@ function paintBuildImage(ctx, draw, { build, stats, lang, buildName, mode, icons
   if (abilityDef) {
     const aName = L ? (abilityDef.nEN || abilityDef.nPT) : abilityDef.nPT
     const aCd   = stats?.abilityCooldown?.finalCd ?? abilityDef.cd
-    pen.icon(icons.ability, leftX, ly - IMG_ICON_SMALL + 4, IMG_ICON_SMALL, false)
+    pen.icon(icons.ability, leftX, ly - IMG_ICON_SMALL + 4, IMG_ICON_SMALL)
     pen.text(aName, textX, ly, { font: `700 13px ${IMG_FONT}`, color: CLS, lineH: 17 })
     pen.text(`[${aCd}s]`, textX + pen.width(aName, `700 13px ${IMG_FONT}`) + 7, ly,
       { font: `400 11px ${IMG_FONT}`, color: T.muted, lineH: 0 })
@@ -2226,10 +2265,13 @@ function paintBuildImage(ctx, draw, { build, stats, lang, buildName, mode, icons
 
     pen.text(L ? `Perk ${tier}` : `Vantagem ${tier}`, leftX, ly,
       { font: `600 9px ${IMG_FONT}`, color: T.dim, lineH: 12 })
-    ly += 12
+    // O icone da linha seguinte sobe 14px acima da base, e o topo das
+    // maiusculas do nome, 12px. Com avanco de 12 os dois caiam em cima do
+    // rotulo. Ver FIX-013.
+    ly += 20
 
     const tName = L ? (techDef.nEN || techDef.nPT) : techDef.nPT
-    pen.icon(icons[`tech_${tier}`], leftX, ly - IMG_ICON_SMALL + 4, IMG_ICON_SMALL, false)
+    pen.icon(icons[`tech_${tier}`], leftX, ly - IMG_ICON_SMALL + 4, IMG_ICON_SMALL)
     ly += pen.text(tName, textX, ly, { font: `600 12px ${IMG_FONT}`, color: T.text, maxW: textW, lineH: 16 })
 
     if (withDesc) {
@@ -2253,7 +2295,7 @@ function paintBuildImage(ctx, draw, { build, stats, lang, buildName, mode, icons
     { font: `700 10px ${IMG_FONT}`, color: T.muted, lineH: 15 })
   ry += 15
   pen.divider(rightX, ry, IMG_W - IMG_PAD, T.border)
-  ry += 14
+  ry += 18   // mesma razao do divisor da coluna esquerda (FIX-013)
 
   const gTextX = rightX + IMG_ICON_SMALL + 8
   const gTextW = rightW - IMG_ICON_SMALL - 8
@@ -2265,10 +2307,10 @@ function paintBuildImage(ctx, draw, { build, stats, lang, buildName, mode, icons
     const slotState = build.gear[slot]
 
     pen.text(slotLabels[slot], rightX, ry, { font: `600 9px ${IMG_FONT}`, color: T.dim, lineH: 12 })
-    ry += 12
+    ry += 20   // mesma razao do rotulo de tier (FIX-013)
 
     const iName = (L ? (item.nEN || item.nPT) : item.nPT) + (item.leg ? ' ★' : '')
-    pen.icon(icons[`gear_${slot}`], rightX, ry - IMG_ICON_SMALL + 4, IMG_ICON_SMALL, false)
+    pen.icon(icons[`gear_${slot}`], rightX, ry - IMG_ICON_SMALL + 4, IMG_ICON_SMALL)
     const nameFont = `700 13px ${IMG_FONT}`
     pen.text(iName, gTextX, ry, { font: nameFont, color: item.leg ? T.leg : T.text, maxW: gTextW, lineH: 17 })
 
@@ -2621,15 +2663,27 @@ function SettingsModal({
       <div onClick={onClose} style={{
         position: 'fixed', inset: 0, zIndex: 800, background: 'rgba(0,0,0,0.55)',
       }} />
+      {/*
+        Centralizacao por FLEXBOX, sem transform — e proposital, nao estilo.
+        Um transform aqui torna este elemento o bloco-contenedor dos filhos
+        `position: fixed`, e o Tooltip e fixed: ele passaria a contar no
+        overflow do modal, criando uma barra de rolagem horizontal que empurra
+        o conteudo a cada hover. Ver FIX-011 e a armadilha 16.
+        `pointerEvents: none` no envelope deixa o clique fora do modal chegar
+        ao backdrop, que e quem fecha.
+      */}
       <div style={{
-        position: 'fixed', top: '50%', left: '50%',
-        transform: 'translate(-50%, -50%)',
-        zIndex: 900,
+        position: 'fixed', inset: 0, zIndex: 900,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        pointerEvents: 'none',
+      }}>
+      <div style={{
+        pointerEvents: 'auto',
         background: T.panel, border: `1px solid ${T.borderHov}`,
         borderRadius: 13, padding: '16px 18px',
         width: 360, maxWidth: '92vw',
         boxShadow: '0 20px 56px rgba(0,0,0,0.75)',
-        maxHeight: '88vh', overflowY: 'auto',
+        maxHeight: '88vh', overflowY: 'auto', overflowX: 'hidden',
       }}>
         {/* Header */}
         <div style={{
@@ -2783,6 +2837,7 @@ function SettingsModal({
               : 'Implementação técnica: Claude (Anthropic AI)'}
           </div>
         </div>
+      </div>
       </div>
     </>
   )
