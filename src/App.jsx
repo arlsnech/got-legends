@@ -1951,9 +1951,11 @@ function generateBuildText({ build, stats, lang, buildName, mode, includeShareCo
 // então ajuste estes valores à vontade sem pensar em resolução.
 const IMG_W          = 900   // largura lógica da imagem
 const IMG_PAD        = 28    // margem interna
-const IMG_COL_SPLIT  = 0.42  // fração da largura ocupada pela coluna esquerda
-const IMG_HEADER_H   = 78    // altura da faixa do cabeçalho
-const IMG_ICON_SMALL = 18    // ícones de linha (habilidade, vantagem, gear)
+const IMG_HEADER_H   = 92    // faixa do cabeçalho (cabe o nome e os sinais vitais)
+const IMG_GAP        = 14    // espaço entre cartões e entre bandas
+const IMG_CARD_PAD   = 12    // respiro interno do cartão
+const IMG_ICON_SMALL = 18    // ícones de linha
+const IMG_ICON_CARD  = 26    // ícone dentro do cartão
 const IMG_ICON_ULT   = 46    // ícone do supremo, no cabeçalho
 const IMG_FOOTER_H   = 30    // faixa reservada para a assinatura
 const IMG_SCALE      = 2     // fator de supersampling — 1 = borrado em tela retina
@@ -2094,20 +2096,34 @@ async function loadBuildIcons(build) {
  * @param {CanvasRenderingContext2D} ctx
  * @param {boolean} draw
  */
+/**
+ * Pintor: a mesma interface serve para medir e para desenhar.
+ *
+ * Com `draw = false` nada é pintado, mas as alturas devolvidas são idênticas —
+ * é o que permite calcular a altura final antes de criar o canvas definitivo.
+ * A opção `dry` de `text` permite medir uma linha durante a passada de desenho,
+ * sem duplicar a lógica de quebra: medir e desenhar continuam sendo o MESMO
+ * caminho de código, que é o que impede os dois de divergirem.
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {boolean} draw
+ */
 function makePainter(ctx, draw) {
   return {
     /**
      * Escreve um texto com quebra automática por palavra.
+     * @param {Object} o
+     * @param {boolean} [o.dry] - só mede, não pinta, mesmo na passada de desenho
      * @returns {number} altura ocupada, em unidades lógicas
      */
-    text(txt, x, y, { font, color, maxW = Infinity, lineH = 16 }) {
+    text(txt, x, y, { font, color, maxW = Infinity, lineH = 16, dry = false }) {
       if (txt == null || txt === '') return 0
       ctx.font = font
       let line = ''
       let dy   = 0
       const flush = () => {
         if (!line) return
-        if (draw) { ctx.fillStyle = color; ctx.fillText(line, x, y + dy) }
+        if (draw && !dry) { ctx.fillStyle = color; ctx.fillText(line, x, y + dy) }
         dy += lineH
         line = ''
       }
@@ -2120,7 +2136,7 @@ function makePainter(ctx, draw) {
       return dy
     },
 
-    /** Largura de um texto numa dada fonte. Útil para posicionar em sequência. */
+    /** Largura de um texto numa dada fonte. */
     width(txt, font) {
       ctx.font = font
       return ctx.measureText(String(txt)).width
@@ -2129,19 +2145,12 @@ function makePainter(ctx, draw) {
     /**
      * Desenha um ícone.
      *
-     * `invert` aplica o filtro do tema — o canvas NÃO herda filtro CSS, então
-     * sem isto o SVG de classe entra com a cor original e some no fundo
-     * escuro (armadilha 15 / DEC-026, D3). E o filtro vale SÓ para os SVG de
-     * classe: em PNG de técnica ele vira retângulo sólido (armadilha 3).
+     * O filtro do tema vem do TIPO do arquivo, marcado no `loadImg`: SVG é
+     * monocromático e precisa dele; PNG já vem colorido e com filtro viraria
+     * retângulo sólido (armadilhas 3 e 15).
      */
     icon(img, x, yTop, size) {
       if (!draw || !img) return
-      // O filtro vem do TIPO do arquivo, marcado no loadImg — nao de um
-      // parametro em cada chamada. Um booleano por ponto de chamada foi o que
-      // deixou os cinco icones de equipamento sem filtro por engano, enquanto
-      // a interface aplicava. Ver FIX-012.
-      //   SVG (gear, classe) → monocromatico, precisa do filtro do tema
-      //   PNG (tecnica, supremo) → colorido; com filtro vira retangulo solido
       const invert = img.isSvgIcon && !!T.iconFilter
       if (invert) ctx.filter = T.iconFilter
       ctx.drawImage(img, x, yTop, size, size)
@@ -2152,6 +2161,30 @@ function makePainter(ctx, draw) {
       if (!draw) return
       ctx.fillStyle = color
       ctx.fillRect(x, y, w, h)
+    },
+
+    /** Cartão: retângulo arredondado com preenchimento e borda. */
+    card(x, y, w, h, fill, stroke) {
+      if (!draw) return
+      const r = 8
+      ctx.save()
+      ctx.beginPath()
+      ctx.moveTo(x + r, y)
+      ctx.lineTo(x + w - r, y)
+      ctx.arcTo(x + w, y, x + w, y + r, r)
+      ctx.lineTo(x + w, y + h - r)
+      ctx.arcTo(x + w, y + h, x + w - r, y + h, r)
+      ctx.lineTo(x + r, y + h)
+      ctx.arcTo(x, y + h, x, y + h - r, r)
+      ctx.lineTo(x, y + r)
+      ctx.arcTo(x, y, x + r, y, r)
+      ctx.closePath()
+      ctx.fillStyle = fill
+      ctx.fill()
+      ctx.strokeStyle = stroke
+      ctx.lineWidth = 1
+      ctx.stroke()
+      ctx.restore()
     },
 
     divider(x1, y, x2, color) {
@@ -2176,218 +2209,328 @@ function makePainter(ctx, draw) {
       ctx.fillText(String(txt), cx, y)
       ctx.restore()
     },
+
+    right(txt, rx, y, { font, color }) {
+      if (!draw || !txt) return
+      ctx.save()
+      ctx.textAlign = 'right'
+      ctx.font      = font
+      ctx.fillStyle = color
+      ctx.fillText(String(txt), rx, y)
+      ctx.restore()
+    },
   }
 }
 
 /**
- * Percorre o layout inteiro da imagem, medindo ou desenhando.
+ * Mede ou desenha o conteúdo de um cartão, a partir da lista de blocos.
  *
- * Chamada duas vezes por geração — ver o comentário de arquitetura no topo.
- * O fundo e a assinatura ficam FORA daqui, porque dependem da altura final.
+ * O cartão é DESCRITO como dados (`blocks`) e renderizado por um caminho só.
+ * É isso que faz a altura reservada ser sempre a altura usada, e é isso que
+ * permite alinhar cartões vizinhos pela altura da linha antes de desenhar
+ * qualquer um deles.
  *
- * @returns {number} altura total do conteúdo, já com a faixa do rodapé
+ * Tipos de bloco:
+ *   `label`  rótulo pequeno e apagado (tier, nome do slot)
+ *   `head`   ícone + nome, com selo opcional à direita do nome
+ *   `xp`     texto de sabor do Magistral, em itálico
+ *   `bullet` item de lista (propriedade ou vantagem)
+ *   `desc`   descrição recuada e apagada
+ *
+ * @returns {number} altura do conteúdo, sem o respiro do cartão
  */
-function paintBuildImage(ctx, draw, { build, stats, lang, buildName, mode, icons }) {
-  const L    = lang === 'en'
-  const cls  = getClass(build.classId)
-  const pen  = makePainter(ctx, draw)
-  const CLS  = T.cls[build.classId]
-  const withDesc  = mode === 'detailed' || mode === 'stats'
-  const withStats = mode === 'stats'
+function paintCardBlocks(pen, blocks, x, y, w, icons, C) {
+  let dy = 0
+  for (const b of blocks) {
+    switch (b.k) {
+      case 'label':
+        pen.text(b.t, x, y + dy + 9, { font: `600 9px ${IMG_FONT}`, color: C.dim, lineH: 0 })
+        dy += 15
+        break
 
-  const colX   = Math.round(IMG_W * IMG_COL_SPLIT)
-  const leftX  = IMG_PAD
-  const leftW  = colX - IMG_PAD * 2
-  const rightX = colX + IMG_PAD
-  const rightW = IMG_W - rightX - IMG_PAD
+      case 'head': {
+        const img  = b.icon ? icons[b.icon] : null
+        const size = b.size || IMG_ICON_CARD
+        const tx   = x + size + 8
+        const font = `700 ${b.fs}px ${IMG_FONT}`
+        const badgeFont = `400 11px ${IMG_FONT}`
+        // O selo de recarga ocupa espaço na mesma linha do nome — descontar
+        // antes de medir, senão o nome quebra por baixo dele.
+        const badgeW = b.badge ? pen.width(` ${b.badge}`, badgeFont) : 0
+        const tw     = w - size - 8 - badgeW
+        const textH  = pen.text(b.t, tx, 0, { font, maxW: tw, lineH: b.fs + 5, dry: true })
+        const rowH   = Math.max(size, textH)
+        pen.icon(img, x, y + dy + (rowH - size) / 2, size)
+        const base = y + dy + (rowH - textH) / 2 + b.fs
+        pen.text(b.t, tx, base, { font, color: b.color, maxW: tw, lineH: b.fs + 5 })
+        // Selo alinhado à DIREITA do cartão. A largura dele já foi descontada
+        // de `tw`, então os dois nunca se encontram — inclusive quando o nome
+        // quebra em duas linhas, caso em que colar o selo no fim do texto o
+        // jogaria por cima da segunda linha.
+        if (b.badge) {
+          pen.right(b.badge, x + w, y + dy + rowH / 2 + 4,
+            { font: badgeFont, color: C.muted })
+        }
+        dy += rowH + 4
+        break
+      }
 
-  // ── Cabeçalho ──────────────────────────────────────────────
-  pen.rect(0, 0, IMG_W, IMG_HEADER_H, CLS + '22')
-  pen.rect(0, IMG_HEADER_H - 1, IMG_W, 1, CLS + '55')
+      case 'xp':
+        dy += pen.text(b.t, x, y + dy + 10,
+          { font: `italic 400 10px ${IMG_FONT}`, color: C.leg, maxW: w, lineH: 14 })
+        dy += 3
+        break
 
-  // Ícone de classe: SVG, precisa do filtro do tema
-  pen.icon(icons.cls, IMG_PAD, (IMG_HEADER_H - 28) / 2, 28)
+      case 'bullet':
+        dy += pen.text(`• ${b.t}`, x, y + dy + 11,
+          { font: `400 11px ${IMG_FONT}`, color: C.text, maxW: w, lineH: 15 })
+        break
 
-  const clsName = L ? (cls.nEN || cls.nPT) : cls.nPT
-  const title   = buildName?.trim() || clsName
-  const sub     = buildName?.trim() ? clsName : ''
-  pen.centered(title, IMG_W / 2, IMG_HEADER_H / 2 + (sub ? -2 : 5),
-    { font: `800 19px ${IMG_FONT}`, color: T.text })
-  if (sub) {
-    pen.centered(`(${sub})`, IMG_W / 2, IMG_HEADER_H / 2 + 16,
-      { font: `500 12px ${IMG_FONT}`, color: CLS })
-  }
-
-  // Supremo, à direita: PNG — NUNCA com filtro (armadilha 3)
-  const ultX = IMG_W - IMG_PAD - IMG_ICON_ULT
-  pen.icon(icons.supreme, ultX, 6, IMG_ICON_ULT)
-  if (stats?.ultimate) {
-    const uName = L ? (stats.ultimate.nEN || stats.ultimate.nPT) : stats.ultimate.nPT
-    pen.centered(uName, ultX + IMG_ICON_ULT / 2, 6 + IMG_ICON_ULT + 13,
-      { font: `600 10px ${IMG_FONT}`, color: CLS })
-  }
-
-  // ── Coluna esquerda: habilidade e vantagens de classe ──────
-  let ly = IMG_HEADER_H + IMG_PAD
-
-  pen.text(L ? 'CLASS ABILITY & PERKS' : 'HABILIDADE & VANTAGENS', leftX, ly,
-    { font: `700 10px ${IMG_FONT}`, color: T.muted, lineH: 15 })
-  ly += 15
-  pen.divider(leftX, ly, colX - IMG_PAD, T.border)
-  // 18 e o minimo para o icone da linha seguinte nao encostar no divisor:
-  // ele e desenhado 14px acima da base. Ver FIX-013.
-  ly += 18
-
-  const textX = leftX + IMG_ICON_SMALL + 8
-  const textW = leftW - IMG_ICON_SMALL - 8
-
-  const abilityDef = cls.abilities.find(a => a.id === build.abilityId)
-  if (abilityDef) {
-    const aName = L ? (abilityDef.nEN || abilityDef.nPT) : abilityDef.nPT
-    const aCd   = stats?.abilityCooldown?.finalCd ?? abilityDef.cd
-    pen.icon(icons.ability, leftX, ly - IMG_ICON_SMALL + 4, IMG_ICON_SMALL)
-    pen.text(aName, textX, ly, { font: `700 13px ${IMG_FONT}`, color: CLS, lineH: 17 })
-    pen.text(`[${aCd}s]`, textX + pen.width(aName, `700 13px ${IMG_FONT}`) + 7, ly,
-      { font: `400 11px ${IMG_FONT}`, color: T.muted, lineH: 0 })
-    ly += 17
-    if (withDesc) {
-      const aDesc = L ? (abilityDef.dEN || abilityDef.dPT) : abilityDef.dPT
-      ly += pen.text(aDesc, textX, ly, { font: `400 10px ${IMG_FONT}`, color: T.muted, maxW: textW, lineH: 14 })
+      case 'desc':
+        dy += pen.text(b.t, x + 10, y + dy + 10,
+          { font: `400 10px ${IMG_FONT}`, color: C.dim, maxW: w - 10, lineH: 13 })
+        dy += 2
+        break
     }
-    ly += 10
+  }
+  return dy
+}
+
+/**
+ * Desenha uma banda: título, divisor e uma grade de cartões.
+ *
+ * Todos os cartões de uma linha recebem a altura do mais alto — é o que dá o
+ * alinhamento de grade e o que impede o "degrau" entre vizinhos.
+ *
+ * @param {Object} pen - pintor da passada corrente
+ * @param {Object} mp  - pintor de medição (sempre `draw = false`)
+ * @returns {number} o `y` logo abaixo da banda
+ */
+function paintBand(pen, mp, { title, cards, cols, x, y, w, icons, C }) {
+  if (!cards.length) return y
+
+  pen.text(title, x, y + 10, { font: `700 10px ${IMG_FONT}`, color: C.muted, lineH: 0 })
+  y += 16
+  pen.divider(x, y, x + w, C.border)
+  y += IMG_GAP
+
+  const colW   = (w - IMG_GAP * (cols - 1)) / cols
+  const innerW = colW - IMG_CARD_PAD * 2
+
+  // Mede todos antes de desenhar qualquer um — a altura da linha é a do mais
+  // alto, e ela precisa ser conhecida antes de pintar a borda do primeiro.
+  const heights = cards.map(c => paintCardBlocks(mp, c.blocks, 0, 0, innerW, icons, C))
+
+  for (let i = 0; i < cards.length; i += cols) {
+    const row  = cards.slice(i, i + cols)
+    const rowH = Math.max(...heights.slice(i, i + cols)) + IMG_CARD_PAD * 2
+    row.forEach((c, j) => {
+      const cx = x + j * (colW + IMG_GAP)
+      pen.card(cx, y, colW, rowH, C.card, c.accent || C.border)
+      paintCardBlocks(pen, c.blocks, cx + IMG_CARD_PAD, y + IMG_CARD_PAD, innerW, icons, C)
+    })
+    y += rowH + IMG_GAP
+  }
+  return y
+}
+
+/**
+ * Monta os cartões da banda de habilidade e vantagens.
+ * São sempre quatro posições: a habilidade de classe e os três tiers.
+ * Posição vazia vira cartão apagado, para a grade não perder o alinhamento.
+ */
+function abilityCards({ build, stats, cls, L, withDesc, C }) {
+  const out = []
+
+  const ab = cls.abilities.find(a => a.id === build.abilityId)
+  if (ab) {
+    const cd = stats?.abilityCooldown?.finalCd ?? ab.cd
+    out.push({ accent: C.cls, blocks: [
+      { k: 'label', t: L ? 'Class Ability' : 'Habilidade' },
+      { k: 'head', t: L ? (ab.nEN || ab.nPT) : ab.nPT, icon: 'ability', fs: 12,
+        color: C.cls, badge: `${cd}s` },
+      ...(withDesc ? [{ k: 'desc', t: L ? (ab.dEN || ab.dPT) : ab.dPT }] : []),
+    ]})
+  } else {
+    out.push({ blocks: [
+      { k: 'label', t: L ? 'Class Ability' : 'Habilidade' },
+      { k: 'head', t: '—', fs: 12, color: C.dim, size: 4 },
+    ]})
   }
 
   for (const tier of ['I', 'II', 'III']) {
     const techId = build.techs?.[tier]
-    if (!techId) continue
-    const techDef = cls.techs.find(t => t.id === techId)
-    if (!techDef) continue
-
-    pen.text(L ? `Perk ${tier}` : `Vantagem ${tier}`, leftX, ly,
-      { font: `600 9px ${IMG_FONT}`, color: T.dim, lineH: 12 })
-    // O icone da linha seguinte sobe 14px acima da base, e o topo das
-    // maiusculas do nome, 12px. Com avanco de 12 os dois caiam em cima do
-    // rotulo. Ver FIX-013.
-    ly += 20
-
-    const tName = L ? (techDef.nEN || techDef.nPT) : techDef.nPT
-    pen.icon(icons[`tech_${tier}`], leftX, ly - IMG_ICON_SMALL + 4, IMG_ICON_SMALL)
-    ly += pen.text(tName, textX, ly, { font: `600 12px ${IMG_FONT}`, color: T.text, maxW: textW, lineH: 16 })
-
-    if (withDesc) {
-      const tDesc = L ? (techDef.dEN || techDef.dPT) : techDef.dPT
-      ly += pen.text(tDesc, textX, ly, { font: `400 10px ${IMG_FONT}`, color: T.muted, maxW: textW, lineH: 14 })
+    const tech   = techId ? cls.techs.find(t => t.id === techId) : null
+    const label  = L ? `Perk ${tier}` : `Vantagem ${tier}`
+    if (!tech) {
+      out.push({ blocks: [
+        { k: 'label', t: label },
+        { k: 'head', t: '—', fs: 12, color: C.dim, size: 4 },
+      ]})
+      continue
     }
-    ly += 8
+    out.push({ blocks: [
+      { k: 'label', t: label },
+      { k: 'head', t: L ? (tech.nEN || tech.nPT) : tech.nPT, icon: `tech_${tier}`,
+        fs: 12, color: C.text },
+      ...(withDesc ? [{ k: 'desc', t: L ? (tech.dEN || tech.dPT) : tech.dPT }] : []),
+    ]})
   }
+  return out
+}
 
-  // ── Coluna direita: equipamentos ───────────────────────────
-  const slotLabels = {
+/**
+ * Monta os cartões de equipamento. Slot vazio não vira cartão — ao contrário
+ * das vantagens, aqui a ausência não precisa de espaço reservado.
+ */
+function gearCards({ build, stats, L, withDesc, C }) {
+  const labels = {
     katana: L ? 'Katana'          : 'Katana',
     ranged: L ? 'Ranged Weapon'   : 'Longo Alcance',
     charm:  L ? 'Charm'           : 'Amuleto',
     gw1:    L ? 'Ghost Weapon I'  : 'Arma Fantasma I',
     gw2:    L ? 'Ghost Weapon II' : 'Arma Fantasma II',
   }
-
-  let ry = IMG_HEADER_H + IMG_PAD
-  pen.text(L ? 'GEAR' : 'EQUIPAMENTOS', rightX, ry,
-    { font: `700 10px ${IMG_FONT}`, color: T.muted, lineH: 15 })
-  ry += 15
-  pen.divider(rightX, ry, IMG_W - IMG_PAD, T.border)
-  ry += 18   // mesma razao do divisor da coluna esquerda (FIX-013)
-
-  const gTextX = rightX + IMG_ICON_SMALL + 8
-  const gTextW = rightW - IMG_ICON_SMALL - 8
+  const out = []
 
   for (const slot of ['katana', 'ranged', 'charm', 'gw1', 'gw2']) {
-    // Amuleto pelo item efetivo — ver slotItemForImage (D1)
+    // Amuleto pelo item EFETIVO — sem isto as props de classe de um Magistral
+    // com classBinding somem da imagem sem erro (armadilha 7).
     const item = slotItemForImage(build, slot)
     if (!item) continue
-    const slotState = build.gear[slot]
+    const st = build.gear[slot]
 
-    pen.text(slotLabels[slot], rightX, ry, { font: `600 9px ${IMG_FONT}`, color: T.dim, lineH: 12 })
-    ry += 20   // mesma razao do rotulo de tier (FIX-013)
+    // Recarga: as chaves sao `stats.gw1` / `stats.gw2` (FIX-010)
+    const cd = slot === 'gw1' ? stats?.gw1?.finalCd
+             : slot === 'gw2' ? stats?.gw2?.finalCd
+             : null
 
-    const iName = (L ? (item.nEN || item.nPT) : item.nPT) + (item.leg ? ' ★' : '')
-    pen.icon(icons[`gear_${slot}`], rightX, ry - IMG_ICON_SMALL + 4, IMG_ICON_SMALL)
-    const nameFont = `700 13px ${IMG_FONT}`
-    pen.text(iName, gTextX, ry, { font: nameFont, color: item.leg ? T.leg : T.text, maxW: gTextW, lineH: 17 })
-
-    // Recarga da Arma Fantasma — as chaves são `stats.gw1` / `stats.gw2` (FIX-010)
-    const gwCd = slot === 'gw1' ? stats?.gw1?.finalCd
-               : slot === 'gw2' ? stats?.gw2?.finalCd
-               : null
-    if (gwCd != null) {
-      pen.text(`[${gwCd}s]`, gTextX + pen.width(iName, nameFont) + 7, ry,
-        { font: `400 11px ${IMG_FONT}`, color: T.muted, lineH: 0 })
-    }
-    ry += 17
+    const blocks = [
+      { k: 'label', t: labels[slot] },
+      { k: 'head', t: (L ? (item.nEN || item.nPT) : item.nPT) + (item.leg ? '  ★' : ''),
+        icon: `gear_${slot}`, fs: 13, color: item.leg ? C.leg : C.text,
+        badge: cd != null ? `${cd}s` : null },
+    ]
 
     if (withDesc && item.leg && item.xp) {
-      const xpText = L ? (item.xp.en || item.xp.pt) : item.xp.pt
-      ry += pen.text(xpText, gTextX, ry,
-        { font: `italic 400 10px ${IMG_FONT}`, color: T.leg, maxW: gTextW, lineH: 14 })
-      ry += 2
+      blocks.push({ k: 'xp', t: L ? (item.xp.en || item.xp.pt) : item.xp.pt })
     }
 
     for (const ps of ['p1', 'p2']) {
-      const pState = slotState[ps]
+      const pState = st[ps]
       if (!pState?.propId) continue
-      const propDef = item.props?.find(p => p.id === pState.propId)
-      if (!propDef) continue
-      const pName = L ? (propDef.nEN || propDef.nPT) : propDef.nPT
-      const pVal  = formatStatValue(pState.value, propDef.u)
-      ry += pen.text(`• ${pName}: ${pVal}`, gTextX, ry,
-        { font: `400 11px ${IMG_FONT}`, color: T.text, maxW: gTextW, lineH: 15 })
-      if (withDesc) {
-        const pDesc = L ? (propDef.dEN || propDef.dPT) : propDef.dPT
-        ry += pen.text(pDesc, gTextX + 10, ry,
-          { font: `400 10px ${IMG_FONT}`, color: T.dim, maxW: gTextW - 10, lineH: 13 })
-      }
+      const def = item.props?.find(p => p.id === pState.propId)
+      if (!def) continue
+      blocks.push({ k: 'bullet',
+        t: `${L ? (def.nEN || def.nPT) : def.nPT}: ${formatStatValue(pState.value, def.u)}` })
+      if (withDesc) blocks.push({ k: 'desc', t: L ? (def.dEN || def.dPT) : def.dPT })
     }
 
     for (const pk of ['perk1', 'perk2']) {
-      const perkId = slotState[pk]
+      const perkId = st[pk]
       if (!perkId) continue
-      const perkDef = item.perks?.find(p => p.id === perkId)
-      if (!perkDef) continue
-      const pkName = L ? (perkDef.nEN || perkDef.nPT) : perkDef.nPT
-      ry += pen.text(`• ${pkName}`, gTextX, ry,
-        { font: `400 11px ${IMG_FONT}`, color: T.text, maxW: gTextW, lineH: 15 })
-      if (withDesc) {
-        const pkDesc = L ? (perkDef.dEN || perkDef.dPT) : perkDef.dPT
-        ry += pen.text(pkDesc, gTextX + 10, ry,
-          { font: `400 10px ${IMG_FONT}`, color: T.dim, maxW: gTextW - 10, lineH: 13 })
-      }
+      const def = item.perks?.find(p => p.id === perkId)
+      if (!def) continue
+      blocks.push({ k: 'bullet', t: L ? (def.nEN || def.nPT) : def.nPT })
+      if (withDesc) blocks.push({ k: 'desc', t: L ? (def.dEN || def.dPT) : def.dPT })
     }
-    ry += 10
+
+    out.push({ accent: item.leg ? C.leg : null, blocks })
+  }
+  return out
+}
+
+/**
+ * Percorre o layout inteiro da imagem, medindo ou desenhando.
+ *
+ * LAYOUT EM BANDAS (DEC-027). O desenho é uma pilha de faixas de largura
+ * total — cabeçalho, habilidade e vantagens, equipamentos, estatísticas — e
+ * cada faixa distribui seus cartões numa grade própria. Nenhuma seção depende
+ * de ter a mesma altura que outra, que era o defeito do layout de duas
+ * colunas: no modo Build a esquerda tinha um quarto da altura da direita.
+ *
+ * Chamada duas vezes por geração: mede, depois desenha. O fundo e a
+ * assinatura ficam fora daqui, porque dependem da altura final.
+ *
+ * @returns {number} altura total do conteúdo, já com a faixa do rodapé
+ */
+function paintBuildImage(ctx, draw, { build, stats, lang, buildName, mode, icons }) {
+  const L   = lang === 'en'
+  const cls = getClass(build.classId)
+  const pen = makePainter(ctx, draw)
+  const mp  = makePainter(ctx, false)   // pintor de medição
+
+  const C = {
+    bg: T.bg, card: T.card, border: T.border, text: T.text,
+    muted: T.muted, dim: T.dim, leg: T.leg, green: T.green,
+    cls: T.cls[build.classId],
+  }
+  const withDesc  = mode === 'detailed' || mode === 'stats'
+  const withStats = mode === 'stats'
+  const innerW    = IMG_W - IMG_PAD * 2
+
+  // ── Cabeçalho ──────────────────────────────────────────────
+  pen.rect(0, 0, IMG_W, IMG_HEADER_H, C.cls + '22')
+  pen.rect(0, IMG_HEADER_H - 1, IMG_W, 1, C.cls + '55')
+
+  const clsIcon = 34
+  pen.icon(icons.cls, IMG_PAD, (IMG_HEADER_H - clsIcon) / 2, clsIcon)
+
+  const clsName = L ? (cls.nEN || cls.nPT) : cls.nPT
+  const tx = IMG_PAD + clsIcon + 14
+  pen.text(buildName?.trim() || clsName, tx, 44,
+    { font: `800 20px ${IMG_FONT}`, color: C.text, lineH: 0 })
+
+  // Faixa de sinais vitais: o que a interface mostra no topo e que a imagem
+  // não trazia em modo nenhum — HP, Determinação e o contador de Magistrais.
+  const leg  = checkLegendaryLimit(build)
+  const bits = [
+    buildName?.trim() ? clsName : null,
+    `HP ${stats?.maxHP ?? 100}`,
+    `${L ? 'Resolve' : 'Det.'} ${stats?.maxResolve ?? 3}`,
+    `${'★'.repeat(leg.used)}${'☆'.repeat(Math.max(0, leg.limit - leg.used))} ${leg.used}/${leg.limit}`,
+  ].filter(Boolean)
+  pen.text(bits.join('   ·   '), tx, 66,
+    { font: `500 11px ${IMG_FONT}`, color: C.muted, lineH: 0 })
+
+  // Supremo, à direita. PNG — nunca com filtro (armadilha 3).
+  const ultX = IMG_W - IMG_PAD - IMG_ICON_ULT
+  pen.icon(icons.supreme, ultX, 8, IMG_ICON_ULT)
+  if (stats?.ultimate) {
+    const uName = L ? (stats.ultimate.nEN || stats.ultimate.nPT) : stats.ultimate.nPT
+    pen.centered(uName, ultX + IMG_ICON_ULT / 2, 8 + IMG_ICON_ULT + 13,
+      { font: `600 10px ${IMG_FONT}`, color: C.cls })
   }
 
-  // ── Faixa de estatísticas (somente modo Estatístico) ───────
-  let y = Math.max(ly, ry) + 6
+  let y = IMG_HEADER_H + IMG_PAD
 
+  // ── Banda 1 — habilidade e vantagens ───────────────────────
+  y = paintBand(pen, mp, {
+    title: L ? 'CLASS ABILITY & PERKS' : 'HABILIDADE & VANTAGENS',
+    cards: abilityCards({ build, stats, cls, L, withDesc, C }),
+    cols: 4, x: IMG_PAD, y, w: innerW, icons, C,
+  })
+
+  // ── Banda 2 — equipamentos ─────────────────────────────────
+  y = paintBand(pen, mp, {
+    title: L ? 'GEAR' : 'EQUIPAMENTOS',
+    cards: gearCards({ build, stats, L, withDesc, C }),
+    cols: 2, x: IMG_PAD, y: y + 4, w: innerW, icons, C,
+  })
+
+  // ── Banda 3 — estatísticas (somente modo Estatístico) ──────
   if (withStats && stats) {
-    pen.divider(IMG_PAD, y, IMG_W - IMG_PAD, T.border)
-    y += 18
+    pen.text(L ? 'STATISTICS' : 'ESTATÍSTICAS', IMG_PAD, y + 14,
+      { font: `700 10px ${IMG_FONT}`, color: C.muted, lineH: 0 })
+    y += 20
+    pen.divider(IMG_PAD, y, IMG_W - IMG_PAD, C.border)
+    y += IMG_GAP
 
     const ultLine = ultimateSummary(stats.ultimate, L)
-    if (ultLine) {
-      const uName = L ? (stats.ultimate.nEN || stats.ultimate.nPT) : stats.ultimate.nPT
-      pen.text(`${L ? 'Ultimate' : 'Supremo'}: ${uName}`, IMG_PAD, y,
-        { font: `700 12px ${IMG_FONT}`, color: CLS, lineH: 16 })
-      y += 16
-      y += pen.text(ultLine, IMG_PAD, y,
-        { font: `400 11px ${IMG_FONT}`, color: T.muted, maxW: IMG_W - IMG_PAD * 2, lineH: 15 })
-      y += 8
-    }
-
-    pen.text(L ? 'STATISTICS' : 'ESTATÍSTICAS', IMG_PAD, y,
-      { font: `700 10px ${IMG_FONT}`, color: T.muted, lineH: 15 })
-    y += 18
-
-    // HP e Determinação SEMPRE, mesmo no valor base; o resto só se mudou (DEC-022)
     const rows = [
+      // HP e Determinação SEMPRE, mesmo no valor base (DEC-022). Aparecem
+      // também na faixa do cabeçalho, de propósito: lá são sinais vitais em
+      // todos os modos, aqui são linha da tabela.
       { label: 'HP', value: String(stats.maxHP ?? 100) },
       { label: L ? 'Resolve' : 'Determinação', value: String(stats.maxResolve ?? 3) },
     ]
@@ -2400,17 +2543,33 @@ function paintBuildImage(ctx, draw, { build, stats, lang, buildName, mode, icons
     }
 
     const cols  = 3
-    const colW  = (IMG_W - IMG_PAD * 2) / cols
+    const colW  = innerW / cols
+    const rowsH = Math.ceil(rows.length / cols) * 18
+    const ultH  = ultLine ? 34 : 0
+    pen.card(IMG_PAD, y, innerW, ultH + rowsH + IMG_CARD_PAD * 2, C.card, C.border)
+
+    let cy = y + IMG_CARD_PAD
+    if (ultLine) {
+      const uName = L ? (stats.ultimate.nEN || stats.ultimate.nPT) : stats.ultimate.nPT
+      pen.text(`${L ? 'Ultimate' : 'Supremo'}: ${uName}`, IMG_PAD + IMG_CARD_PAD, cy + 12,
+        { font: `700 12px ${IMG_FONT}`, color: C.cls, lineH: 0 })
+      pen.text(ultLine, IMG_PAD + IMG_CARD_PAD, cy + 28,
+        { font: `400 11px ${IMG_FONT}`, color: C.muted, lineH: 0 })
+      cy += ultH
+    }
+
     const lblFt = `400 11px ${IMG_FONT}`
     const valFt = `700 11px ${IMG_FONT}`
     rows.forEach((row, i) => {
-      const cx = IMG_PAD + (i % cols) * colW
-      const cy = y + Math.floor(i / cols) * 18
-      pen.text(`${row.label}:`, cx, cy, { font: lblFt, color: T.muted, lineH: 0 })
-      pen.text(row.value, cx + pen.width(`${row.label}: `, lblFt), cy,
-        { font: valFt, color: T.green, lineH: 0 })
+      const rx = IMG_PAD + IMG_CARD_PAD + (i % cols) * colW
+      const ry = cy + Math.floor(i / cols) * 18 + 11
+      pen.text(`${row.label}:`, rx, ry, { font: lblFt, color: C.muted, lineH: 0 })
+      pen.text(row.value, rx + pen.width(`${row.label}: `, lblFt), ry,
+        { font: valFt, color: C.green, lineH: 0 })
     })
-    y += Math.ceil(rows.length / cols) * 18
+    y += ultH + rowsH + IMG_CARD_PAD * 2
+  } else {
+    y -= IMG_GAP   // a última banda já somou um espaçamento que aqui sobra
   }
 
   return y + IMG_FOOTER_H
