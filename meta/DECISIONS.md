@@ -881,3 +881,35 @@ Avanço de 20 px depois dos rótulos e de 18 px depois dos divisores de seção 
 
 ### Nota
 O defeito não apareceu na simulação de altura da `spec0014` porque **as duas passadas concordavam**: a sobreposição é colisão dentro de uma linha, não erro de altura acumulada. Medir bem a altura não diz nada sobre colisão dentro da faixa medida.
+
+---
+
+## DEC-027 — A imagem da build é organizada em bandas, não em colunas
+
+**Data:** 2026-07-26 · **Status:** aceita, em vigor · **Substitui** a disposição descrita no pedido original
+
+### O problema
+A primeira versão da Fase 3 dispôs o conteúdo em duas colunas de altura livre: habilidade e vantagens à esquerda, equipamentos à direita. **As duas nunca podiam bater.** No modo Build a esquerda tem cerca de sete linhas e a direita trinta — cinco equipamentos com quatro itens cada. A metade inferior esquerda fica vazia por construção, e nenhum ajuste de proporção resolve, porque a razão entre os dois lados muda a cada build.
+
+Isso contrariava o pedido em dois pontos escritos: *"podendo preencher bem o espaço da imagem"* e *"com caixas e formatação, e não só o texto bruto um atrás do outro"*.
+
+### A decisão
+O desenho passa a ser uma pilha de **bandas de largura total** — cabeçalho, habilidade e vantagens, equipamentos, estatísticas —, e cada banda distribui seus cartões numa grade própria: quatro colunas para as vantagens, duas para os equipamentos. **Nenhuma seção depende de ter a mesma altura que outra**, que era a origem do problema.
+
+Dentro de uma linha da grade, todos os cartões recebem a altura do mais alto. É o que dá o alinhamento e o que evita o degrau entre vizinhos.
+
+### A alternativa rejeitada — três colunas
+O pedido original descrevia três colunas: *"Habilidades e vantagens em uma coluna, equipamentos em outra, e estatísticas em outra"*. Aquilo vinha da tela, onde cada coluna rola por conta própria e altura desigual não custa nada. **Numa imagem de altura fixa, custa** — e três colunas desiguais seria pior que duas, não melhor.
+
+O autor foi consultado e escolheu as bandas, com uma observação que vale registrar: *"não precisa seguir meu pedido original, pois foi justamente o que pedi, que você pesquisasse e refinasse, não que aceitasse cegamente o que cogitei"*.
+
+### O cartão como dados
+Cada cartão é descrito como uma lista de blocos — `label`, `head`, `xp`, `bullet`, `desc` — e renderizado por `paintCardBlocks`, num caminho só. Duas consequências: os três modos viram uma questão de **quais blocos entram**, e a altura reservada é sempre a altura usada, porque medir e desenhar percorrem o mesmo código.
+
+### O cabeçalho ganhou os sinais vitais
+HP, Determinação e o contador de Magistrais são a primeira coisa que a interface mostra e **não apareciam na imagem em modo nenhum** — no Estatístico, HP e Determinação estavam no meio da lista. Agora estão na faixa do cabeçalho, nos três modos.
+
+Eles **continuam também na tabela** do modo Estatístico, de propósito: a DEC-022 exige que apareçam ali mesmo no valor base, e a duplicação custa duas linhas. Se algum dia incomodar, tirar da tabela é uma linha — mas aí a DEC-022 precisa ser reescrita junto.
+
+### Validação
+Simulado antes de virar código, com o método da `spec0014`: as duas passadas devolvem altura idêntica nos três modos e em três preenchimentos (cheio, vazio, parcial), e a passada de medição não pinta nada. A altura passou a acompanhar o conteúdo em vez do modo — build vazia sai com 244 px onde a versão anterior reservava o mesmo de uma build cheia.

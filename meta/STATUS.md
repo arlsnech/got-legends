@@ -320,3 +320,20 @@ Quatro defeitos, todos com causa raiz:
 **Decisão do autor registrada:** o **modo Estatístico fica**. A dúvida da DEC-024 vinha dos defeitos que insistiam nele, não do recurso — e os defeitos acabaram.
 
 **Em aberto:** o refinamento de layout da imagem. O diagnóstico é que a imagem **não preenche o espaço** — no modo Build a coluna esquerda termina com metade da altura da direita — e que falta a "caixas e formatação" do pedido original. A direção foi apresentada ao autor com duas opções e aguarda escolha; ver o item no `IDEAS.md`.
+
+---
+
+**2026-07-26 — imagem redesenhada em bandas (DEC-027).**
+
+O autor escolheu as bandas em vez das três colunas do pedido original, com a observação de que o pedido de refinamento existia justamente para não ser seguido cegamente.
+
+O layout de duas colunas tinha um defeito estrutural, não de ajuste: no modo Build a esquerda tem ~7 linhas e a direita ~30, então a metade inferior esquerda ficava vazia **por construção**, e nenhuma proporção resolveria, porque a razão entre os lados muda a cada build. Agora são faixas de largura total, cada uma com sua grade: quatro colunas para as vantagens, duas para os equipamentos, estatísticas ao pé.
+
+Três ganhos além da distribuição:
+- **Cartões com borda**, a "caixas e formatação" que o pedido descrevia e a primeira versão não entregou. Magistral com borda dourada.
+- **Sinais vitais no cabeçalho** — HP, Determinação e o contador de Magistrais, que não estavam na imagem em modo nenhum e são a primeira coisa que a interface mostra.
+- **Cartão descrito como dados.** Uma lista de blocos renderizada por um caminho só; os três modos passam a ser uma questão de quais blocos entram, em vez de três trechos de desenho parecidos.
+
+Validado por simulação antes de virar spec, com o método da `spec0014`: altura idêntica nas duas passadas nos três modos e em três preenchimentos. A altura passou a acompanhar o **conteúdo** em vez do modo — build vazia sai com 244 px onde antes se reservava o mesmo de uma cheia.
+
+**Próximo passo: F4 — polimento e mobile.** A F3 está fechada, e com ela a última pendência de desenho da exportação.

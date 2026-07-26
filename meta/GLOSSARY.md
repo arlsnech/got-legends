@@ -43,6 +43,9 @@
 - **`generateBuildText({ build, stats, lang, buildName, mode, includeShareCode })`** — monta o texto de exportação em um dos três modos (`build`, `detailed`, `stats`). Vive no `App.jsx`. HP e Determinação sempre entram no bloco de estatísticas; o resto só se modificado. Ver DEC-022.
 - **`generateBuildImage({ build, stats, lang, buildName, mode })`** — contrapartida em imagem dos três modos de exportação. Canvas puro, sem dependência externa (DEC-021), renderizado em 2x. Assíncrona: espera os ícones. Ver DEC-026.
 - **`paintBuildImage(ctx, draw, args)`** — o layout da imagem, percorrido **duas vezes**: com `draw = false` mede, com `draw = true` desenha. É o que permite a altura exata. Quem mexer no layout mexe nos dois — é o mesmo código, de propósito.
+- **Banda** — faixa de largura total da imagem gerada (cabeçalho, vantagens, equipamentos, estatísticas). Cada uma distribui seus cartões numa grade própria e independe da altura das outras. Ver DEC-027.
+- **Bloco de cartão** — unidade de conteúdo dentro de um cartão da imagem: `label`, `head`, `xp`, `bullet` ou `desc`. O cartão é descrito como uma lista de blocos e renderizado por `paintCardBlocks`; os três modos de exportação diferem só nos blocos que entram.
+- **`paintBand(pen, mp, opts)`** — desenha uma banda: título, divisor e a grade de cartões. Recebe **dois** pintores: o da passada corrente e um de medição, porque a altura da linha precisa ser conhecida antes de pintar a borda do primeiro cartão.
 - **`ultimateSummary(ult, L)`** — resumo do Supremo em uma linha, montado por classe. Usado pelo texto **e** pela imagem, para que não divirjam. Ver FIX-010.
 - **`layoutMode`** — `'three-col'` ou `'two-col'`. Precisa descer até o `TechRow`: os dois modos têm estilos independentes de propósito. Ver DEC-023.
 - **`getStatGroups(stats, classId, lang)`** — agrupa as stats calculadas em seções para exibição. Atenção: `classId` é obrigatório — sem ele, grupos de classe errados são incluídos.

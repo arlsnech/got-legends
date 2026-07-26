@@ -32,7 +32,7 @@
 
 ---
 
-## 🟢 F3 — Exportação de Imagem *(concluída em 2026-07-25)*
+## 🟢 F3 — Exportação de Imagem *(concluída em 2026-07-25; layout redesenhado em 2026-07-26, DEC-027)*
 
 **Objetivo:** Usuário consegue baixar um PNG visualmente polido da build para compartilhar em redes sociais, Discord, Reddit etc.
 

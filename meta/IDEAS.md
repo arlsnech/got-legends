@@ -169,7 +169,18 @@ Nos prompts antigos o autor cogitou **remover o modo Estatístico** caso desse t
 
 ---
 
-## 🔧 Correções de processo — 2026-07-25
+## 🔧 Correções de processo
+
+### 2026-07-26 — Hipótese de causa precisa vir com teste e com instrução de parada
+A `spec0015` diagnosticou o FIX-012 a partir de capturas de tela e chegou à causa errada. O que impediu o estrago foi um portão escrito na própria spec: *rode este teste, interprete assim, e **pare** se contradisser*. O executor rodou, o resultado contradisse, ele parou e trouxe a causa real — sem aplicar código inútil.
+
+**Regra que fica, e que vale para o kit:** quando a causa de um defeito é **hipótese** e não observação — porque quem escreveu a spec não pôde rodar o sistema —, a spec não deve mandar corrigir. Deve mandar **diagnosticar**, dizer o que cada resultado significa, e mandar parar na divergência. O custo é um passo a mais; o benefício é não gravar uma causa errada nos `meta/`, que é um estrago que sobrevive ao commit.
+
+Nota complementar: a resposta certa já estava no `CONTEXT.md` deste projeto, na armadilha 15, escrita três specs antes. **Reler as armadilhas antes de formular uma hipótese** pertence ao ritual de diagnóstico, não ao de escrita.
+
+*(Este item foi perdido uma vez: a `spec0016` o endereçou a uma âncora que já não existia, e o executor registrou a falha em vez de forçar um lugar próximo — que é o comportamento certo. Recuperado pela `spec0017`.)*
+
+### Leva de 2026-07-25
 
 ### O chat afirmou "CRLF" no `.flatdropignore` em quatro specs seguidas — e o arquivo é LF
 As specs 0008 a 0011 abriram a parte do `.flatdropignore` com um aviso de que o arquivo tinha quebras CRLF e que era preciso preservá-las. **Está errado:** o relatório de aplicação da spec0010 registra `git ls-files --eol` mostrando LF, e o executor manteve o formato real em vez de seguir a spec. O que induziu ao erro foi ler o `_TREE` e o `_MANIFEST` do pacote FlatDrop, esses **sim** em CRLF, e generalizar para o arquivo vizinho.
@@ -183,7 +194,7 @@ Todas viraram DEC-024. Duas fecham, uma fica agendada:
 2. **"Só alteradas"** — tirado por dar problema, e sem utilidade na tela. Encerrado.
 3. **Modo Estatístico** — **encerrado em 2026-07-25: fica.** O autor esclareceu que a dúvida vinha dos defeitos que insistiam nele, não do recurso. Com a Fase 3 entregue e o FIX-005 e o FIX-010 aplicados, os defeitos acabaram e a dúvida com eles.
 
-### 2026-07-25 — Refinar o layout da imagem gerada *(proposta, aguardando direção do autor)*
+### 2026-07-25 — Refinar o layout da imagem gerada *(aprovado e aplicado em 2026-07-26 — DEC-027)*
 A Fase 3 entregou uma imagem correta e **mal distribuída**. Três diagnósticos:
 
 1. **Não preenche o espaço.** As duas colunas têm conteúdos muito diferentes: no modo Build a esquerda tem ~7 linhas e a direita ~30, então a metade inferior esquerda fica vazia. O pedido original dizia, com estas palavras, *"podendo preencher bem o espaço da imagem"*.
