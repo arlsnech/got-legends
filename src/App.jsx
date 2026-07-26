@@ -1947,19 +1947,52 @@ function generateBuildText({ build, stats, lang, buildName, mode, includeShareCo
 // desenha precisam ser o MESMO código, ou os dois divergem na primeira
 // alteração de layout.
 //
-// CONSTANTES DE LAYOUT — em unidades lógicas. A renderização sai em 2x (D4),
-// então ajuste estes valores à vontade sem pensar em resolução.
-const IMG_W          = 900   // largura lógica da imagem
-const IMG_PAD        = 28    // margem interna
-const IMG_HEADER_H   = 92    // faixa do cabeçalho (cabe o nome e os sinais vitais)
+// CONSTANTES DE LAYOUT — em unidades lógicas. A renderização sai em 3x
+// (IMG_SCALE), então ajuste estes valores sem pensar em resolução.
+const IMG_W          = 1000  // largura lógica da imagem
+const IMG_PAD        = 30    // margem interna
+const IMG_HEADER_H   = 118   // faixa do cabeçalho (identidade + supremo)
 const IMG_GAP        = 14    // espaço entre cartões e entre bandas
-const IMG_CARD_PAD   = 12    // respiro interno do cartão
-const IMG_ICON_SMALL = 18    // ícones de linha
-const IMG_ICON_CARD  = 26    // ícone dentro do cartão
-const IMG_ICON_ULT   = 46    // ícone do supremo, no cabeçalho
-const IMG_FOOTER_H   = 30    // faixa reservada para a assinatura
-const IMG_SCALE      = 2     // fator de supersampling — 1 = borrado em tela retina
+const IMG_CARD_PAD   = 13    // respiro interno do cartão
+const IMG_ICON_CARD  = 34    // ícone dentro do cartão
+const IMG_ICON_CLS   = 38    // ícone de classe, no cabeçalho
+const IMG_ICON_ULT   = 56    // ícone do supremo, no cabeçalho
+const IMG_FOOTER_H   = 32    // faixa reservada para a assinatura
+const IMG_SCALE      = 3     // supersampling — 1 = borrado em tela retina
 const IMG_FONT       = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+
+// TIPOGRAFIA — num lugar só, de propósito. Aumentar a imagem inteira é mexer
+// aqui; espalhar tamanhos pelo desenho foi o que tornou o ajuste anterior um
+// trabalho de garimpo.
+const IMG_FS = {
+  title:   22,  // nome da build
+  cls:     11,  // classe, sob o nome
+  ult:     16,  // nome do supremo
+  ultInfo: 12,  // custo, golpes, bônus
+  ultNote: 11,  // modificação textual do supremo
+  band:    11,  // título da banda
+  label:   10,  // rótulo do cartão (tier / slot)
+  head:    14,  // nome no cartão de vantagem
+  headGear:15,  // nome no cartão de equipamento
+  badge:   12,  // selo de recarga
+  bullet:  13,  // propriedade / vantagem
+  desc:    11,  // descrição
+  xp:      11,  // texto de sabor do Magistral
+  stat:    12,  // linha da tabela de estatísticas
+  vital:    9,  // rótulos HP / DET
+}
+
+// SINAIS VITAIS — a barra de HP e os círculos de Determinação espelham a
+// topbar da interface, com uma diferença deliberada: aqui a cor é UNIFORME.
+// Na tela, dourado e verde distinguem base de bônus porque o usuário está
+// montando e precisa ver o efeito do que acabou de equipar. No print não há
+// interação para explicar a distinção, e ela viraria ruído — o número ao
+// lado já diz o total. Ver DEC-028.
+const IMG_HP_BASE_W  = 104   // largura da barra em HP base (100)
+const IMG_HP_BONUS_W = 0.9   // px por ponto de HP acima da base
+const IMG_HP_H       = 9     // altura da barra
+const IMG_DET_R      = 6     // raio dos círculos de Determinação
+const IMG_DET_GAP    = 7     // espaço entre círculos
 
 /**
  * Carrega uma imagem para uso no canvas.
@@ -2035,10 +2068,12 @@ function ultimateSummary(ult, L) {
   }
   if (ult.targets != null) parts.push(`${L ? 'Targets' : 'Alvos'}: ${ult.targets}`)
 
-  // Ronin: o Sopro ativo é a variante escolhida (ou a única, quando só há uma)
+  // Ronin: a variante ativa, ou a base quando nenhuma tecnica de tier III a
+  // troca. O `find` sozinho devolvia undefined nesse caso e a variante sumia
+  // da linha; a base e sempre a primeira do array.
   if (ult.classId === 'ronin' && ult.variants?.length) {
-    const act = ult.variants.find(v => ult.variants.length === 1 || ult.activeBreath === v.id)
-    if (act) parts.push(L ? (act.nEN || act.nPT) : act.nPT)
+    const act = ult.variants.find(v => v.id === ult.activeBreath) || ult.variants[0]
+    parts.push(L ? (act.nEN || act.nPT) : act.nPT)
   }
   if (ult.dmgMult) parts.push(`x${ult.dmgMult} ${L ? 'damage' : 'de dano'}`)
   if (ult.ultDmgBonus > 0) {
@@ -2210,6 +2245,80 @@ function makePainter(ctx, draw) {
       ctx.restore()
     },
 
+    /**
+     * "Tecla": glifo de comando dentro de uma caixinha arredondada.
+     * Não depende de imagem — os glifos (△ ◯ ✕ ☐ R1 L2) já são usados como
+     * texto nas descrições de `data.js`.
+     * @returns {number} largura ocupada
+     */
+    keycap(txt, x, y, { fs = 11, color, border }) {
+      ctx.font = `700 ${fs}px ${IMG_FONT}`
+      const padX = 7
+      const w = ctx.measureText(String(txt)).width + padX * 2
+      const h = fs + 9
+      if (draw) {
+        const r = 4
+        ctx.save()
+        ctx.beginPath()
+        ctx.moveTo(x + r, y)
+        ctx.lineTo(x + w - r, y)
+        ctx.arcTo(x + w, y, x + w, y + r, r)
+        ctx.lineTo(x + w, y + h - r)
+        ctx.arcTo(x + w, y + h, x + w - r, y + h, r)
+        ctx.lineTo(x + r, y + h)
+        ctx.arcTo(x, y + h, x, y + h - r, r)
+        ctx.lineTo(x, y + r)
+        ctx.arcTo(x, y, x + r, y, r)
+        ctx.closePath()
+        ctx.strokeStyle = border
+        ctx.lineWidth = 1
+        ctx.stroke()
+        ctx.fillStyle = color
+        ctx.font = `700 ${fs}px ${IMG_FONT}`
+        ctx.fillText(String(txt), x + padX, y + h - 6)
+        ctx.restore()
+      }
+      return w
+    },
+
+    /**
+     * Barra de HP. COR ÚNICA de propósito: no print não há interação para
+     * explicar por que um pedaço teria cor diferente do outro, e a distinção
+     * base/bônus da interface viraria ruído. Ver DEC-028.
+     */
+    hpBar(x, y, w, h, color) {
+      if (!draw) return
+      const r = h / 2
+      ctx.save()
+      ctx.beginPath()
+      ctx.moveTo(x + r, y)
+      ctx.lineTo(x + w - r, y)
+      ctx.arcTo(x + w, y, x + w, y + r, r)
+      ctx.lineTo(x + w, y + h - r)
+      ctx.arcTo(x + w, y + h, x + w - r, y + h, r)
+      ctx.lineTo(x + r, y + h)
+      ctx.arcTo(x, y + h, x, y + h - r, r)
+      ctx.lineTo(x, y + r)
+      ctx.arcTo(x, y, x + r, y, r)
+      ctx.closePath()
+      ctx.fillStyle = color
+      ctx.fill()
+      ctx.restore()
+    },
+
+    /** Círculos de Determinação, todos da mesma cor (ver DEC-028). */
+    detDots(x, yCenter, count, color) {
+      if (!draw) return
+      ctx.save()
+      ctx.fillStyle = color
+      for (let i = 0; i < count; i++) {
+        ctx.beginPath()
+        ctx.arc(x + IMG_DET_R + i * (IMG_DET_R * 2 + IMG_DET_GAP), yCenter, IMG_DET_R, 0, Math.PI * 2)
+        ctx.fill()
+      }
+      ctx.restore()
+    },
+
     right(txt, rx, y, { font, color }) {
       if (!draw || !txt) return
       ctx.save()
@@ -2219,6 +2328,168 @@ function makePainter(ctx, draw) {
       ctx.fillText(String(txt), rx, y)
       ctx.restore()
     },
+  }
+}
+
+/**
+ * Monta as linhas de informação do Supremo para o cabeçalho.
+ *
+ * `stats` é a linha compacta de números; `note` é a modificação textual — a
+ * frase que muda conforme a build, e que não aparecia em lugar nenhum da
+ * imagem. A ordem de escolha vai da mais específica para a mais genérica:
+ * nota de modo (Fúria a 300%), variante ativa (Sopro do Ronin) e, na falta
+ * das duas, a descrição base do supremo, que vive em `data.js` e até agora
+ * nunca foi exibida.
+ *
+ * @param {Object|null} ult - `stats.ultimate`
+ * @param {Object|null} cls - a classe, para chegar à descrição base
+ * @param {boolean} L - true quando o idioma é EN
+ * @returns {{ stats: string, note: string|null }}
+ */
+function ultimateHeaderLines(ult, cls, L) {
+  const bits = []
+  if (ult?.cost != null) bits.push(`${L ? 'Cost' : 'Custo'} ${ult.cost}★`)
+
+  if (ult?.mode === 'rage300') {
+    bits.push(`${L ? 'Strikes' : 'Golpes'} ${ult.strikes} × ${ult.dmgPct}%`)
+  } else if (ult?.strikes != null) {
+    bits.push(`${L ? 'Strikes' : 'Golpes'} ${ult.strikes}` +
+      (ult.strikeBonus ? ` (+${ult.strikeBonus})` : ''))
+  }
+  if (ult?.targets != null) {
+    bits.push(`${L ? 'Targets' : 'Alvos'} ${ult.targets}` +
+      (ult.targetBonus ? ` (+${ult.targetBonus})` : ''))
+  }
+  if (ult?.dmgMult) bits.push(`×${ult.dmgMult} ${L ? 'dmg' : 'dano'}`)
+  if (ult?.ultDmgBonus > 0) {
+    bits.push(`+${Math.round(ult.ultDmgBonus * 100)}% ${L ? 'dmg' : 'dano'}`)
+  }
+
+  let note = null
+  if (ult?.notePT || ult?.noteEN) {
+    note = L ? (ult.noteEN || ult.notePT) : ult.notePT
+  } else if (ult?.classId === 'ronin' && ult.variants?.length) {
+    // A variante ativa, ou a base quando nenhuma técnica de tier III a troca.
+    const act = ult.variants.find(v => v.id === ult.activeBreath) || ult.variants[0]
+    note = `${L ? (act.nEN || act.nPT) : act.nPT} — ${L ? (act.dEN || act.dPT) : act.dPT}`
+  }
+  if (!note && cls?.ult) {
+    // A descrição base termina repetindo o custo, que já está na linha de
+    // números logo acima. A âncora de fim de string cobre os dois idiomas.
+    note = (L ? (cls.ult.dEN || cls.ult.dPT) : cls.ult.dPT)
+      .replace(/\s*(Custa|Costs?)\s+\d+\s+(Determinação|Resolve)\.?\s*$/i, '')
+  }
+
+  return { stats: bits.join('   ·   '), note }
+}
+
+/**
+ * Desenha um comando de controle como sequência de teclas.
+ *
+ * Não há imagem de botão no projeto, e não faz falta: os glifos do PlayStation
+ * (△ ◯ ✕ ☐ R1 L2) já são usados como TEXTO nas descrições de `data.js`. A
+ * caixinha é desenhada e o glifo é fonte — zero dependência nova.
+ *
+ * O comando de cada supremo é opcional e vem de `cls.ult.cmd` (ex.: `'L1+R1'`).
+ * Quando o campo não existe, nada é desenhado.
+ *
+ * @returns {number} largura ocupada
+ */
+function paintCommand(pen, cmd, x, y, C) {
+  if (!cmd) return 0
+  const parts = String(cmd).split('+').map(s => s.trim()).filter(Boolean)
+  let cx = x
+  parts.forEach((p, i) => {
+    cx += pen.keycap(p, cx, y, { fs: IMG_FS.ultInfo, color: C.text, border: C.border })
+    if (i < parts.length - 1) {
+      pen.text('+', cx + 4, y + IMG_FS.ultInfo + 3,
+        { font: `600 ${IMG_FS.ultInfo}px ${IMG_FONT}`, color: C.muted, lineH: 0 })
+      cx += 14
+    }
+  })
+  return cx - x
+}
+
+/**
+ * Cabeçalho da imagem: identidade à esquerda, Supremo puxado para o centro.
+ *
+ * O layout anterior gastava a faixa inteira com um nome e um ícone, e jogava
+ * HP e Determinação numa linha de texto. Aqui a esquerda repete os sinais
+ * vitais da interface — barra e círculos de verdade — e a direita passa a
+ * carregar o que o Supremo tem a dizer: números, comando e a modificação
+ * textual que a build causou nele. Ver DEC-028.
+ *
+ * @returns {void}
+ */
+function paintHeader(pen, { build, stats, cls, L, buildName, icons, C }) {
+  pen.rect(0, 0, IMG_W, IMG_HEADER_H, C.cls + '22')
+  pen.rect(0, IMG_HEADER_H - 1, IMG_W, 1, C.cls + '55')
+
+  // ── Esquerda: classe, nome e sinais vitais ─────────────────
+  pen.icon(icons.cls, IMG_PAD, (IMG_HEADER_H - IMG_ICON_CLS) / 2, IMG_ICON_CLS)
+
+  const clsName = L ? (cls.nEN || cls.nPT) : cls.nPT
+  const named   = !!buildName?.trim()
+  const tx      = IMG_PAD + IMG_ICON_CLS + 14
+
+  pen.text(named ? buildName.trim() : clsName, tx, 40,
+    { font: `800 ${IMG_FS.title}px ${IMG_FONT}`, color: C.text, lineH: 0 })
+  if (named) {
+    pen.text(clsName.toUpperCase(), tx, 56,
+      { font: `700 ${IMG_FS.cls}px ${IMG_FONT}`, color: C.cls, lineH: 0 })
+  }
+
+  const leg     = checkLegendaryLimit(build)
+  const hp      = stats?.maxHP ?? 100
+  const resolve = stats?.maxResolve ?? 3
+  const vitalFt = `700 ${IMG_FS.vital}px ${IMG_FONT}`
+  const labelW  = 26
+
+  // Determinação — círculos, todos da mesma cor (ver DEC-028)
+  const detY = named ? 74 : 68
+  pen.text(L ? 'RES' : 'DET', tx, detY + 3, { font: vitalFt, color: C.muted, lineH: 0 })
+  pen.detDots(tx + labelW, detY, resolve, C.accent)
+
+  // HP — barra de cor única, mais o número à direita
+  const hpY = detY + 20
+  pen.text('HP', tx, hpY + 3, { font: vitalFt, color: C.muted, lineH: 0 })
+  const barW = IMG_HP_BASE_W + Math.max(0, hp - 100) * IMG_HP_BONUS_W
+  pen.hpBar(tx + labelW, hpY - IMG_HP_H / 2, barW, IMG_HP_H, C.hp)
+  pen.text(String(hp), tx + labelW + barW + 9, hpY + 4,
+    { font: `700 ${IMG_FS.ultInfo}px ${IMG_FONT}`, color: C.text, lineH: 0 })
+
+  // Contador de Magistrais, ao lado do HP
+  const legX = tx + labelW + barW + 9 + 34
+  pen.text(`${'★'.repeat(leg.used)}${'☆'.repeat(Math.max(0, leg.limit - leg.used))}`,
+    legX, hpY + 4, { font: `400 ${IMG_FS.ultInfo}px ${IMG_FONT}`, color: C.leg, lineH: 0 })
+
+  // ── Direita: o Supremo ─────────────────────────────────────
+  // Puxado para o centro: o bloco começa um pouco depois da metade e usa toda
+  // a faixa que sobrava à direita.
+  const ux = Math.round(IMG_W * 0.46)
+  pen.icon(icons.supreme, ux, (IMG_HEADER_H - IMG_ICON_ULT) / 2, IMG_ICON_ULT)
+
+  const utx = ux + IMG_ICON_ULT + 14
+  const utw = IMG_W - IMG_PAD - utx
+  const ult = stats?.ultimate
+
+  const uName = ult ? (L ? (ult.nEN || ult.nPT) : ult.nPT)
+                    : (L ? (cls.ult?.nEN || cls.ult?.nPT) : cls.ult?.nPT)
+  pen.text(uName, utx, 38,
+    { font: `700 ${IMG_FS.ult}px ${IMG_FONT}`, color: C.cls, maxW: utw, lineH: 0 })
+
+  const info = ultimateHeaderLines(ult, cls, L)
+  let infoX  = utx
+  const cmdW = paintCommand(pen, cls.ult?.cmd, infoX, 47, C)
+  if (cmdW) infoX += cmdW + 12
+  if (info.stats) {
+    pen.text(info.stats, infoX, 58,
+      { font: `600 ${IMG_FS.ultInfo}px ${IMG_FONT}`, color: C.text, lineH: 0 })
+  }
+  if (info.note) {
+    pen.text(info.note, utx, 78,
+      { font: `italic 400 ${IMG_FS.ultNote}px ${IMG_FONT}`, color: C.muted,
+        maxW: utw, lineH: 14 })
   }
 }
 
@@ -2244,7 +2515,7 @@ function paintCardBlocks(pen, blocks, x, y, w, icons, C) {
   for (const b of blocks) {
     switch (b.k) {
       case 'label':
-        pen.text(b.t, x, y + dy + 9, { font: `600 9px ${IMG_FONT}`, color: C.dim, lineH: 0 })
+        pen.text(b.t, x, y + dy + 9, { font: `600 ${IMG_FS.label}px ${IMG_FONT}`, color: C.dim, lineH: 0 })
         dy += 15
         break
 
@@ -2253,7 +2524,7 @@ function paintCardBlocks(pen, blocks, x, y, w, icons, C) {
         const size = b.size || IMG_ICON_CARD
         const tx   = x + size + 8
         const font = `700 ${b.fs}px ${IMG_FONT}`
-        const badgeFont = `400 11px ${IMG_FONT}`
+        const badgeFont = `400 ${IMG_FS.badge}px ${IMG_FONT}`
         // O selo de recarga ocupa espaço na mesma linha do nome — descontar
         // antes de medir, senão o nome quebra por baixo dele.
         const badgeW = b.badge ? pen.width(` ${b.badge}`, badgeFont) : 0
@@ -2277,18 +2548,18 @@ function paintCardBlocks(pen, blocks, x, y, w, icons, C) {
 
       case 'xp':
         dy += pen.text(b.t, x, y + dy + 10,
-          { font: `italic 400 10px ${IMG_FONT}`, color: C.leg, maxW: w, lineH: 14 })
+          { font: `italic 400 ${IMG_FS.xp}px ${IMG_FONT}`, color: C.leg, maxW: w, lineH: IMG_FS.xp + 4 })
         dy += 3
         break
 
       case 'bullet':
         dy += pen.text(`• ${b.t}`, x, y + dy + 11,
-          { font: `400 11px ${IMG_FONT}`, color: C.text, maxW: w, lineH: 15 })
+          { font: `400 ${IMG_FS.bullet}px ${IMG_FONT}`, color: C.text, maxW: w, lineH: IMG_FS.bullet + 4 })
         break
 
       case 'desc':
         dy += pen.text(b.t, x + 10, y + dy + 10,
-          { font: `400 10px ${IMG_FONT}`, color: C.dim, maxW: w - 10, lineH: 13 })
+          { font: `400 ${IMG_FS.desc}px ${IMG_FONT}`, color: C.dim, maxW: w - 12, lineH: IMG_FS.desc + 4 })
         dy += 2
         break
     }
@@ -2309,7 +2580,7 @@ function paintCardBlocks(pen, blocks, x, y, w, icons, C) {
 function paintBand(pen, mp, { title, cards, cols, x, y, w, icons, C }) {
   if (!cards.length) return y
 
-  pen.text(title, x, y + 10, { font: `700 10px ${IMG_FONT}`, color: C.muted, lineH: 0 })
+  pen.text(title, x, y + 10, { font: `700 ${IMG_FS.band}px ${IMG_FONT}`, color: C.muted, lineH: 0 })
   y += 16
   pen.divider(x, y, x + w, C.border)
   y += IMG_GAP
@@ -2347,14 +2618,14 @@ function abilityCards({ build, stats, cls, L, withDesc, C }) {
     const cd = stats?.abilityCooldown?.finalCd ?? ab.cd
     out.push({ accent: C.cls, blocks: [
       { k: 'label', t: L ? 'Class Ability' : 'Habilidade' },
-      { k: 'head', t: L ? (ab.nEN || ab.nPT) : ab.nPT, icon: 'ability', fs: 12,
+      { k: 'head', t: L ? (ab.nEN || ab.nPT) : ab.nPT, icon: 'ability', fs: IMG_FS.head,
         color: C.cls, badge: `${cd}s` },
       ...(withDesc ? [{ k: 'desc', t: L ? (ab.dEN || ab.dPT) : ab.dPT }] : []),
     ]})
   } else {
     out.push({ blocks: [
       { k: 'label', t: L ? 'Class Ability' : 'Habilidade' },
-      { k: 'head', t: '—', fs: 12, color: C.dim, size: 4 },
+      { k: 'head', t: '—', fs: IMG_FS.head, color: C.dim, size: 4 },
     ]})
   }
 
@@ -2365,14 +2636,14 @@ function abilityCards({ build, stats, cls, L, withDesc, C }) {
     if (!tech) {
       out.push({ blocks: [
         { k: 'label', t: label },
-        { k: 'head', t: '—', fs: 12, color: C.dim, size: 4 },
+        { k: 'head', t: '—', fs: IMG_FS.head, color: C.dim, size: 4 },
       ]})
       continue
     }
     out.push({ blocks: [
       { k: 'label', t: label },
       { k: 'head', t: L ? (tech.nEN || tech.nPT) : tech.nPT, icon: `tech_${tier}`,
-        fs: 12, color: C.text },
+        fs: IMG_FS.head, color: C.text },
       ...(withDesc ? [{ k: 'desc', t: L ? (tech.dEN || tech.dPT) : tech.dPT }] : []),
     ]})
   }
@@ -2408,7 +2679,7 @@ function gearCards({ build, stats, L, withDesc, C }) {
     const blocks = [
       { k: 'label', t: labels[slot] },
       { k: 'head', t: (L ? (item.nEN || item.nPT) : item.nPT) + (item.leg ? '  ★' : ''),
-        icon: `gear_${slot}`, fs: 13, color: item.leg ? C.leg : C.text,
+        icon: `gear_${slot}`, fs: IMG_FS.headGear, color: item.leg ? C.leg : C.text,
         badge: cd != null ? `${cd}s` : null },
     ]
 
@@ -2463,44 +2734,14 @@ function paintBuildImage(ctx, draw, { build, stats, lang, buildName, mode, icons
   const C = {
     bg: T.bg, card: T.card, border: T.border, text: T.text,
     muted: T.muted, dim: T.dim, leg: T.leg, green: T.green,
+    accent: T.accent, hp: '#c0392b',
     cls: T.cls[build.classId],
   }
   const withDesc  = mode === 'detailed' || mode === 'stats'
   const withStats = mode === 'stats'
   const innerW    = IMG_W - IMG_PAD * 2
 
-  // ── Cabeçalho ──────────────────────────────────────────────
-  pen.rect(0, 0, IMG_W, IMG_HEADER_H, C.cls + '22')
-  pen.rect(0, IMG_HEADER_H - 1, IMG_W, 1, C.cls + '55')
-
-  const clsIcon = 34
-  pen.icon(icons.cls, IMG_PAD, (IMG_HEADER_H - clsIcon) / 2, clsIcon)
-
-  const clsName = L ? (cls.nEN || cls.nPT) : cls.nPT
-  const tx = IMG_PAD + clsIcon + 14
-  pen.text(buildName?.trim() || clsName, tx, 44,
-    { font: `800 20px ${IMG_FONT}`, color: C.text, lineH: 0 })
-
-  // Faixa de sinais vitais: o que a interface mostra no topo e que a imagem
-  // não trazia em modo nenhum — HP, Determinação e o contador de Magistrais.
-  const leg  = checkLegendaryLimit(build)
-  const bits = [
-    buildName?.trim() ? clsName : null,
-    `HP ${stats?.maxHP ?? 100}`,
-    `${L ? 'Resolve' : 'Det.'} ${stats?.maxResolve ?? 3}`,
-    `${'★'.repeat(leg.used)}${'☆'.repeat(Math.max(0, leg.limit - leg.used))} ${leg.used}/${leg.limit}`,
-  ].filter(Boolean)
-  pen.text(bits.join('   ·   '), tx, 66,
-    { font: `500 11px ${IMG_FONT}`, color: C.muted, lineH: 0 })
-
-  // Supremo, à direita. PNG — nunca com filtro (armadilha 3).
-  const ultX = IMG_W - IMG_PAD - IMG_ICON_ULT
-  pen.icon(icons.supreme, ultX, 8, IMG_ICON_ULT)
-  if (stats?.ultimate) {
-    const uName = L ? (stats.ultimate.nEN || stats.ultimate.nPT) : stats.ultimate.nPT
-    pen.centered(uName, ultX + IMG_ICON_ULT / 2, 8 + IMG_ICON_ULT + 13,
-      { font: `600 10px ${IMG_FONT}`, color: C.cls })
-  }
+  paintHeader(pen, { build, stats, cls, L, buildName, icons, C })
 
   let y = IMG_HEADER_H + IMG_PAD
 
@@ -2521,7 +2762,7 @@ function paintBuildImage(ctx, draw, { build, stats, lang, buildName, mode, icons
   // ── Banda 3 — estatísticas (somente modo Estatístico) ──────
   if (withStats && stats) {
     pen.text(L ? 'STATISTICS' : 'ESTATÍSTICAS', IMG_PAD, y + 14,
-      { font: `700 10px ${IMG_FONT}`, color: C.muted, lineH: 0 })
+      { font: `700 ${IMG_FS.band}px ${IMG_FONT}`, color: C.muted, lineH: 0 })
     y += 20
     pen.divider(IMG_PAD, y, IMG_W - IMG_PAD, C.border)
     y += IMG_GAP
@@ -2544,7 +2785,7 @@ function paintBuildImage(ctx, draw, { build, stats, lang, buildName, mode, icons
 
     const cols  = 3
     const colW  = innerW / cols
-    const rowsH = Math.ceil(rows.length / cols) * 18
+    const rowsH = Math.ceil(rows.length / cols) * 20
     const ultH  = ultLine ? 34 : 0
     pen.card(IMG_PAD, y, innerW, ultH + rowsH + IMG_CARD_PAD * 2, C.card, C.border)
 
@@ -2552,17 +2793,17 @@ function paintBuildImage(ctx, draw, { build, stats, lang, buildName, mode, icons
     if (ultLine) {
       const uName = L ? (stats.ultimate.nEN || stats.ultimate.nPT) : stats.ultimate.nPT
       pen.text(`${L ? 'Ultimate' : 'Supremo'}: ${uName}`, IMG_PAD + IMG_CARD_PAD, cy + 12,
-        { font: `700 12px ${IMG_FONT}`, color: C.cls, lineH: 0 })
+        { font: `700 ${IMG_FS.stat + 1}px ${IMG_FONT}`, color: C.cls, lineH: 0 })
       pen.text(ultLine, IMG_PAD + IMG_CARD_PAD, cy + 28,
-        { font: `400 11px ${IMG_FONT}`, color: C.muted, lineH: 0 })
+        { font: `400 ${IMG_FS.stat}px ${IMG_FONT}`, color: C.muted, lineH: 0 })
       cy += ultH
     }
 
-    const lblFt = `400 11px ${IMG_FONT}`
-    const valFt = `700 11px ${IMG_FONT}`
+    const lblFt = `400 ${IMG_FS.stat}px ${IMG_FONT}`
+    const valFt = `700 ${IMG_FS.stat}px ${IMG_FONT}`
     rows.forEach((row, i) => {
       const rx = IMG_PAD + IMG_CARD_PAD + (i % cols) * colW
-      const ry = cy + Math.floor(i / cols) * 18 + 11
+      const ry = cy + Math.floor(i / cols) * 20 + 12
       pen.text(`${row.label}:`, rx, ry, { font: lblFt, color: C.muted, lineH: 0 })
       pen.text(row.value, rx + pen.width(`${row.label}: `, lblFt), ry,
         { font: valFt, color: C.green, lineH: 0 })
