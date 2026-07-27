@@ -1112,7 +1112,7 @@ function UltimateCard({ stats, build, setBuild, lang }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
         <span style={{ fontWeight: 700, color: clsColor, fontSize: 14 }}>{title}</span>
         <span style={{ fontSize: 11, color: T.muted }}>
-          {lang === 'en' ? 'Cost:' : 'Custo:'} {ult.cost}★
+          {lang === 'en' ? 'Cost:' : 'Custo:'} {ult.cost} ●
         </span>
       </div>
 
@@ -1202,7 +1202,7 @@ function StatsPanel({ stats, build, setBuild, lang }) {
   const groups = useMemo(() => stats ? getStatGroups(stats, build.classId, lang) : [], [stats, build.classId, lang])
 
   const fmtStat = (s) => {
-    if (s.unit === '★') return '★'.repeat(s.value)
+    if (s.unit === '●') return '●'.repeat(s.value)
     if (s.unit === '%') return pct(s.value)
     if (s.unit === 'pts' || s.unit === 's') return pts(s.value, s.unit)
     return String(s.value)
@@ -2079,7 +2079,7 @@ function ultimateSummary(ult, L) {
   if (ult.ultDmgBonus > 0) {
     parts.push(`+${Math.round(ult.ultDmgBonus * 100)}% ${L ? 'ult. dmg' : 'dano do supremo'}`)
   }
-  if (ult.cost != null) parts.push(`${L ? 'Cost' : 'Custo'}: ${ult.cost}★`)
+  if (ult.cost != null) parts.push(`${L ? 'Cost' : 'Custo'}: ${ult.cost} ●`)
 
   return parts.length ? parts.join('  ·  ') : null
 }
@@ -2348,7 +2348,7 @@ function makePainter(ctx, draw) {
  */
 function ultimateHeaderLines(ult, cls, L) {
   const bits = []
-  if (ult?.cost != null) bits.push(`${L ? 'Cost' : 'Custo'} ${ult.cost}★`)
+  if (ult?.cost != null) bits.push(`${L ? 'Cost' : 'Custo'} ${ult.cost} ●`)
 
   if (ult?.mode === 'rage300') {
     bits.push(`${L ? 'Strikes' : 'Golpes'} ${ult.strikes} × ${ult.dmgPct}%`)
@@ -2458,10 +2458,18 @@ function paintHeader(pen, { build, stats, cls, L, buildName, icons, C }) {
   pen.text(String(hp), tx + labelW + barW + 9, hpY + 4,
     { font: `700 ${IMG_FS.ultInfo}px ${IMG_FONT}`, color: C.text, lineH: 0 })
 
-  // Contador de Magistrais, ao lado do HP
-  const legX = tx + labelW + barW + 9 + 34
+  // Contador de Magistrais — na mesma linha do HP, mas AFASTADO e com nome.
+  // O afastamento e medido, nao fixo: o numero de HP muda de largura entre
+  // dois e tres digitos, e um espaco fixo deixava as estrelas coladas nele.
+  // O nome existe porque estrela sozinha nao diz o que conta — e agora que a
+  // Determinacao usa circulo, e a unica coisa contada em estrelas. Ver FIX-014.
+  const hpNumFt = `700 ${IMG_FS.ultInfo}px ${IMG_FONT}`
+  const legLbl  = L ? 'LEGENDARY' : 'MAGISTRAIS'
+  const legX    = tx + labelW + barW + 9 + pen.width(String(hp), hpNumFt) + 44
+  pen.text(legLbl, legX, hpY + 3, { font: vitalFt, color: C.muted, lineH: 0 })
   pen.text(`${'★'.repeat(leg.used)}${'☆'.repeat(Math.max(0, leg.limit - leg.used))}`,
-    legX, hpY + 4, { font: `400 ${IMG_FS.ultInfo}px ${IMG_FONT}`, color: C.leg, lineH: 0 })
+    legX + pen.width(legLbl, vitalFt) + 9, hpY + 4,
+    { font: `400 ${IMG_FS.ultInfo}px ${IMG_FONT}`, color: C.leg, lineH: 0 })
 
   // ── Direita: o Supremo ─────────────────────────────────────
   // Puxado para o centro: o bloco começa um pouco depois da metade e usa toda

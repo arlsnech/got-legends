@@ -1191,7 +1191,10 @@ export function getStatGroups(stats, classId, lang) {
       groupId: 'resolve',
       label:   t.grp_resolve,
       stats: [
-        { key: 'maxResolve',       label: t.maxResolve,       value: stats.maxResolve,       unit: '★', base: BASE_RESOLVE },
+        // Unidade '●': o circulo e o simbolo da Determinacao, igual a topbar
+        // e ao jogo. Era '★' — a MESMA unidade dos itens Magistrais, o que
+        // punha "Determinacao ★★★★" e "Magistrais ★☆☆" na mesma tabela. Ver FIX-014.
+        { key: 'maxResolve',       label: t.maxResolve,       value: stats.maxResolve,       unit: '●', base: BASE_RESOLVE },
         { key: 'resolveGain',      label: t.resolveGain,      value: stats.resolveGain,      unit: '%', base: 0 },
         { key: 'resolveFromMelee', label: t.resolveFromMelee, value: stats.resolveFromMelee, unit: '%', base: 0 },
         { key: 'resolveFromRanged',label: t.resolveFromRanged,value: stats.resolveFromRanged,unit: '%', base: 0 },
@@ -1463,13 +1466,15 @@ function generateId() {
 /**
  * Formata um valor de stat para exibição na UI.
  * @param {number} value
- * @param {string} unit  '%' | 'pts' | 's' | '★' | ''
+ * @param {string} unit  '%' | 'pts' | 's' | '●' | ''
  * @param {string} sk    stat key (para casos especiais)
  * @returns {string}
  */
 export function formatStatValue(value, unit, sk) {
-  if (unit === '★') {
-    return '★'.repeat(value);
+  // '●' e a unidade da Determinacao. A estrela e reservada a Magistral e nao
+  // deve voltar para ca — ver FIX-014.
+  if (unit === '●') {
+    return '●'.repeat(value);
   }
   if (unit === '%') {
     const pct = Math.round(value * 10000) / 100; // ex: 0.12 → 12
