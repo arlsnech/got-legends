@@ -354,3 +354,19 @@ Quatro pedidos do autor sobre a imagem: letras maiores, mais nitidez, ícones ma
 **Também nesta sessão:** o `meta/specs/260725-spec0015-correcoes-modal-e-imagem.md` estava *untracked* desde a `spec0016` e entrou no commit. Spec é artefato versionado, e aquela ficou de fora por acidente — a `spec0015` é justamente a que registra um diagnóstico errado, e é o tipo de coisa que não deve sumir.
 
 Simulado antes de virar spec: duas passadas com altura idêntica nos três modos, e as seis combinações de Supremo (Samurai comum e a 300%, Caçadora, Assassino com Ofuscado, Ronin com e sem variante) conferidas uma a uma.
+
+---
+
+**2026-07-26 (3) — a estrela significava duas coisas (FIX-014).**
+
+O autor viu no print que o custo do Supremo saía como `3★`, e ★ já marca Magistral em toda a ferramenta. A verificação mostrou que o problema é de vocabulário, não de um lugar: **a estrela era a unidade da estatística `maxResolve`** (`unit: '★'` em `getStatGroups`, repetida por `formatStatValue`), e daí se espalhou para os três pontos que escrevem o custo do Supremo.
+
+O efeito mais claro estava na própria tabela de estatísticas: *Determinação Máxima* `★★★★` logo abaixo de *Slots Magistrais*, com a mesma estrela contando duas grandezas diferentes.
+
+A Determinação passou a usar **`●`** — que é o que a topbar sempre desenhou, só que como desenho, nunca como dado. A estrela ficou exclusiva de Magistral. Cinco pontos alterados; as seis ocorrências que significam Magistral foram listadas na spec para conferência no `git diff`.
+
+**Por que passou tanto tempo:** as duas leituras quase nunca apareciam juntas. Foi o cabeçalho novo da imagem (DEC-028) que pôs `Custo 3★` a três centímetros de `★☆☆`. Virou a armadilha 21.
+
+**De passagem**, os dois ajustes que o autor pediu no cabeçalho da imagem: o contador de Magistrais ganhou o rótulo **MAGISTRAIS** e um afastamento **medido** do número de HP — o espaço fixo anterior não sabia se o número tinha dois ou três dígitos.
+
+**Próximo passo:** duas frentes em aberto, à escolha do autor — fechar as pendências acumuladas (o `cmd` dos quatro Supremos, o destino de `getAvailableProps`/`getAvailablePerks`, a duplicação de `selectTech`/`selectAbility`, as cópias soltas de `GUIA_COMPLETO*.md`), ou decidir a simplificação dos botões de exportação, cuja proposta foi apresentada ao autor.

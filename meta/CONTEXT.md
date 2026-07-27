@@ -164,6 +164,8 @@ Dois tipos de ícones com lógica diferente:
 
 20. **Tamanho de fonte da imagem mora em `IMG_FS`.** Dezenove literais espalhados pelo desenho tornavam "aumente um pouco as letras" uma caçada, com desalinhamento garantido no que fosse esquecido. Acrescentou texto novo ao canvas? A medida vem do mapa.
 
+21. **`★` é de Magistral. `●` é de Determinação. Não troque.** A estrela marca item Magistral no selo, no `<select>`, no texto exportado, no cartão da imagem e no contador `★☆☆`; o círculo é a unidade de `maxResolve` e o custo do Supremo. Já foram a mesma coisa, e o resultado era *Determinação* `★★★★` na tabela logo abaixo de *Slots Magistrais* (FIX-014). Símbolo é vocabulário: um significado por caractere.
+
 ### Onde ficam as larguras das colunas
 
 Numa linha só, no `return` do `App`, dentro do bloco marcado `{/* ══ ÁREA DE 3/2 COLUNAS ══ */}`. Busque por `gridTemplateColumns`:

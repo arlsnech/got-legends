@@ -947,3 +947,28 @@ Para ligar, basta acrescentar `cmd` ao `ult` da classe em `data.js` — por exem
 
 ### Tipografia num lugar só
 Todos os tamanhos de fonte da imagem passaram para `IMG_FS`. O pedido de "aumentar um pouco as letras" seria, antes, uma caçada por dezenove literais espalhados pelo desenho — e cada um esquecido produziria um desalinhamento sutil. `IMG_SCALE` subiu de 2 para 3 e `IMG_W` de 900 para 1000 pelo mesmo motivo: mais pixels por unidade lógica, e mais largura para o texto maior respirar.
+
+---
+
+## FIX-014 — A estrela significava Magistral e Determinação ao mesmo tempo
+
+**Data:** 2026-07-26 · **Gravidade:** média (ambiguidade de leitura, em toda a ferramenta)
+
+### Sintoma
+O custo do Supremo aparecia como `3★`. Como ★ marca item Magistral em todo o resto — no selo do item, no `<select>`, no texto exportado, no cartão da imagem e no contador `★☆☆` —, `Custo 3★` sugeria alguma relação com Magistrais que não existe. O autor viu no print, com as duas leituras a poucos centímetros uma da outra.
+
+### Causa raiz
+Não era um símbolo mal escolhido num lugar: **a estrela era a unidade da estatística `maxResolve`**. `getStatGroups` declarava `unit: '★'`, e `formatStatValue` repetia a estrela para essa unidade. Daí a tabela de estatísticas mostrar *Determinação Máxima* `★★★★` logo abaixo de *Slots Magistrais*, e daí os três lugares que exibem o custo do Supremo terem herdado a estrela como se fosse o símbolo da Determinação.
+
+A Determinação, na prática, **nunca teve símbolo próprio** — a topbar da interface sempre a desenhou como círculos, mas isso era desenho, não dado. O caractere só aparecia onde havia texto.
+
+### Correção
+A unidade virou `●`, que é o que a topbar já desenhava e o que o jogo mostra. Cinco pontos: a declaração em `logic.js`, os dois formatadores (`logic.js` e a cópia dentro do `StatsPanel`), e os três lugares que escrevem o custo do Supremo — painel da UI, texto exportado e cabeçalho da imagem. **A estrela ficou exclusiva de Magistral.**
+
+### Por que passou tanto tempo
+Porque as duas leituras raramente apareciam juntas. Foi o cabeçalho novo da imagem (DEC-028) que pôs `Custo 3★` a três centímetros de `★☆☆` e tornou a colisão visível de uma vez.
+
+**Regra que fica:** símbolo é vocabulário, e vocabulário tem que ser único por significado. Antes de usar um caractere como unidade, procure onde mais ele já aparece na interface — a colisão não dói enquanto os dois usos vivem em telas diferentes, e dói de uma vez quando alguém os aproxima.
+
+### De passagem
+O contador de Magistrais no cabeçalho da imagem ganhou o rótulo **MAGISTRAIS** e um afastamento **medido** do número de HP — antes era um espaço fixo, que não sabia se o número tinha dois ou três dígitos. Com a Determinação em círculos, a estrela passou a ser a única coisa contada em estrelas, e nomear o contador fecha a leitura.
