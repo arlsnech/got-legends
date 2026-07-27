@@ -11,6 +11,9 @@
 - **Fase 3 — exportação em imagem.** Os três botões 🖼️ (Build, Detalhado, Estatístico) geram um PNG da build e disparam o download. Canvas puro, sem dependência externa; altura calculada a partir do conteúdo e renderização em 2x. Layout em duas colunas — habilidade e vantagens à esquerda, equipamentos à direita — com faixa de estatísticas no modo Estatístico, ícones do jogo em cada linha e as cores da classe ativa.
 
 ### Modificado
+- **O painel de exportação separou nível de detalhe de formato.** Eram seis botões em dois triplos, e Build/Detalhado/Estatístico significam a mesma coisa nos dois — agora o nível é escolhido uma vez num controle segmentado, com uma linha de descrição que muda ao selecionar e ao passar o cursor, e o formato virou dois botões: 🖼️ Imagem e 📋 Texto (DEC-029)
+- O custo do Supremo passou a ser mostrado como pips (`●●●`) em vez de número mais símbolo, na mesma linguagem dos círculos de Determinação da topbar
+- Os quatro Supremos ganharam o comando de ativação (`L1+R1`), que aparece como teclas desenhadas no cabeçalho da imagem
 - No cabeçalho da imagem, o contador de Magistrais ganhou o rótulo **MAGISTRAIS** e um afastamento medido do número de HP, que antes era fixo e não sabia se o número tinha dois ou três dígitos
 - **O cabeçalho da imagem passou a mostrar barra de HP e círculos de Determinação de verdade**, como a topbar da ferramenta — em cor uniforme, sem a distinção base/bônus que só faz sentido enquanto se monta. O Supremo saiu da borda para perto do centro e ganhou custo, golpes ou alvos com o bônus, multiplicadores e a **descrição da habilidade**, que existia no dado e nunca tinha sido exibida (DEC-028)
 - **Letras e ícones maiores na imagem gerada**, e resolução de renderização aumentada (DEC-028)

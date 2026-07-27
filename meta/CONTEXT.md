@@ -164,7 +164,11 @@ Dois tipos de ícones com lógica diferente:
 
 20. **Tamanho de fonte da imagem mora em `IMG_FS`.** Dezenove literais espalhados pelo desenho tornavam "aumente um pouco as letras" uma caçada, com desalinhamento garantido no que fosse esquecido. Acrescentou texto novo ao canvas? A medida vem do mapa.
 
-21. **`★` é de Magistral. `●` é de Determinação. Não troque.** A estrela marca item Magistral no selo, no `<select>`, no texto exportado, no cartão da imagem e no contador `★☆☆`; o círculo é a unidade de `maxResolve` e o custo do Supremo. Já foram a mesma coisa, e o resultado era *Determinação* `★★★★` na tabela logo abaixo de *Slots Magistrais* (FIX-014). Símbolo é vocabulário: um significado por caractere.
+21. **`★` é de Magistral. `●` é de Determinação. Não troque.** A estrela marca item Magistral no selo, no `<select>`, no texto exportado, no cartão da imagem e no contador `★☆☆`; o círculo é a unidade de `maxResolve` e o custo do Supremo, sempre **repetido** (`●●●`), nunca como número mais símbolo. Já foram a mesma coisa, e o resultado era *Determinação* `★★★★` na tabela logo abaixo de *Slots Magistrais* (FIX-014). Símbolo é vocabulário: um significado por caractere.
+
+22. **O nível de detalhe é um só para os dois formatos.** Build, Detalhado e Estatístico significam a mesma coisa em imagem e em texto (DEC-022), e o painel de exportação escolhe o nível **uma vez**, num controle segmentado, e o formato separado. Acrescentar um formato novo é acrescentar um botão de Gerar — **não** um triplo novo de níveis. Ver DEC-029.
+
+23. **Texto que muda com o cursor precisa de altura fixa.** A linha de descrição do seletor de detalhe troca a cada hover; sem altura fixa, uma descrição de duas linhas empurra a topbar inteira a cada passada do cursor. É o FIX-011 por outro caminho, e a mesma regra do aviso de "salvo" na gaveta de builds.
 
 ### Onde ficam as larguras das colunas
 

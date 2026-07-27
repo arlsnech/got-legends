@@ -145,6 +145,19 @@ As quatro perguntas que renderam, na ordem em que apareceram:
 
 **Se um dia houver material antigo de novo, comece pela 3 e pela 4.** As duas primeiras são as intuitivas e as menos produtivas.
 
+### 2026-07-27 — Onde vive o compartilhamento por link
+Um botão de **Código** ao lado de Imagem e Texto foi proposto e recusado pelo autor: confunde, porque não é um formato de leitura como os outros dois. A observação abre um assunto maior, que vale tratar de uma vez em vez de aos pedaços.
+
+Há hoje **quatro** ideias de compartilhamento espalhadas, e elas competem entre si:
+1. **Código Base64** — existe, e é um interruptor nas Configurações que altera o fim do texto copiado.
+2. **URL com a build na query string** (`?b=eyJ...`) — está na F4 do `ROADMAP.md`.
+3. **Link curto** — mencionado, sem decisão; depende de encurtador, e encurtador é serviço externo num projeto 100% client-side.
+4. **QR Code** — está na F5, e depende da URL curta existir.
+
+**A pergunta que decide as quatro:** se a URL com a build embutida funcionar, o Base64 vira redundante — quem quer passar uma build passa um link, não um blocão de texto. Nesse caso o interruptor das Configurações some, a F4 absorve o assunto inteiro, e o painel de exportação ganha no máximo **um** controle novo, não três.
+
+Vale resolver isso **na F4**, junto com a URL, e não antes.
+
 ### 2026-07-24 — Seletor "Só alteradas" *(respondido em 2026-07-25 — encerrado)*
 Removido por dar problema, e a avaliação do autor de que era inútil se sustenta: na tela o espaço não é escasso, a tabela rola de graça e o destaque visual já mostra o que a build muda. **Não reimplementar.** O conceito não morreu — mudou de lugar: na imagem da Fase 3, onde o espaço é fixo, filtrar é obrigatório (DEC-022). Fica a regra geral, que vale para qualquer filtro futuro: **a utilidade de esconder é proporcional à escassez de espaço.**
 

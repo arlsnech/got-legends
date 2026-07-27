@@ -370,3 +370,21 @@ A Determinação passou a usar **`●`** — que é o que a topbar sempre desenh
 **De passagem**, os dois ajustes que o autor pediu no cabeçalho da imagem: o contador de Magistrais ganhou o rótulo **MAGISTRAIS** e um afastamento **medido** do número de HP — o espaço fixo anterior não sabia se o número tinha dois ou três dígitos.
 
 **Próximo passo:** duas frentes em aberto, à escolha do autor — fechar as pendências acumuladas (o `cmd` dos quatro Supremos, o destino de `getAvailableProps`/`getAvailablePerks`, a duplicação de `selectTech`/`selectAbility`, as cópias soltas de `GUIA_COMPLETO*.md`), ou decidir a simplificação dos botões de exportação, cuja proposta foi apresentada ao autor.
+
+---
+
+**2026-07-27 — exportação reconstruída, custo em pips, comando dos Supremos (DEC-029).**
+
+- **O custo virou `●●●`.** O autor corrigiu a `spec0019`: trocar a estrela pelo círculo e manter o número (`3 ●`) resolvia a colisão e perdia a oportunidade. A topbar já mostra a Determinação **disponível** como pips, então `●●●` embaixo de `●●●●●` diz "gasta três dos cinco" sem ler número nenhum.
+- **`cmd: "L1+R1"` nos quatro Supremos**, conferido no jogo. O renderizador de teclas estava pronto e desligado desde a `spec0018`; agora liga. As quatro classes usam o mesmo comando e ainda assim ele é escrito quatro vezes — DEC-006 em vigor.
+- **O painel de exportação separou nível de formato.** Eram dois triplos independentes para um conceito que é um só (DEC-022). Agora: um controle segmentado de três níveis, escolhido uma vez, e dois botões de Gerar.
+
+**A pesquisa mudou o desenho, e vale registrar como.** O autor pediu que as referências de UX fossem consultadas em vez de eu decidir por instinto, e três coisas vieram de lá: *switch* está descartado (é para dois estados, não três); controle segmentado é o padrão para 2–5 opções mutuamente exclusivas em espaço apertado; e — o ponto que quase invalidou tudo — **a seleção de um segmentado precisa ter efeito imediato**, e a literatura desaconselha usá-lo para configurar uma ação futura, que é exatamente o nosso caso.
+
+A saída foi dar-lhe efeito imediato: uma **linha de descrição que muda na hora**, e que também reage ao cursor. Ela substitui os balões de ajuda dos seis botões antigos — um mecanismo no lugar de dois — e as três descrições falam só do **conteúdo**, nunca do formato, porque mencionar imagem ou texto recriaria em palavras a confusão que o desenho desfaz. Altura fixa, senão a topbar tremeria a cada passada do cursor (armadilha 23).
+
+**Recusado de propósito:** o botão de Código. Base64, link direto, link curto e QR Code são um terceiro formato com decisões próprias, e o autor preferiu tratá-los juntos numa fase futura. O interruptor do Base64 fica nas Configurações.
+
+**Corrigido de casa:** a `spec0019` inseriu uma entrada *Determinação* no `GLOSSARY.md` sem verificar que já havia outra três linhas abaixo. O executor seguiu a âncora e reportou; as duas foram consolidadas.
+
+**Próximo passo:** a limpeza acordada com o autor — o destino de `getAvailableProps`/`getAvailablePerks` (armadilha 14, sem consumidor), a duplicação de `selectTech`/`selectAbility` e a do formatador de stats entre `logic.js` e o `StatsPanel`, e as cópias soltas de `GUIA_COMPLETO*.md` fora do repositório.

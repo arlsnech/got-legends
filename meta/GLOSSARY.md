@@ -7,10 +7,9 @@
 ## Conceitos do jogo (tradução PT-BR usada no projeto)
 
 - **Magistral** — item Legendary; nível máximo de qualidade de equipamento. Em EN: *Legendary*. Marcado por **★** em toda a ferramenta — selo do item, `<select>`, texto exportado, cartão da imagem e o contador `★☆☆`.
-- **Determinação** — recurso gasto pelo Supremo e por algumas habilidades. Em EN: *Resolve*. Representada por **●**: é a unidade da estatística `maxResolve` e o símbolo do custo do Supremo. Foi ★ até 2026-07-26, quando colidia com Magistral (FIX-014).
+- **Determinação** — Resolve; recurso que permite usar a habilidade suprema e algumas habilidades de classe. Representada por **●**: é a unidade da estatística `maxResolve`, o símbolo do custo do Supremo, e os círculos da topbar. Foi ★ até 2026-07-26, quando colidia com Magistral (FIX-014).
 - **Técnica Magistral** — vantagem de classe que concede `+1 legSlots`, elevando o limite de itens Magistrais equipáveis. Existe nos tiers I e III das quatro classes. Não tem flag própria: é reconhecida pelo efeito `legSlots` no array `fx`. Ver DEC-013.
 - **Vantagem** — Perk; modificador passivo equipado num item ou técnica. Em EN: *Perk*.
-- **Determinação** — Resolve; recurso que permite usar a habilidade suprema. Em EN: *Resolve*.
 - **Arma Fantasma (AF)** — Ghost Weapon; habilidade ativa de combate (kunai, bomba etc.). Em EN: *Ghost Weapon (GW)*.
 - **Habilidade Suprema** — Ultimate; habilidade poderosa que consome Determinação. Em EN: *Ultimate*.
 - **Habilidade de Classe** — Class Ability; habilidade ativa de cooldown de cada classe. Em EN: *Class Ability*.

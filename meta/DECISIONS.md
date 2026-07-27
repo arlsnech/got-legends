@@ -972,3 +972,42 @@ Porque as duas leituras raramente apareciam juntas. Foi o cabeçalho novo da ima
 
 ### De passagem
 O contador de Magistrais no cabeçalho da imagem ganhou o rótulo **MAGISTRAIS** e um afastamento **medido** do número de HP — antes era um espaço fixo, que não sabia se o número tinha dois ou três dígitos. Com a Determinação em círculos, a estrela passou a ser a única coisa contada em estrelas, e nomear o contador fecha a leitura.
+
+**Emenda de 2026-07-27:** o custo passou de `3 ●` para `●●●`. A primeira forma trocava o símbolo e mantinha o número; a segunda usa a mesma linguagem da topbar, onde a Determinação **disponível** já aparece como pips. `●●●` embaixo de `●●●●●` diz "gasta três dos cinco" sem ler número nenhum — e era isso que a estrela nunca deixou fazer.
+
+---
+
+## DEC-029 — Nível de detalhe e formato são escolhas separadas
+
+**Data:** 2026-07-27 · **Status:** aceita, em vigor
+
+### O problema
+O painel de exportação tinha **seis botões em dois triplos** — Texto {Build, Detalhado, Estatístico} e Print {Build, Detalhado, Estatístico}. Mas Build, Detalhado e Estatístico **significam exatamente a mesma coisa nos dois formatos**; a DEC-022 define os três níveis sem mencionar meio. A interface obrigava a escolher o mesmo conceito duas vezes, em dois lugares, como se fossem coisas diferentes.
+
+Não era excesso de botões: eram duas dimensões independentes — nível × formato — achatadas numa lista só.
+
+### A decisão
+Desdobrar as duas. O **nível de detalhe** vira um controle segmentado de três opções, escolhido uma vez; o **formato** vira duas ações, `🖼️ Imagem` e `📋 Texto`. Cinco controles no lugar de seis, e as seis combinações continuam todas alcançáveis.
+
+### O que a pesquisa determinou do desenho
+O autor pediu que as referências de UX fossem consultadas antes de desenhar. Quatro pontos vieram de lá e não da intuição:
+
+1. **Um *switch* está fora.** Switch é para dois estados opostos. Três níveis não cabem — é o engano mais comum quando se pensa "switch" para um seletor de três.
+2. **Controle segmentado é o padrão** para 2–5 opções mutuamente exclusivas, igualmente importantes, todas visíveis e em espaço apertado. Botões de rádio seriam a alternativa, mas pressupõem envio explícito e pedem mais altura do que a topbar tem.
+3. **A ressalva que quase invalidou a escolha:** a literatura é consistente em dizer que a seleção de um segmentado precisa ter **efeito imediato e visível**, e desaconselha usá-lo para configurar uma ação futura — que é justamente o nosso caso.
+4. **Segmentos de largura igual**, definida pelo rótulo mais longo, sem quebra e sem reticência. Rótulo à esquerda em vez de acima, exceção que a própria regra abre quando falta espaço vertical.
+
+### A linha de descrição resolve duas coisas de uma vez
+A ressalva do ponto 3 foi resolvida dando ao seletor um efeito imediato: uma **linha de descrição abaixo do controle, que muda no instante da escolha**. E ela também reage ao cursor — mostra o nível apontado e volta para o selecionado quando o cursor sai.
+
+Isso substitui os balões de ajuda que existiam em cada um dos seis botões: **um mecanismo servindo às duas necessidades**, sem sobreposição e sem estado invisível. Os balões continuam onde ainda fazem sentido — nos dois botões de Gerar, que explicam o formato, não o conteúdo.
+
+As três descrições falam **só do conteúdo**, nunca do meio. Mencionar imagem ou texto nelas recriaria em palavras a confusão que o desenho existe para desfazer.
+
+A linha tem **altura fixa**. Sem isso, um texto de duas linhas empurraria a topbar a cada passada do cursor — o mesmo defeito do FIX-011 por outro caminho.
+
+### O que ficou de fora, e por quê
+Um botão de **Código** foi proposto e **recusado pelo autor**. O código Base64, o link direto para a ferramenta, o link curto e o QR Code são um terceiro formato com decisões próprias — onde vivem, se substituem o Base64, se dependem de encurtador. Tratar isso agora seria decidir de afogadilho a parte mais difícil. O interruptor do Base64 continua nas Configurações, e o assunto fica para uma fase futura.
+
+### O comando de ativação
+`cmd: "L1+R1"` entrou nos quatro Supremos de `data.js`, conferido no jogo pelo autor. As quatro classes usam o mesmo comando e ainda assim ele é escrito quatro vezes — DEC-006 em vigor: `data.js` é explícito. Uma constante compartilhada economizaria três linhas e criaria a dúvida "e se uma classe mudar?", que é o tipo de pergunta que dado explícito não tem.
