@@ -1112,7 +1112,7 @@ function UltimateCard({ stats, build, setBuild, lang }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
         <span style={{ fontWeight: 700, color: clsColor, fontSize: 14 }}>{title}</span>
         <span style={{ fontSize: 11, color: T.muted }}>
-          {lang === 'en' ? 'Cost:' : 'Custo:'} {ult.cost} ●
+          {lang === 'en' ? 'Cost:' : 'Custo:'} {'●'.repeat(ult.cost)}
         </span>
       </div>
 
@@ -2079,7 +2079,9 @@ function ultimateSummary(ult, L) {
   if (ult.ultDmgBonus > 0) {
     parts.push(`+${Math.round(ult.ultDmgBonus * 100)}% ${L ? 'ult. dmg' : 'dano do supremo'}`)
   }
-  if (ult.cost != null) parts.push(`${L ? 'Cost' : 'Custo'}: ${ult.cost} ●`)
+  // Pips em vez de numero: a topbar mostra a Determinacao disponivel do mesmo
+  // jeito, entao "●●●" embaixo de "●●●●●" ja diz quanto sobra. Ver DEC-029.
+  if (ult.cost != null) parts.push(`${L ? 'Cost' : 'Custo'}: ${'●'.repeat(ult.cost)}`)
 
   return parts.length ? parts.join('  ·  ') : null
 }
@@ -2348,7 +2350,7 @@ function makePainter(ctx, draw) {
  */
 function ultimateHeaderLines(ult, cls, L) {
   const bits = []
-  if (ult?.cost != null) bits.push(`${L ? 'Cost' : 'Custo'} ${ult.cost} ●`)
+  if (ult?.cost != null) bits.push(`${L ? 'Cost' : 'Custo'} ${'●'.repeat(ult.cost)}`)
 
   if (ult?.mode === 'rage300') {
     bits.push(`${L ? 'Strikes' : 'Golpes'} ${ult.strikes} × ${ult.dmgPct}%`)
@@ -2895,121 +2897,157 @@ async function generateBuildImage({ build, stats, lang, buildName, mode }) {
 // ─── ExportPanel — botões de copiar texto e gerar imagem ─────
 function ExportPanel({ build, stats, lang, buildName, includeShareCode }) {
   const [feedback, setFeedback] = useState(null)
+
+  // O nivel de detalhe e escolhido UMA vez e vale para os dois formatos.
+  // Build, Detalhado e Estatistico significam a mesma coisa em imagem e em
+  // texto (DEC-022) — a interface anterior obrigava a escolher o mesmo
+  // conceito duas vezes, em dois grupos de tres botoes. Ver DEC-029.
+  const [mode, setMode] = useState('stats')
+
+  // Nivel sob o cursor. A linha de descricao mostra este quando existe e o
+  // selecionado quando nao — e o que da ao controle segmentado o efeito
+  // imediato que o padrao exige, e o que substitui o balao de ajuda.
+  const [hover, setHover] = useState(null)
+
   const flash = (key) => { setFeedback(key); setTimeout(() => setFeedback(null), 1500) }
 
-  const handleCopyText = (mode) => {
+  const handleCopyText = () => {
     const text = generateBuildText({ build, stats, lang, buildName, mode, includeShareCode })
     navigator.clipboard.writeText(text)
-      .then(() => flash(`txt-${mode}`))
-      .catch(() => flash(`txt-${mode}`))  // copia mesmo se clipboard falhou silenciosamente
+      .then(() => flash('txt'))
+      .catch(() => flash('txt'))  // copia mesmo se o clipboard falhou silenciosamente
   }
 
-  const handleGenImage = (mode) => {
+  const handleGenImage = () => {
     generateBuildImage({ build, stats, lang, buildName, mode })
-      .then(() => flash(`img-${mode}`))
+      .then(() => flash('img'))
       .catch(err => {
         // A exportacao e o unico ponto que lanca se o canvas estiver
         // contaminado — o drawImage nao lanca. Ver DEC-026, D7.
         console.error('Falha ao gerar a imagem da build:', err)
-        flash(`img-${mode}`)
+        flash('img')
       })
   }
 
   const L = lang === 'en'
-  const modes = [
-    {
-      id: 'build',
-      labelPT: 'Build',      labelEN: 'Build',
-      tipTxtPT: 'Copia um resumo compacto: habilidade de classe, vantagens, equipamentos e valores de propriedades — sem descrições',
-      tipTxtEN: 'Copies a compact summary: class ability, perks, gear and property values — no descriptions',
-      tipImgPT: 'Gera uma imagem compacta com os dados resumidos da build',
-      tipImgEN: 'Generates a compact image with the summarized build data',
-    },
-    {
-      id: 'detailed',
-      labelPT: 'Detalhado',  labelEN: 'Detailed',
-      tipTxtPT: 'Copia a build completa com descrições de habilidade de classe, vantagens de classe e de cada equipamento',
-      tipTxtEN: 'Copies the full build with class ability, class perk and gear descriptions',
-      tipImgPT: 'Gera uma imagem detalhada com todas as descrições da build',
-      tipImgEN: 'Generates a detailed image with all build descriptions',
-    },
-    {
-      id: 'stats',
-      labelPT: 'Estatístico', labelEN: 'Statistical',
-      tipTxtPT: 'Copia a build completa com descrições + todas as estatísticas calculadas (somente as modificadas pela build)',
-      tipTxtEN: 'Copies the full build with descriptions + all calculated stats (only those modified by the build)',
-      tipImgPT: 'Gera uma imagem com a build completa e as estatísticas calculadas, dividida em colunas',
-      tipImgEN: 'Generates a columned image with the full build and all calculated statistics',
-    },
-  ]
 
-  // Estilo dos botões de texto (dourado)
-  const bTxt = (mode) => ({
-    background: feedback === `txt-${mode}` ? T.accent + '44' : T.accent + '18',
-    border: `1px solid ${feedback === `txt-${mode}` ? T.accent : T.accent + '50'}`,
+  // As descricoes falam do CONTEUDO, nunca do formato: o mesmo nivel vale
+  // para imagem e para texto, e mencionar um dos dois recriaria a confusao
+  // que este desenho existe para desfazer.
+  const MODES = [
+    { id: 'build',
+      labelPT: 'Build',       labelEN: 'Build',
+      descPT: 'Só os nomes do que está equipado.',
+      descEN: 'Names of everything equipped, nothing else.' },
+    { id: 'detailed',
+      labelPT: 'Detalhado',   labelEN: 'Detailed',
+      descPT: 'Os nomes mais a descrição de cada item.',
+      descEN: 'The names plus a description for each item.' },
+    { id: 'stats',
+      labelPT: 'Estatístico', labelEN: 'Statistical',
+      descPT: 'Tudo isso mais a tabela de estatísticas calculadas.',
+      descEN: 'All of that plus the calculated stats table.' },
+  ]
+  const shown = MODES.find(m => m.id === (hover || mode)) || MODES[0]
+
+  const groupLabel = {
+    fontSize: 9, fontWeight: 800, letterSpacing: '0.08em',
+    textTransform: 'uppercase', color: T.muted, whiteSpace: 'nowrap',
+  }
+
+  // Botao de gerar: dourado para texto, roxo para imagem — as cores que os
+  // dois formatos ja tinham.
+  const bGen = (key, tint) => ({
+    background: feedback === key ? tint + '44' : tint + '18',
+    border: `1px solid ${feedback === key ? tint : tint + '50'}`,
     color: T.text, borderRadius: 6,
-    padding: '3px 9px', cursor: 'pointer',
+    padding: '4px 10px', cursor: 'pointer',
     fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap',
     transition: 'all 0.15s',
-  })
-  // Estilo dos botões de imagem (roxo)
-  const bImg = (mode) => ({
-    background: feedback === `img-${mode}` ? '#6c5ce740' : '#6c5ce714',
-    border: `1px solid ${feedback === `img-${mode}` ? '#6c5ce7' : '#6c5ce750'}`,
-    color: T.text, borderRadius: 6,
-    padding: '3px 9px', cursor: 'pointer',
-    fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap',
-    transition: 'all 0.15s',
-  })
-  // Estilo do grupo (caixa rotulada)
-  const groupBox = (borderColor, bgColor) => ({
-    border: `1px solid ${borderColor}`,
-    borderRadius: 8,
-    padding: '4px 8px',
-    background: bgColor,
-    display: 'flex', alignItems: 'center', gap: 6,
   })
 
   return (
-    // Uma única linha horizontal com dois grupos rotulados
-    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
 
-      {/* Grupo TEXTO */}
-      <div style={groupBox(T.accent + '44', T.accent + '0c')}>
-        <span style={{
-          fontSize: 9, color: T.accent, fontWeight: 800,
-          letterSpacing: '0.08em', textTransform: 'uppercase',
-          borderRight: `1px solid ${T.accent + '44'}`,
-          paddingRight: 6, whiteSpace: 'nowrap',
+      {/* ── Nivel de detalhe: controle segmentado + descricao viva ── */}
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={groupLabel}>{L ? 'Detail' : 'Detalhe'}</span>
+
+          {/*
+            inline-grid com colunas 1fr: os tres segmentos saem com a largura
+            do mais longo ("Estatistico"), que e o que o padrao pede. Sem gap
+            entre eles e com overflow escondido, os tres dividem uma trilha so
+            — e o que distingue um controle segmentado de tres botoes soltos.
+          */}
+          <div role="group"
+            aria-label={L ? 'Detail level' : 'Nível de detalhe'}
+            style={{
+              display: 'inline-grid',
+              gridTemplateColumns: `repeat(${MODES.length}, 1fr)`,
+              border: `1px solid ${T.border}`,
+              borderRadius: 7, overflow: 'hidden', background: T.card,
+            }}>
+            {MODES.map((m, i) => {
+              const on = m.id === mode
+              return (
+                <button key={m.id}
+                  onClick={() => setMode(m.id)}
+                  onMouseEnter={() => setHover(m.id)}
+                  onMouseLeave={() => setHover(null)}
+                  onFocus={() => setHover(m.id)}
+                  onBlur={() => setHover(null)}
+                  aria-pressed={on}
+                  style={{
+                    background: on ? T.accent + '2e' : 'transparent',
+                    color: on ? T.text : T.muted,
+                    border: 'none',
+                    borderLeft: i ? `1px solid ${T.border}` : 'none',
+                    padding: '4px 12px',
+                    fontSize: 11, fontWeight: on ? 700 : 500,
+                    cursor: 'pointer', whiteSpace: 'nowrap',
+                    transition: 'background 0.15s, color 0.15s',
+                  }}>
+                  {L ? m.labelEN : m.labelPT}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/*
+          ALTURA FIXA. A linha troca de texto a cada hover, e sem altura fixa
+          um texto de duas linhas empurraria a topbar inteira a cada passada
+          do cursor — o mesmo defeito do FIX-011, por outro caminho.
+        */}
+        <div style={{
+          height: 15, marginTop: 3, paddingLeft: 2,
+          fontSize: 10, color: T.muted,
+          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
         }}>
-          📋 {L ? 'Text' : 'Texto'}
-        </span>
-        {modes.map(m => (
-          <Tooltip key={m.id} text={L ? m.tipTxtEN : m.tipTxtPT}>
-            <button onClick={() => handleCopyText(m.id)} style={bTxt(m.id)}>
-              {feedback === `txt-${m.id}` ? '✓' : (L ? m.labelEN : m.labelPT)}
-            </button>
-          </Tooltip>
-        ))}
+          {L ? shown.descEN : shown.descPT}
+        </div>
       </div>
 
-      {/* Grupo PRINT */}
-      <div style={groupBox('#6c5ce750', '#6c5ce70c')}>
-        <span style={{
-          fontSize: 9, color: '#9b8ef0', fontWeight: 800,
-          letterSpacing: '0.08em', textTransform: 'uppercase',
-          borderRight: '1px solid #6c5ce750',
-          paddingRight: 6, whiteSpace: 'nowrap',
-        }}>
-          🖼️ {L ? 'Print' : 'Print'}
-        </span>
-        {modes.map(m => (
-          <Tooltip key={m.id} text={L ? m.tipImgEN : m.tipImgPT}>
-            <button onClick={() => handleGenImage(m.id)} style={bImg(m.id)}>
-              {feedback === `img-${m.id}` ? '✓' : (L ? m.labelEN : m.labelPT)}
-            </button>
-          </Tooltip>
-        ))}
+      {/* ── Gerar ── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, paddingTop: 1 }}>
+        <span style={groupLabel}>{L ? 'Generate' : 'Gerar'}</span>
+
+        <Tooltip text={L
+          ? 'Downloads a PNG of the build at the selected detail level'
+          : 'Baixa um PNG da build no nível de detalhe selecionado'}>
+          <button onClick={handleGenImage} style={bGen('img', '#6c5ce7')}>
+            {feedback === 'img' ? '✓' : `🖼️ ${L ? 'Image' : 'Imagem'}`}
+          </button>
+        </Tooltip>
+
+        <Tooltip text={L
+          ? 'Copies the build as text at the selected detail level'
+          : 'Copia a build como texto no nível de detalhe selecionado'}>
+          <button onClick={handleCopyText} style={bGen('txt', T.accent)}>
+            {feedback === 'txt' ? '✓' : `📋 ${L ? 'Text' : 'Texto'}`}
+          </button>
+        </Tooltip>
       </div>
 
     </div>

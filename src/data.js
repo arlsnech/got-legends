@@ -15,6 +15,9 @@ export const CLASSES = [
     ult: {
       id: "furia_de_hachiman",
       nPT: "Fúria de Hachiman", nEN: "Hachiman's Fury",
+      // Comando de ativacao, conferido no jogo. Vira teclas desenhadas no
+      // cabecalho da imagem exportada. Ver DEC-029.
+      cmd: "L1+R1",
       cost: 3, strikes: 3,
       dPT: "Executa uma série de golpes extremamente ágeis contra um grupo de inimigos. Custa 3 Determinação.",
       dEN: "Perform a series of lightning-fast strikes against a group of enemies. Costs 3 Resolve."
@@ -73,6 +76,7 @@ export const CLASSES = [
     hp: 100, res: 3,
     ult: {
       id: "olho_de_uchitsune",
+      cmd: "L1+R1",
       nPT: "Olho de Uchitsune", nEN: "Eye of Uchitsune",
       cost: 3, targets: 3,
       dPT: "Mira em 3 inimigos e acerta um disparo na cabeça garantido em cada alvo. Custa 3 Determinação.",
@@ -133,6 +137,7 @@ export const CLASSES = [
     hp: 100, res: 3,
     ult: {
       id: "sopro_de_izanami",
+      cmd: "L1+R1",
       nPT: "Sopro de Izanami", nEN: "Breath of Izanami",
       cost: 3, strikes: 1,
       dPT: "Revive todos os aliados incapacitados. Custa 3 Determinação.",
@@ -190,6 +195,7 @@ export const CLASSES = [
     hp: 100, res: 3,
     ult: {
       id: "golpe_sombrio",
+      cmd: "L1+R1",
       nPT: "Golpe Sombrio", nEN: "Shadow Strike",
       cost: 3, strikes: 3,
       dPT: "Entra nas sombras e ataca inimigos à distância. Custa 3 Determinação.",
