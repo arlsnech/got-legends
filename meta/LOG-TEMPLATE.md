@@ -12,13 +12,16 @@
 [O que se pretendia fazer ao começar.]
 
 ## Feito
-- [Mudanças concretas: arquivos tocados, funções criadas, bugs resolvidos, guias entregues.]
+- [Mudanças concretas: arquivos tocados, funções criadas, bugs resolvidos.]
 
-## Guias entregues
-- [Nome do arquivo `.md` de guia, se houver — diferente do log: são instruções de aplicação, não o próprio trabalho. Se virou spec, anote o nome da spec em `meta/specs/`.]
+## Análises abertas / decididas
+- [`AAMMDD-ANALISE-<tema>.md` — o problema que ela levanta e em que Status ficou. Se foi decidida, qual DEC registrou o desfecho.]
 
-## Specs entregues / aplicadas
-- [`AAMMDD-specNNNN-desc.md` — o que ela fez, e se já foi aplicada pelo Claude Code ou está aguardando.]
+## Specs de feature entregues
+- [`AAMMDD-<nome>.md` em `meta/specs/` — o que a feature promete e quais critérios de aceite ficaram escritos.]
+
+## WOs entregues / aplicadas
+- [`AAMMDD-woNNNN-desc.md` — o que ela fez, e se já foi aplicada pelo Claude Code ou está aguardando. Âncora que falhou, se houve.]
 
 ## Decisões
 - [Decisões tomadas → quais viraram DEC-N em DECISIONS.md.]
@@ -27,7 +30,7 @@
 - [Bugs encontrados/resolvidos → quais viraram FIX-N em DECISIONS.md.]
 
 ## Aprendizados / armadilhas
-- [O que descobrimos que vale virar armadilha em CONTEXT.md.]
+- [O que descobrimos que vale virar armadilha em CONTEXT.md, ou entrada em «Correções de processo» no IDEAS.]
 
 ## Onde parei
 [Estado exato ao encerrar + próximo passo óbvio. Alimenta o «Última Sessão» do STATUS.]

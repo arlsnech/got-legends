@@ -47,9 +47,11 @@ projeto/
 │       └── logo/          — Logo do jogo (tsushima_logo.png)
 ├── meta/             — documentos de contexto (CEREBRO, CONTEXT, STATUS, DECISIONS,
 │   │                   CHANGELOG, IDEAS, ROADMAP, GLOSSARY, HISTORY, LOG-TEMPLATE)
-│   └── specs/        — specs de doc, aplicadas pelo Claude Code via /apply-spec
+│   ├── workorders/   — WOs: o texto exato de cada edição + âncora, aplicadas via /apply-wo
+│   ├── specs/        — specs de feature: o quê construir e os critérios de aceite (molde: SPEC.md)
+│   └── analises/     — a análise que precede mudança não-trivial (nasce no primeiro uso)
 ├── logs/             — logs de sessão (AAAA-MM-DD.md)
-├── .claude/          — settings.json + skills /apply-spec e /wrap
+├── .claude/          — settings.json + skills /apply-wo e /wrap
 ├── CLAUDE.md         — guia raiz lido pelo Claude Code em todo turno
 ├── package.json      — React 18 + Vite 5 + Tailwind
 ├── vite.config.js    — base controlado por VITE_BASE_URL

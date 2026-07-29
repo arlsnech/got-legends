@@ -67,8 +67,10 @@
 - **`npm run deploy`** — faz build e chama `gh-pages -d dist`. **Quebra neste ambiente** com `ENAMETOOLONG` (limite de linha de comando do Windows); está no `deny` do `.claude/settings.json`. O site é publicado pelo Netlify a partir do `dist/`. Ver DEC-016.
 - **`GUIA_CORRECOES_FASE3.md`** — arquivo de guia com 4 correções pendentes + código completo da Fase 3
 - **`GUIA_COMPLETO_v4.md`** — guia da rodada v8, **removido do repositório em 2026-07-25** (DEC-025) por estar superado inteiro pelo `GUIA_CORRECOES_FASE3.md`. Recuperável pelo histórico do Git. As duas cópias soltas fora do repositório continuam no backlog para apagar.
-- **spec** — arquivo em `meta/specs/` com o texto exato de uma alteração de documento e a âncora onde ela entra. O chat autora, o Claude Code posiciona. Nome: `AAMMDD-specNNNN-desc.md`. É artefato versionado; não se apaga depois de aplicada.
-- **`/apply-spec`** — comando do Claude Code que aplica uma spec (âncora exata, ou PARA e reporta).
+- **WO (work order)** — arquivo em `meta/workorders/` com o texto exato de uma alteração e a âncora onde ela entra. Diz **como aplicar**. O chat autora, o Claude Code posiciona. Nome: `AAMMDD-woNNNN-desc.md`. É artefato versionado; não se apaga depois de aplicada. Até a `wo0020` estes arquivos se chamavam **spec** e viviam em `meta/specs/`; os nomes antigos foram preservados de propósito (DEC-030).
+- **spec de feature** — arquivo em `meta/specs/`, um por feature, no formato de `meta/SPEC.md`: o problema, os critérios de aceite verificáveis, as decisões de desenho e o fora-de-escopo. Diz **o quê** construir e quando está pronto — não como aplicar, que é papel da WO.
+- **análise** — arquivo em `meta/analises/AAMMDD-ANALISE-<tema>.md` que precede o compromisso numa mudança não-trivial: problema, o que foi medido, opções (inclusive as descartadas, com o motivo), recomendação única, riscos e ponto de decisão. Não decide nem abre trabalho sozinha; para no ponto de decisão. Funil: análise → WO → DECISIONS.
+- **`/apply-wo`** — comando do Claude Code que aplica uma WO (âncora exata, ou PARA e reporta).
 - **`/wrap`** — comando do Claude Code que fecha a sessão: append em STATUS/DECISIONS, build, `git diff`, commit e push.
 - **`.flatdropignore`** — lista do que NÃO sobe ao Projeto do Claude no achatamento (continua tudo no Git).
 - **KCM** — Kit de Contexto Universal, o gerador dos documentos de `meta/`. Um **template-update** do KCM traz arquivos genéricos do nicho, propositalmente vazios do específico desta obra.
