@@ -7,6 +7,14 @@
 
 ## [Não lançado]
 
+### Infraestrutura de repositório
+- **Template-update do KCM v1.87.0 comparado e fundido** — sem efeito no produto. `meta/specs/` passou a `meta/workorders/`, a skill `/apply-spec` passou a `/apply-wo`, e o nome `meta/specs/` ficou reservado para specs de feature (DEC-030). Os vinte arquivos existentes e as menções históricas a `spec0001`–`spec0020` foram preservados.
+- **`meta/SPEC.md`** — molde novo da spec de feature: problema, critérios de aceite verificáveis, decisões de desenho, fora de escopo.
+- **«Análise antes do compromisso»** — mudança não-trivial passa a começar por uma análise escrita em `meta/analises/` (a pasta nasce no primeiro uso), com recomendação única e ponto de decisão. Funil: análise → WO → DECISIONS.
+- **«Bloco de fecho de turno»** — formato fixo de encerramento na raia de planejamento: Próximo · Estado · Arquivar/Manter · Config por raia · Handoff. Quem executa no Code fecha com relatório de trabalho, não com este formulário.
+- **DEC-008 ganhou a lista de «colisões já julgadas — não reabrir»** — as seis linhas em que o template genérico colide com este projeto todo update e que já foram decididas passam a ser reportadas como «sem ação», em vez de reapresentadas como decisão.
+- `CLAUDE.md`, `.flatdropignore` e `meta/LOG-TEMPLATE.md` atualizados para o vocabulário novo.
+
 ### Adicionado
 - **Fase 3 — exportação em imagem.** Os três botões 🖼️ (Build, Detalhado, Estatístico) geram um PNG da build e disparam o download. Canvas puro, sem dependência externa; altura calculada a partir do conteúdo e renderização em 2x. Layout em duas colunas — habilidade e vantagens à esquerda, equipamentos à direita — com faixa de estatísticas no modo Estatístico, ícones do jogo em cada linha e as cores da classe ativa.
 

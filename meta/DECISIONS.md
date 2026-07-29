@@ -1011,3 +1011,32 @@ Um botão de **Código** foi proposto e **recusado pelo autor**. O código Base6
 
 ### O comando de ativação
 `cmd: "L1+R1"` entrou nos quatro Supremos de `data.js`, conferido no jogo pelo autor. As quatro classes usam o mesmo comando e ainda assim ele é escrito quatro vezes — DEC-006 em vigor: `data.js` é explícito. Uma constante compartilhada economizaria três linhas e criaria a dúvida "e se uma classe mudar?", que é o tipo de pergunta que dado explícito não tem.
+
+---
+
+## DEC-030 — `spec` passa a se chamar `WO`; `specs/` fica para specs de feature
+**Data:** 2026-07-27 · **Status:** aceita
+
+### Contexto
+O template-update do KCM v1.87.0 trouxe uma separação que este projeto não fazia. O kit agora distingue **WO** (`meta/workorders/`, o texto exato de uma edição e a âncora onde ela entra — diz *como aplicar*) de **spec de feature** (`meta/specs/`, uma por feature — diz *o quê construir e quando está pronto*, com critérios de aceite verificáveis).
+
+Pelo conteúdo, as vinte "specs" 0001–0020 deste projeto são **WOs**: nenhuma delas enuncia critério de aceite; todas enunciam âncora e texto. O nome `specs/` estava ocupado pelo artefato errado, e o artefato que o kit chama de spec **não existia aqui em nenhuma forma** — o que se aproximava dele eram os `GUIA_*.md`, justamente o formato que deixou a Fase 3 parada de junho a julho.
+
+Foi a segunda vez que o kit passou por este projeto. Na primeira (DEC-007, DEC-008) a régua foi «convenção genérica que colide com prática em vigor é sugestão, não ordem». Esta decisão **não** é uma exceção a ela: aqui não há colisão de convenção, há um conceito novo que o projeto não tinha, e o nome que ele quer estava ocupado.
+
+### Decisão
+- `meta/specs/` → `meta/workorders/`; a skill `/apply-spec` → `/apply-wo`; o método passa a se chamar «doc por WO».
+- **Os vinte arquivos existentes não foram renomeados**, nem as menções a `spec0001`…`spec0020` nos documentos. São nomes próprios de artefatos passados: reescrevê-los faria o histórico mentir sobre o que se chamava o quê em cada data.
+- **A numeração é contínua.** A primeira WO com o nome novo é a `wo0021`. A sequência é a do trabalho, não a do rótulo.
+- `meta/specs/` volta a existir quando a primeira spec de feature for escrita, no molde de `meta/SPEC.md`. Não nasce vazia.
+- Junto vieram, do mesmo template-update, três disciplinas novas: «Análise antes do compromisso» (`meta/analises/`), o «Bloco de fecho de turno» e o endurecimento da revisão de mount. Ver CEREBRO.
+
+### Alternativas consideradas
+- **Manter tudo como estava e registrar o desvio.** Custo zero, e a DEC-008 já licenciava. Recusada: o vocabulário do projeto e o do kit divergiriam para sempre, e cada template-update futuro reabriria a questão — que é exatamente o atrito que esta leva veio reduzir.
+- **Renomear também os vinte arquivos e todas as menções históricas.** Recusada: ou o histórico passa a mentir, ou fica pela metade e inconsistente. O nome de um artefato é a data em que ele nasceu.
+- **Manter o nome `spec` para o artefato de aplicação e batizar a spec de feature de outra coisa** (`meta/features/`). Recusada: preserva o mal-entendido que causou o problema, só que com mais um nome.
+
+### Consequências
+- O que era `spec` no vocabulário deste projeto agora é `WO` daqui para a frente, e continua sendo `spec` no que já foi escrito. A `wo0021` deixou isso registrado no `GLOSSARY.md` para que a leitura do histórico não confunda.
+- Abre espaço para o artefato que faltava. A F4 (Polimento e Mobile) e a decisão pendente sobre compartilhamento por link são candidatas naturais à primeira **análise** e à primeira **spec de feature**.
+- `.flatdropignore`: o corpo das WOs continua fora do mount (peso); as specs de feature **sobem**, porque são curtas e olham para a frente. E a linha passou de `meta/specs/` para `meta/workorders/*` — com `/*` a reinclusão por `!` volta a funcionar, o que a forma antiga impedia.

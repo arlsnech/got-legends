@@ -182,7 +182,26 @@ Nos prompts antigos o autor cogitou **remover o modo Estatístico** caso desse t
 
 ---
 
+## 📌 Feedback para o Kit de Contexto — leva de 2026-07-27 (template-update v1.87.0)
+
+- **O `IDEAS__template-update.md` continua sem a seção «Feedback para o Kit»** — mesmo feedback já registrado por este projeto em 2026-07-22 e não absorvido em catorze versões. O CEREBRO exige a seção em dois lugares (regra de higiene e tabela de gatilhos): o template está incompleto em relação ao comportamento que ele mesmo prescreve.
+- **O `claude-settings__template-update.json` não é JSON válido.** Traz uma linha `// Adicione seu comando de build/teste ao allow…` **depois** do objeto. Aplicado como está, quebra qualquer parser estrito. A dica deveria vir no manifesto ou como campo do próprio JSON.
+- **O `gitignore__template-update` continua só com lixo de SO** — sem `node_modules/` nem `dist/`. Feedback de 2026-07-22 não absorvido. Deveria vir marcado no manifesto como **aditivo**, não como substituto.
+- **O `LOG-TEMPLATE__template-update.md` continua sem «Guias entregues»** e o `STATUS__template-update.md` continua sem «Pendente de Aplicação» — as duas de 2026-07-22, idem.
+- **O `GLOSSARY__template-update.md` continua sem seção de glossário bilíngue de domínio** — idem.
+- **O kit repete a pergunta já respondida.** Este projeto passou pelo update duas vezes e nas duas o assistente reapresentou as MESMAS colisões (IDs em PT-BR, commits sem acento, `.gitignore`) como decisão a tomar. Custa um turno do usuário para chegar à mesma resposta, e desgasta. **Sugestão para o kit:** o `_UPDATE-PROMPT.md` deveria mandar o assistente procurar no `DECISIONS.md` do projeto se a colisão já foi julgada e, havendo julgamento, reportá-la como «colisão conhecida, sem ação». Este projeto resolveu localmente com a lista «colisões já julgadas — não reabrir» dentro da DEC-008.
+- **O `taskkill` do Claude Code é perigoso e ninguém avisa.** Em pelo menos duas sessões o executor encerrou o dev server com `taskkill /F /IM node.exe /T`, que mata **todo** processo Node da máquina — não só o Vite. Ninguém reclama porque o comando "funciona". **Sugestão para o kit:** o `CLAUDE.md` de arranque deveria trazer, no nicho Desenvolvimento, a regra de encerrar servidor por **porta ou PID**, nunca por nome de imagem. Aplicado localmente no `CLAUDE.md` deste repo em 2026-07-27.
+- **O funil análise → WO → DECISIONS é boa adição, mas não diz onde a análise encontra o STATUS.** Uma análise em curso é trabalho em progresso; o kit não define se ela aparece no STATUS enquanto espera decisão. Aqui a leitura adotada é que sim: análise aberta é linha em «🔧 Em Progresso» até virar decisão.
+
+---
+
 ## 🔧 Correções de processo
+
+### 2026-07-27 — Procure antes de inserir
+
+A `spec0019` criou uma entrada *Determinação* no `GLOSSARY.md` sem verificar que já havia outra três linhas abaixo. O executor seguiu a âncora — que é o comportamento certo — e reportou; as duas tiveram de ser consolidadas depois.
+
+**Regra que fica:** antes de inserir uma entrada nova em qualquer doc (termo no GLOSSARY, item de backlog no STATUS, ideia no IDEAS, armadilha no CONTEXT), **procure o termo primeiro**. A âncora garante *onde* o texto entra, não que ele já não exista em outro lugar do arquivo. Quem escreve a WO é que tem de olhar; o executor, por desenho, não olha.
 
 ### 2026-07-26 — Hipótese de causa precisa vir com teste e com instrução de parada
 A `spec0015` diagnosticou o FIX-012 a partir de capturas de tela e chegou à causa errada. O que impediu o estrago foi um portão escrito na própria spec: *rode este teste, interprete assim, e **pare** se contradisser*. O executor rodou, o resultado contradisse, ele parou e trouxe a causa real — sem aplicar código inútil.

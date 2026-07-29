@@ -81,6 +81,7 @@ O que resta do guia é a **Fase 3** (`generateBuildImage` via Canvas, ~470 linha
 - [x] ~~Limpar o código morto do vínculo de classe~~ — **feito em 2026-07-25** (spec0012). Junto saíram outros oito imports órfãos do `App.jsx`. O campo `linkedClass` do estado ficou intacto.
 - [ ] **Decidir o destino de `getAvailableProps` e `getAvailablePerks` em `logic.js`** — não têm consumidor e, como estão, são armadilha: resolvem o item por `id` e por isso devolvem lista errada para amuleto com `classBinding` (armadilha 14). Duas saídas: **remover** as duas, já que ninguém as usa, ou **trocar a assinatura** para receber o item já resolvido e então usá-las no `App.jsx` no lugar do filtro inline. Não decidir também é uma escolha — mas aí a armadilha fica.
 - [ ] **Duplicação de `selectTech` / `selectAbility`** — o `App.jsx` reimplementa inline o toggle que essas duas funções de `logic.js` já fazem, com lógica idêntica. Ao contrário do caso acima, aqui não há motivo: as assinaturas servem. Trocar o inline pela chamada elimina uma fonte de verdade duplicada. Mudança de duas linhas, mas **não embutida na spec0012** por estar fora do escopo dela.
+- [ ] **Duplicação do formatador de estatísticas** — o `if (s.unit === '●') return '●'.repeat(s.value)` do `StatsPanel` (`App.jsx`) é cópia do que já existe em `formatStatValue` (`logic.js`). Descoberta durante a `spec0019`, onde custou uma edição extra: os dois tiveram de ser corrigidos para a mesma coisa. Mesma família do item acima e deve ser resolvida junto.
 - [x] ~~Verificar se `visao_sugaru` deveria ter perk de desbloqueio~~ — **respondido em 2026-07-23: não deveria, e o dado está certo.** O pool dela é o do Arco Longo menos Disparo Arremessante, Certeiro, Olho de Águia e Versátil; sem Versátil no pool, qualquer classe a equipa sem custo. Ver DEC-018.
 - [x] ~~Verificar IDs de amuletos, técnicas do Assassino e entradas faltantes em `TECH_ICON`~~ — **os três verificados em 2026-07-25 e todos em ordem.** Cruzamento programático de `data.js` contra `icons.js`: **50 itens de `GEAR` ↔ 50 chaves de `GEAR_ICON`** e **60 chaves de `TECH_ICON` ↔ 60 ids de técnica/habilidade**, sem nenhum órfão nos dois sentidos. `sumico_toxico` e `supergolpe`, citados como faltantes, estão mapeados. Os quatro ids restantes são os supremos (`furia_de_hachiman`, `olho_de_uchitsune`, `sopro_de_izanami`, `golpe_sombrio`), que por decisão usam `CLASS_TECH_FALLBACK`. Eram resquícios da escrita original do `icons.js`.
 - [ ] Apagar as duas cópias soltas de `GUIA_COMPLETO*.md` que ficaram **fora do repositório** (`got-legends/GUIA_COMPLETO.md` e `got-legends/notas-arquivadas/GUIA_COMPLETO_v4.md`). São byte-idênticas — md5 conferido em 2026-07-23 — à versionada em `meta/legacy/GUIA_COMPLETO_v4.md`. Pela DEC-012, cópia fora do repo é cópia em risco, e estas três divergirem seria pior do que não existirem.
@@ -388,3 +389,19 @@ A saída foi dar-lhe efeito imediato: uma **linha de descrição que muda na hor
 **Corrigido de casa:** a `spec0019` inseriu uma entrada *Determinação* no `GLOSSARY.md` sem verificar que já havia outra três linhas abaixo. O executor seguiu a âncora e reportou; as duas foram consolidadas.
 
 **Próximo passo:** a limpeza acordada com o autor — o destino de `getAvailableProps`/`getAvailablePerks` (armadilha 14, sem consumidor), a duplicação de `selectTech`/`selectAbility` e a do formatador de stats entre `logic.js` e o `StatsPanel`, e as cópias soltas de `GUIA_COMPLETO*.md` fora do repositório.
+
+---
+
+### 2026-07-27 — Segundo template-update do KCM (v1.87.0), sem tocar no produto
+
+Sessão de infraestrutura. O pacote de dezoito arquivos genéricos foi comparado item a item com os vivos; nada foi sobrescrito por template vazio.
+
+**Adotado:** a renomeação `spec` → **WO** com `meta/specs/` liberada para specs de feature (DEC-030); a disciplina de **análise antes do compromisso**; o **bloco de fecho de turno**; o endurecimento da revisão de mount e da exposição de premissas; as quatro cláusulas novas de refino das Instruções; o relatório de trabalho obrigatório no `/apply-wo`; e a forma `meta/workorders/*` no `.flatdropignore`, que devolve o funcionamento do `!`.
+
+**Recusado, e agora registrado para não voltar à pauta:** as seis colisões recorrentes entre o template genérico e a prática deste projeto — IDs `snake_case` PT-BR, commits sem acento, `.gitignore` de stack, `settings.json` com os `npm run`, as skills na versão longa e a regra bilíngue. Estão nomeadas na DEC-008 sob «colisões já julgadas — não reabrir». Era a segunda vez que a mesma discussão se abria.
+
+**Fechadas três pendências de registro** que vinham do handoff: o aviso do `taskkill`, a regra «procure antes de inserir» e o item de backlog do formatador de stats duplicado.
+
+**Higiene levantada e ainda não feita:** o `DECISIONS.md` passou de 1.000 linhas (o limiar do CEREBRO é ~700) e o `STATUS.md` tem cerca de três quartos do corpo sob «Última Sessão», quando o arquivo deveria ser rolante. Curadoria de arquivo inteiro é trabalho do chat, não do Code.
+
+**Próximo passo:** a limpeza acordada com o autor, começando pela decisão do item `getAvailableProps`/`getAvailablePerks` — que é o primeiro candidato natural a uma **análise** no formato novo.
