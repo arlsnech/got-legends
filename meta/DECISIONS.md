@@ -1040,3 +1040,55 @@ Foi a segunda vez que o kit passou por este projeto. Na primeira (DEC-007, DEC-0
 - O que era `spec` no vocabulário deste projeto agora é `WO` daqui para a frente, e continua sendo `spec` no que já foi escrito. A `wo0021` deixou isso registrado no `GLOSSARY.md` para que a leitura do histórico não confunda.
 - Abre espaço para o artefato que faltava. A F4 (Polimento e Mobile) e a decisão pendente sobre compartilhamento por link são candidatas naturais à primeira **análise** e à primeira **spec de feature**.
 - `.flatdropignore`: o corpo das WOs continua fora do mount (peso); as specs de feature **sobem**, porque são curtas e olham para a frente. E a linha passou de `meta/specs/` para `meta/workorders/*` — com `/*` a reinclusão por `!` volta a funcionar, o que a forma antiga impedia.
+
+---
+
+## DEC-031 — Adoção do kit v1.90; o `.flatdropignore` passa a ter a regra dentro do bloco
+**Data:** 2026-07-29 · **Status:** aceita
+
+### Contexto
+Terceiro template-update do KCM neste projeto (v1.73 → v1.87 → v1.90). Duas mudanças do pacote mereciam adoção e uma delas nos pegou errados.
+
+O v1.90 formaliza o que a DEC-008 já praticava: **template genérico não é candidato a substituir arquivo vivo refinado** — `CLAUDE.md`, `.claude/*`, as skills e os `meta/` especializados caem por padrão em «o projeto tem, o template não cobre», e não voltam à pauta a cada update. A única exceção é formato descontinuado (`.claude/commands/` → `.claude/skills/`), e este repo já está migrado. Junto vem a exigência de **listar o mount e declarar versão/commit antes de comparar**: o pacote descreve o kit, não o repo.
+
+A segunda é técnica e nos corrigiu. O `.flatdropignore` que este projeto escreveu em 2026-07-27 (DEC-030) deixou as regras **fora** do bloco `# >>> flatdrop-editor`, com só duas dentro. O editor do FlatDrop **reescreve o bloco inteiro a cada salvamento**: regra fora do bloco é invisível para ele, e comentário dentro do bloco desaparece. Pior, `INSTRUCOES-DO-PROJETO.md` acabou escrito **duas vezes**, uma fora e uma dentro — a duplicação silenciosa que o próprio v1.90 descreve na regra nova sobre artefato gerado que convive com edição humana.
+
+### Decisão
+- Todas as regras do `.flatdropignore` passam para **dentro** do bloco; explicação fica **acima** dele; **nada** depois do `# <<<`, porque vale a última regra que casa e o que vier depois vence o bloco em silêncio.
+- Forma `pasta/*` (o conteúdo), nunca `pasta/` (a pasta), em toda linha de pasta — inclusive `logs/*` e os `src/v*/*`. É o que permite reincluir um arquivo com `!` depois.
+- `meta/specs/` e `meta/analises/` seguem **fora** da lista, subindo ao mount. O motivo, agora emprestado do kit: análise «Em discussão» que o assistente não vê não é discutida, é reescrita do zero.
+- **`.claude/settings.local.json` sai do Git e do mount.** São caminhos absolutos da máquina do autor e uma lista de permissões que o Claude Code acumula sozinho — config de ambiente, não conhecimento do projeto. O `.claude/settings.json` compartilhado continua versionado (DEC-016 intacta).
+- Adotadas no CEREBRO, pela `wo0024`: a regra do template-update acima; o gatilho concreto de análise («mudar o formato de um artefato que outra pessoa vai ler ou editar pede análise, mesmo com diff pequeno»); a proibição de renomear pasta alheia por conta própria; os quatro modos de falha da releitura de mount; a regra de que a linha «Estado» só carrega dado lido no próprio turno; e a de que a cópia do assistente não é a fonte da verdade.
+
+### Alternativas consideradas
+- **Manter o `.flatdropignore` como estava.** Recusada: funciona hoje e quebra na primeira vez que alguém salvar pelo editor, com o sintoma aparecendo longe da causa — arquivo que devia sumir do mount continuando lá, ou o contrário.
+- **Levar tudo para dentro do bloco, inclusive os comentários.** Impossível por construção: o editor reescreve o bloco e os comentários somem.
+- **Apagar o `settings.local.json`.** Recusada: o Code precisa dele em disco. O que sobra é tirá-lo do índice, não do sistema de arquivos.
+
+### Consequências
+- O `.flatdropignore` ficou mais longo em explicação e mais curto em regra — que é a divisão certa, já que a explicação é a única parte que sobrevive ao editor.
+- Quem clonar o repo numa máquina nova não herda as permissões locais do autor e vai reconstruí-las. É o comportamento correto para um arquivo `.local`.
+- Terceira rodada seguida em que quatro feedbacks deste projeto não foram absorvidos pelo kit (ver IDEAS). Isso não bloqueia nada, mas já é padrão, não acaso.
+
+---
+
+## DEC-032 — `getAvailableProps` e `getAvailablePerks` passam a receber o item, não o `id`
+**Data:** 2026-07-29 · **Status:** aceita · **Aplicada pela** `wo0025`
+
+### Contexto
+As duas funções de `logic.js` estavam sem consumidor desde a limpeza de 2026-07-25 e eram armadilha ativa (armadilha 14 do CONTEXT): resolviam o item por `id` via `getItem(itemId)` e, para amuleto magistral com `classBinding`, devolviam o item cru do `GEAR` — **sem** os props e perks de classe, e **sem erro**. Enquanto isso, o `App.jsx` reimplementava a mesma regra inline em dois lugares (`PropInput` e `PerkRow`), justamente para poder passar o item efetivo.
+
+### O que foi medido
+Antes de recomendar, foram lidos os dois pontos de chamada. **`PropInput` e `PerkRow` já recebem o item efetivo por prop** — o pai já resolveu o `classBinding`. A troca de assinatura, portanto, não exigia nada dos chamadores que eles já não tivessem: era um encaixe, não um refactor. Foi essa medição que decidiu entre as duas saídas.
+
+### Decisão
+Assinatura passa a `getAvailableProps(item, slot, otherPropId)` e `getAvailablePerks(item, otherPerkId)`; o `getItem()` interno sai. Os dois filtros inline do `App.jsx` viram chamadas. **Não se reintroduz sobrecarga que aceite `id`.**
+
+### Alternativas consideradas
+- **Remover as duas funções**, já que ninguém as usava. Era a saída de menor risco e foi recusada por dois motivos: a regra de bloqueio por `sk` (props de mesma `sk` não coexistem em P1 e P2) é conhecimento de domínio que ficaria só implícito no meio de um componente de 2.500 linhas; e a duplicação entre `logic.js` e `App.jsx` continuaria existindo — apenas com uma das cópias apagada, o que não é o mesmo que resolvida.
+- **Deixar como estava e só documentar melhor a armadilha.** Recusada: comentário não impede ninguém de chamar. A assinatura impede.
+
+### Consequências
+- A armadilha 14 muda de natureza: deixa de ser «cuidado ao usar» e vira «o erro é impossível de escrever». O CONTEXT foi reescrito nesse sentido pela `wo0025`.
+- Uma fonte de verdade a menos duplicada. Restam duas da mesma família no backlog: `selectTech`/`selectAbility` e o formatador de estatísticas.
+- `App.jsx` perde cerca de dez linhas e recupera dois imports que a limpeza de julho havia removido por órfãos.

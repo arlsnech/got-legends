@@ -12,6 +12,10 @@ dist/
 # Logs de ferramenta (NAO confundir com logs/ de sessao, que sao versionados)
 *.log
 
+# Config de maquina do Claude Code: caminhos absolutos e permissoes acumuladas localmente.
+# O .claude/settings.json (compartilhado) CONTINUA versionado — so o .local sai. Ver DEC-031.
+.claude/settings.local.json
+
 # Lixo de SO / editor
 .DS_Store
 Thumbs.db

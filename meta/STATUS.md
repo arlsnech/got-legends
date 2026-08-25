@@ -7,7 +7,7 @@
 
 ## Versão Atual
 
-**[1.0.0-beta]** — 2026-06-24 — Planejador funcional completo com exportação de texto (Fase 2). Geração de imagem em guia, pendente de aplicação.
+**[1.0.0-beta]** — 2026-06-24 — última versão etiquetada. O `[Não lançado]` do CHANGELOG já acumula a **Fase 3 inteira** (exportação em imagem nos três modos, painel de exportação, pips de Determinação) e a leva de infraestrutura dos template-updates v1.87 e v1.90. A próxima etiqueta deve sair antes que a distância entre esta linha e o CHANGELOG volte a crescer.
 
 ---
 
@@ -79,7 +79,6 @@ O que resta do guia é a **Fase 3** (`generateBuildImage` via Canvas, ~470 linha
 - [x] ~~Implementar `generateBuildImage` (Fase 3)~~ — **feito em 2026-07-25** (spec0014), com os oito defeitos da DEC-026 corrigidos.
 - [x] ~~`picada_celestial` fora de `REQUIRED_PERKS`~~ — **corrigido em 2026-07-23** (FIX-009). A regra foi confirmada pela fonte no bloco 27 do arquivo de origem, e virou a DEC-018.
 - [x] ~~Limpar o código morto do vínculo de classe~~ — **feito em 2026-07-25** (spec0012). Junto saíram outros oito imports órfãos do `App.jsx`. O campo `linkedClass` do estado ficou intacto.
-- [ ] **Decidir o destino de `getAvailableProps` e `getAvailablePerks` em `logic.js`** — não têm consumidor e, como estão, são armadilha: resolvem o item por `id` e por isso devolvem lista errada para amuleto com `classBinding` (armadilha 14). Duas saídas: **remover** as duas, já que ninguém as usa, ou **trocar a assinatura** para receber o item já resolvido e então usá-las no `App.jsx` no lugar do filtro inline. Não decidir também é uma escolha — mas aí a armadilha fica.
 - [ ] **Duplicação de `selectTech` / `selectAbility`** — o `App.jsx` reimplementa inline o toggle que essas duas funções de `logic.js` já fazem, com lógica idêntica. Ao contrário do caso acima, aqui não há motivo: as assinaturas servem. Trocar o inline pela chamada elimina uma fonte de verdade duplicada. Mudança de duas linhas, mas **não embutida na spec0012** por estar fora do escopo dela.
 - [ ] **Duplicação do formatador de estatísticas** — o `if (s.unit === '●') return '●'.repeat(s.value)` do `StatsPanel` (`App.jsx`) é cópia do que já existe em `formatStatValue` (`logic.js`). Descoberta durante a `spec0019`, onde custou uma edição extra: os dois tiveram de ser corrigidos para a mesma coisa. Mesma família do item acima e deve ser resolvida junto.
 - [x] ~~Verificar se `visao_sugaru` deveria ter perk de desbloqueio~~ — **respondido em 2026-07-23: não deveria, e o dado está certo.** O pool dela é o do Arco Longo menos Disparo Arremessante, Certeiro, Olho de Águia e Versátil; sem Versátil no pool, qualquer classe a equipa sem custo. Ver DEC-018.
@@ -405,3 +404,17 @@ Sessão de infraestrutura. O pacote de dezoito arquivos genéricos foi comparado
 **Higiene levantada e ainda não feita:** o `DECISIONS.md` passou de 1.000 linhas (o limiar do CEREBRO é ~700) e o `STATUS.md` tem cerca de três quartos do corpo sob «Última Sessão», quando o arquivo deveria ser rolante. Curadoria de arquivo inteiro é trabalho do chat, não do Code.
 
 **Próximo passo:** a limpeza acordada com o autor, começando pela decisão do item `getAvailableProps`/`getAvailablePerks` — que é o primeiro candidato natural a uma **análise** no formato novo.
+
+---
+
+### 2026-07-29 — Kit v1.90 e a primeira das pendências de limpeza fechada
+
+**Infraestrutura (DEC-031).** Terceiro template-update comparado. Adotadas cinco disciplinas no CEREBRO, das quais duas se aplicam ao próprio assistente: os quatro modos de falha da releitura de mount, e a regra de que a linha «Estado» do fecho de turno só carrega dado lido naquele turno — «não verificado nesta rodada» passa a ser resposta legítima. O `.flatdropignore` foi reorganizado (regra dentro do bloco, explicação acima, nada depois do `# <<<`) e o `.claude/settings.local.json` saiu do Git e do mount.
+
+**Código (DEC-032).** `getAvailableProps` e `getAvailablePerks` passaram a receber o item resolvido; os dois filtros inline do `App.jsx` viraram chamadas. A armadilha 14 deixou de ser advertência e virou impossibilidade. A decisão foi tomada na conversa, sem análise escrita — corretamente: o CEREBRO diz que mudança pequena não pede cerimônia, e a medição que a decidiu (os dois chamadores já tinham o item efetivo em mãos) coube em dois parágrafos.
+
+**Backlog restante da mesma família:** `selectTech`/`selectAbility` reimplementados inline e o formatador de estatísticas duplicado entre `logic.js` e o `StatsPanel`. Devem ser resolvidos juntos.
+
+**Higiene ainda não feita, agora com um ano de atraso próprio:** o `DECISIONS.md` passou de 1.100 linhas e este `STATUS.md` segue com a maior parte do corpo sob entradas de sessão antigas. Continua sendo curadoria de arquivo inteiro, e continua sendo trabalho do chat.
+
+**Próximo passo:** fechar as duas duplicações restantes do backlog, ou abrir a F4.

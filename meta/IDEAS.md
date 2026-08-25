@@ -182,6 +182,16 @@ Nos prompts antigos o autor cogitou **remover o modo Estatístico** caso desse t
 
 ---
 
+## 📌 Feedback para o Kit de Contexto — leva de 2026-07-29 (template-update v1.90.0)
+
+- **O `.flatdropignore` do v1.90 é a melhor peça de documentação que o kit já mandou para cá** — e nos corrigiu. Explicar que o editor reescreve o bloco inteiro, que comentário dentro do bloco some, e que nada pode vir depois do `# <<<` porque vale a última regra que casa: as três coisas eram invisíveis para quem escreveu o arquivo em 2026-07-27, e as três estavam erradas aqui. Feedback positivo, registrado com o mesmo peso das reclamações.
+- **Terceira rodada consecutiva sem absorver quatro feedbacks deste projeto:** `IDEAS` sem seção «Feedback para o Kit» (registrado em 22/07 e 27/07), `LOG-TEMPLATE` sem campo de guias/WOs entregues, `STATUS` sem «Pendente de Aplicação», `GLOSSARY` sem seção de vocabulário bilíngue de domínio. Não bloqueiam nada; a observação é que já viraram padrão.
+- **O kit ainda não diz onde a análise em curso aparece no STATUS.** O funil análise → WO → DECISIONS está bem descrito, mas uma análise «Em discussão» é trabalho em progresso e o kit não define se ela ganha linha em «Em Progresso». A leitura adotada aqui é que sim.
+- **O `claude-settings__template-update.json` continua não sendo JSON válido** — a linha `//` depois do objeto, já reportada em 27/07.
+- **Sugestão nascida do uso:** o kit não menciona `.claude/settings.local.json` em lugar nenhum, nem no template do `.gitignore`. É um arquivo que o Claude Code cria sozinho, enche de caminhos absolutos e permissões acumuladas, e que ninguém decide versionar — simplesmente acontece. O `gitignore__template-update` do nicho Desenvolvimento deveria trazê-lo por padrão.
+
+---
+
 ## 📌 Feedback para o Kit de Contexto — leva de 2026-07-27 (template-update v1.87.0)
 
 - **O `IDEAS__template-update.md` continua sem a seção «Feedback para o Kit»** — mesmo feedback já registrado por este projeto em 2026-07-22 e não absorvido em catorze versões. O CEREBRO exige a seção em dois lugares (regra de higiene e tabela de gatilhos): o template está incompleto em relação ao comportamento que ele mesmo prescreve.

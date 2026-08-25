@@ -1,43 +1,60 @@
 # .flatdropignore — enxuga o que sobe ao Projeto do Claude (tudo segue versionado no git).
 # Sintaxe .gitignore; salvo na raiz; tem a palavra final sobre o .gitignore.
-
-# Logs de sessao: o "agora" fica no meta/STATUS.md; o diario nao precisa ir ao mount.
-logs/
-
-# WOs aplicadas: o desfecho vive em meta/DECISIONS.md e meta/CHANGELOG.md; o corpo pesa.
-# Use "/*" (o CONTEUDO da pasta), nao "/" (a pasta): sob pasta excluida por inteiro o "!"
-# NAO reinclui — a sintaxe .gitignore nem chega a avaliar os arquivos de dentro.
-# Com "/*" a reinclusao funciona: para estudar UMA WO no Projeto, descomente uma linha
-# como  !meta/workorders/260727-wo0021-renomear-spec-para-wo.md
-# (Ate a wo0020 estes arquivos se chamavam spec e viviam em meta/specs/ — DEC-030.)
-meta/workorders/*
-
-# Specs de feature (meta/specs/): NAO sao ignoradas de proposito. Sao curtas, olham para a
-# frente e dizem o que esta sendo construido — e exatamente o que o assistente precisa ler
-# no inicio da sessao. So ligue uma exclusao aqui se a pasta crescer a ponto de pesar.
-
-# Analises (meta/analises/, uma por decisao nao-trivial; a pasta nasce no primeiro uso):
-# enquanto forem poucas, deixe subir — sao o "por que" das decisoes. Quando pesarem, ligue
-# as duas linhas abaixo. REGRA: modelo e guia SEMPRE sobem; corpo de analise, nao.
-# meta/analises/*
-# !meta/analises/_TEMPLATE.md
-
-# Versoes historicas do App: snapshots congelados, ~340 KB de JSX quase identico.
-# O que interessa deles ja esta consolidado em meta/HISTORY.md e meta/DECISIONS.md.
-# src/v4/App.jsx e byte a byte igual ao src/App.jsx atual — subir os dois e desperdicio puro.
-src/v1/
-src/v2/
-src/v3/
-src/v4/App.jsx
-
-# Material legado recuperado em 2026-07-22/23 (DEC-012).
-# A pasta meta/legacy/ foi encerrada e removida em 2026-07-25, depois da extracao retroativa
-# completa (DEC-011). O bloco fica registrado aqui so como historico da regra: material
-# legado vive no Git para nunca se perder, e sobe ao mount so quando esta em pauta.
-
-INSTRUCOES-DO-PROJETO.md
+#
+# COMO ESTE ARQUIVO E ORGANIZADO (kit v1.90):
+# - Explicacao e comentario ficam AQUI EM CIMA, fora do bloco. Dentro do bloco eles somem:
+#   o editor do FlatDrop reescreve o bloco inteiro a cada salvamento.
+# - REGRA (o que some do mount) vai DENTRO do bloco "# >>> flatdrop-editor".
+# - NADA depois do "# <<<": vale a ULTIMA regra que casa, entao o que vier depois vence o
+#   bloco em silencio.
+#
+# FORMA: use "pasta/*" (o CONTEUDO), nunca "pasta/" (a PASTA). A ferramenta poda o diretorio
+# casado antes de descer, e um "!" la dentro nunca chega a ser avaliado. Com "pasta/*" a
+# varredura desce e o "!arquivo" volta a valer.
+# Corolario: modelo/guia de pasta ignorada precisa do PAR completo — a linha "pasta/*" e a
+# linha "!pasta/_TEMPLATE.md" logo depois dela, DENTRO do bloco.
+#
+# --- Por que cada regra esta la dentro ---
+#
+# logs/* — o "agora" fica no meta/STATUS.md; o diario de sessao nao precisa ir ao mount.
+#
+# meta/workorders/* — WOs aplicadas: o desfecho vive em meta/DECISIONS.md e meta/CHANGELOG.md;
+#   o corpo pesa. Ate a wo0020 estes arquivos se chamavam spec e viviam em meta/specs/ (DEC-030).
+#   Para estudar UMA WO no Projeto, reinclua nominalmente DENTRO do bloco, logo depois desta
+#   linha:  !meta/workorders/260729-wo0024-cerebro-kit-190.md
+#
+# src/v1/*, src/v2/*, src/v3/*, src/v4/App.jsx — snapshots congelados do App, ~340 KB de JSX
+#   quase identico. O que interessa deles ja esta consolidado em meta/HISTORY.md e
+#   meta/DECISIONS.md, e o src/v4/App.jsx e byte a byte igual ao src/App.jsx atual.
+#
+# INSTRUCOES-DO-PROJETO.md — o texto vive nas Instrucoes do Projeto do claude.ai; o arquivo do
+#   repo e so a copia versionada. Subi-lo ao mount duplicaria o que ja e lido em toda mensagem.
+#
+# .claude/settings.local.json — arquivo de maquina: caminhos absolutos do Windows e a lista de
+#   permissoes que o Code foi acumulando. Nao e conhecimento do projeto (DEC-031).
+#
+# --- O que fica DE FORA de proposito ---
+#
+# meta/specs/ (specs de feature) — NAO e ignorada. Sao curtas, olham para a frente e dizem o que
+#   esta sendo construido: e exatamente o que o assistente precisa ler no inicio da sessao.
+#
+# meta/analises/ — NAO e ignorada enquanto forem poucas. Analise "Em discussao" precisa ser
+#   relida no turno seguinte, e analise que o assistente nao ve nao e discutida: e reescrita do
+#   zero. Quando pesarem, acrescente ESTE PAR dentro do bloco (o modelo sempre sobe; o corpo, nao):
+#     meta/analises/*
+#     !meta/analises/_TEMPLATE.md
+#
+# meta/legacy/ — pasta encerrada e removida em 2026-07-25, depois da extracao retroativa completa
+#   (DEC-011). Fica registrado aqui so como historico da regra: material legado vive no Git para
+#   nunca se perder, e sobe ao mount so quando esta em pauta.
 
 # >>> flatdrop-editor
-logs/
+logs/*
+meta/workorders/*
+src/v1/*
+src/v2/*
+src/v3/*
+src/v4/App.jsx
 INSTRUCOES-DO-PROJETO.md
+.claude/settings.local.json
 # <<<

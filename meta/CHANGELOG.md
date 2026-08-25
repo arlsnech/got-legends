@@ -14,6 +14,12 @@
 - **«Bloco de fecho de turno»** — formato fixo de encerramento na raia de planejamento: Próximo · Estado · Arquivar/Manter · Config por raia · Handoff. Quem executa no Code fecha com relatório de trabalho, não com este formulário.
 - **DEC-008 ganhou a lista de «colisões já julgadas — não reabrir»** — as seis linhas em que o template genérico colide com este projeto todo update e que já foram decididas passam a ser reportadas como «sem ação», em vez de reapresentadas como decisão.
 - `CLAUDE.md`, `.flatdropignore` e `meta/LOG-TEMPLATE.md` atualizados para o vocabulário novo.
+- **Template-update do KCM v1.90.0 comparado e fundido** (DEC-031) — sem efeito no produto. O CEREBRO ganhou: o template genérico deixa de ser candidato a substituir arquivo vivo refinado; a exigência de declarar versão/commit antes de comparar; o gatilho concreto de análise para mudança de formato de artefato; os quatro modos de falha da releitura de mount; e a regra de que a linha «Estado» só carrega dado lido no próprio turno.
+- **`.flatdropignore` reorganizado** — regra dentro do bloco `flatdrop-editor`, explicação acima dele, nada depois do `# <<<`, e forma `pasta/*` em toda linha de pasta. Corrige a duplicação silenciosa de `INSTRUCOES-DO-PROJETO.md`, que estava escrito dentro e fora do bloco.
+- **`.claude/settings.local.json` saiu do versionamento e do mount** — config de máquina (caminhos absolutos, permissões acumuladas pelo Code), não conhecimento do projeto. O `.claude/settings.json` compartilhado segue versionado.
+
+### Modificado
+- **`getAvailableProps` e `getAvailablePerks` passam a receber o item resolvido** em vez do `id` (DEC-032). Elimina a armadilha 14 pela assinatura — o erro deixa de ser possível de escrever — e substitui os dois filtros inline do `App.jsx` por chamadas às funções. Sem mudança visível de comportamento.
 
 ### Adicionado
 - **Fase 3 — exportação em imagem.** Os três botões 🖼️ (Build, Detalhado, Estatístico) geram um PNG da build e disparam o download. Canvas puro, sem dependência externa; altura calculada a partir do conteúdo e renderização em 2x. Layout em duas colunas — habilidade e vantagens à esquerda, equipamentos à direita — com faixa de estatísticas no modo Estatístico, ícones do jogo em cada linha e as cores da classe ativa.
