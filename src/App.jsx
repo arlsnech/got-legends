@@ -10,6 +10,7 @@ import {
   getEffectiveCharm, getStatGroups, isStatChanged,
   getClass, getItem,
   getAvailableProps, getAvailablePerks,
+  selectTech, selectAbility,
   formatStatValue, formatPropRange, propValueForDisplay,
   propValueFromDisplay, formatCd,
   encodeBuild, decodeBuild, serializeBuild, deserializeBuild,
@@ -109,10 +110,6 @@ function Tooltip({ text, children, wrapperStyle }) {
     </span>
   )
 }
-
-// ─── Small helpers ───────────────────────────────────────────
-const pct = (v) => v > 0 ? `+${Math.round(v * 100)}%` : `${Math.round(v * 100)}%`
-const pts = (v, u) => v > 0 ? `+${v}${u}` : `${v}${u}`
 
 // ─── HpResolveBar — barra de HP e círculos de Determinação ──
 // Layout vertical: círculos acima, barra de HP abaixo (como no jogo)
@@ -879,7 +876,7 @@ function TechniquesPanel({ build, setBuild, lang, layoutMode }) {
   }
 
   const handleAbility = (id) => {
-    setBuild(prev => ({ ...prev, abilityId: prev.abilityId === id ? null : id }))
+    setBuild(prev => selectAbility(prev, id))
   }
 
   return (
@@ -983,7 +980,8 @@ function TechniquesPanel({ build, setBuild, lang, layoutMode }) {
                 <button
                   onClick={() => {
                     if (!canChangeTech(tier, null)) return
-                    setBuild(prev => ({ ...prev, techs: { ...prev.techs, [tier]: null } }))
+                    // selectTech com techId null sempre esvazia o slot
+                    setBuild(prev => selectTech(prev, tier, null))
                   }}
                   title={!canChangeTech(tier, null)
                     ? (lang === 'en' ? 'Unequip a Legendary item first' : 'Desequipe um item Magistral primeiro')
@@ -1021,10 +1019,7 @@ function TechniquesPanel({ build, setBuild, lang, layoutMode }) {
                   onToggle={() => {
                     const incoming = build.techs[tier] === t.id ? null : t.id
                     if (!canChangeTech(tier, incoming)) return
-                    setBuild(prev => ({
-                      ...prev,
-                      techs: { ...prev.techs, [tier]: prev.techs[tier] === t.id ? null : t.id },
-                    }))
+                    setBuild(prev => selectTech(prev, tier, t.id))
                   }}
                   blocked={!canChangeTech(tier, build.techs[tier] === t.id ? null : t.id)}
                 />
@@ -1196,15 +1191,6 @@ function StatsPanel({ stats, build, setBuild, lang }) {
   const L = lang === 'en' ? LABELS_EN : LABELS_PT
   const groups = useMemo(() => stats ? getStatGroups(stats, build.classId, lang) : [], [stats, build.classId, lang])
 
-  const fmtStat = (s) => {
-    if (s.unit === '●') return '●'.repeat(s.value)
-    if (s.unit === '%') return pct(s.value)
-    if (s.unit === 'pts' || s.unit === 's') return pts(s.value, s.unit)
-    return String(s.value)
-  }
-
-  const changed = (s) => s.value !== s.base
-
   if (!stats) return null
 
   return (
@@ -1253,12 +1239,12 @@ function StatsPanel({ stats, build, setBuild, lang }) {
               padding: '4px 0',
               borderBottom: `1px solid ${T.border}20`,
             }}>
-              <span style={{ fontSize: 12, color: changed(s) ? T.text : T.muted }}>{s.label}</span>
+              <span style={{ fontSize: 12, color: isStatChanged(s) ? T.text : T.muted }}>{s.label}</span>
               <span style={{
                 fontSize: 12, fontWeight: 700,
-                color: changed(s) ? T.green : T.muted,
+                color: isStatChanged(s) ? T.green : T.muted,
               }}>
-                {fmtStat(s)}
+                {formatStatValue(s.value, s.unit)}
               </span>
             </div>
           ))}

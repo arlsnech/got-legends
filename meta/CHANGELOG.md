@@ -20,6 +20,8 @@
 
 ### Modificado
 - **`getAvailableProps` e `getAvailablePerks` passam a receber o item resolvido** em vez do `id` (DEC-032). Elimina a armadilha 14 pela assinatura — o erro deixa de ser possível de escrever — e substitui os dois filtros inline do `App.jsx` por chamadas às funções. Sem mudança visível de comportamento.
+- **Painel de estatísticas e exportações passam a usar o mesmo formatador** (DEC-033). O `StatsPanel` deixa de ter `fmtStat` e `changed` próprios e chama `formatStatValue` e `isStatChanged`, como o resto do `App.jsx` já fazia; os helpers locais `pct` e `pts` saem por ficarem órfãos. Fecha uma divergência de arredondamento que ainda não aparecia na tela: `pct` truncava a porcentagem para inteiro e `formatStatValue` mantém duas casas.
+- **Os três toggles inline de técnica e habilidade viram chamadas a `selectTech`/`selectAbility`** (DEC-033). Sem mudança de comportamento.
 
 ### Adicionado
 - **Fase 3 — exportação em imagem.** Os três botões 🖼️ (Build, Detalhado, Estatístico) geram um PNG da build e disparam o download. Canvas puro, sem dependência externa; altura calculada a partir do conteúdo e renderização em 2x. Layout em duas colunas — habilidade e vantagens à esquerda, equipamentos à direita — com faixa de estatísticas no modo Estatístico, ícones do jogo em cada linha e as cores da classe ativa.

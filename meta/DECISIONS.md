@@ -1092,3 +1092,28 @@ Assinatura passa a `getAvailableProps(item, slot, otherPropId)` e `getAvailableP
 - A armadilha 14 muda de natureza: deixa de ser «cuidado ao usar» e vira «o erro é impossível de escrever». O CONTEXT foi reescrito nesse sentido pela `wo0025`.
 - Uma fonte de verdade a menos duplicada. Restam duas da mesma família no backlog: `selectTech`/`selectAbility` e o formatador de estatísticas.
 - `App.jsx` perde cerca de dez linhas e recupera dois imports que a limpeza de julho havia removido por órfãos.
+
+---
+
+## DEC-033 — Painel e exportação passam a usar o mesmo formatador de estatísticas
+**Data:** 2026-08-24 · **Status:** aceita · **Aplicada pela** `wo0027`
+
+### Contexto
+O `StatsPanel` do `App.jsx` tinha um `fmtStat` local e um `changed` local, duplicando `formatStatValue` e `isStatChanged` de `logic.js` — as duas funções já importadas no mesmo arquivo e já usadas pelas rotinas de exportação de texto e de imagem. Também havia três toggles inline reimplementando `selectTech` e `selectAbility`.
+
+**O achado não foi a duplicação, foi a divergência.** O `fmtStat` delegava o ramo de porcentagem ao helper local `pct`, que arredonda para inteiro (`Math.round(v * 100)`), enquanto `formatStatValue` mantém duas casas (`Math.round(v * 10000) / 100`). Para um valor de `0.125`, o painel diria `+13%` e a imagem exportada diria `+12.5%` — a mesma build mostrando dois números.
+
+Medição feita antes de decidir: não existe no `data.js` atual nenhum valor com três ou mais casas decimais, então **hoje as duas implementações produzem a mesma string em todos os casos**. A divergência é latente. Ela viraria bug silencioso no primeiro valor fracionário que o jogo trouxer, e o sintoma — painel e exportação discordando — é dos caros de diagnosticar, porque as duas telas parecem corretas isoladamente.
+
+### Decisão
+O `StatsPanel` passa a chamar `formatStatValue` e `isStatChanged` como o resto do arquivo já fazia. `fmtStat` e `changed` saem. Os helpers locais `pct` e `pts` saem junto, por ficarem órfãos: `pts` era cópia fiel do ramo correspondente, e `pct` era a implementação **menos** precisa das duas — retirá-la é o ponto, não um efeito colateral. Os três toggles inline viram chamadas a `selectTech`/`selectAbility`.
+
+### Alternativas consideradas
+- **Só trocar os toggles e deixar o formatador.** Recusada: eram os dois itens da mesma família no backlog, e o do formatador é o que escondia a divergência.
+- **Manter `pct` e alinhar `formatStatValue` ao arredondamento inteiro.** Recusada: perderia precisão na exportação para resolver uma duplicação. A regra é convergir para a implementação melhor, não para a mais antiga.
+- **Deixar `pct`/`pts` no arquivo para uso futuro.** Recusada: é como nasceram os oito imports órfãos limpos em 2026-07-25.
+
+### Consequências
+- O painel e as duas exportações passam a ter uma fonte de verdade só para formatação de estatística. A próxima correção de formato entra em um lugar, não em dois — que foi o custo real cobrado na `spec0019`.
+- Fecha o último par de duplicações mapeadas no backlog. A família aberta pela `spec0012` está encerrada.
+- Registrado como aplicação da regra de processo «quando duas implementações divergem, a divergência é o achado»: a duplicação era conhecida desde julho, mas o que estava anotado era «é cópia» — e não era.
