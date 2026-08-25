@@ -9,6 +9,7 @@ import {
   checkLegendaryLimit, getGearListForClass, getRequiredPerkId,
   getEffectiveCharm, getStatGroups, isStatChanged,
   getClass, getItem,
+  getAvailableProps, getAvailablePerks,
   formatStatValue, formatPropRange, propValueForDisplay,
   propValueFromDisplay, formatCd,
   encodeBuild, decodeBuild, serializeBuild, deserializeBuild,
@@ -260,16 +261,10 @@ function Tag({ children, color }) {
 function PropInput({ item, propState, onPropChange, onValueChange, slot, propSlot, otherPropId, locked, lang }) {
   const L = lang === 'en' ? LABELS_EN : LABELS_PT
   const avail = useMemo(() => {
-    if (!item) return []
     const slotCode = propSlot === 'p1' ? 'P1' : 'P2'
-    return item.props.filter(p => {
-      if (!p.sl.includes(slotCode)) return false
-      if (otherPropId) {
-        const other = item.props.find(pp => pp.id === otherPropId)
-        if (other && p.sk === other.sk) return false
-      }
-      return true
-    })
+    // `item` aqui já é o EFETIVO (classBinding resolvido pelo pai) — que é
+    // exatamente o que a assinatura de getAvailableProps exige.
+    return getAvailableProps(item, slotCode, otherPropId)
   }, [item, propSlot, otherPropId])
 
   const propDef = propState?.propId ? item?.props.find(p => p.id === propState.propId) : null
@@ -440,7 +435,7 @@ function PerkRow({ item, selected, other, onSelect, perkSlot, lang, forcedPerkId
   const isForced = perkSlot === 'perk1' && !!forcedPerkId
   const effectiveSelected = isForced ? forcedPerkId : selected
 
-  const avail = item ? item.perks.filter(p => p.id !== other) : []
+  const avail = getAvailablePerks(item, other)
   const perkDef = effectiveSelected ? item?.perks.find(p => p.id === effectiveSelected) : null
   const labelPT = perkSlot === 'perk1' ? 'Vantagem I (60 Ki)' : 'Vantagem II (120 Ki)'
   const labelEN = perkSlot === 'perk1' ? 'Perk I (60 Ki)' : 'Perk II (120 Ki)'

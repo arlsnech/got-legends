@@ -145,9 +145,13 @@ export function getGearListForClass(type, classId) {
 /**
  * Retorna as props disponíveis para um slot (P1 ou P2) de um item,
  * excluindo a prop já escolhida no outro slot (mesma sk = bloqueada).
+ *
+ * Recebe o ITEM já resolvido, nunca o id. Amuleto magistral com classBinding
+ * só tem os props de classe depois de passar por getEffectiveCharm; resolver
+ * por id aqui devolveria lista incompleta e sem erro — era a armadilha 14.
+ * A assinatura é a barreira: ver DEC-032.
  */
-export function getAvailableProps(itemId, slot, otherPropId) {
-  const item = getItem(itemId);
+export function getAvailableProps(item, slot, otherPropId) {
   if (!item) return [];
   const other = otherPropId ? item.props.find(p => p.id === otherPropId) : null;
   return item.props.filter(p => {
@@ -161,9 +165,11 @@ export function getAvailableProps(itemId, slot, otherPropId) {
 /**
  * Retorna os perks disponíveis para um item, excluindo o já escolhido
  * no outro slot de perk.
+ *
+ * Recebe o ITEM já resolvido, nunca o id — mesmo motivo de
+ * getAvailableProps (armadilha 14, DEC-032).
  */
-export function getAvailablePerks(itemId, otherPerkId) {
-  const item = getItem(itemId);
+export function getAvailablePerks(item, otherPerkId) {
   if (!item) return [];
   return item.perks.filter(p => p.id !== otherPerkId);
 }
