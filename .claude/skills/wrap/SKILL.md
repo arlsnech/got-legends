@@ -1,14 +1,19 @@
 ---
 name: wrap
-description: Encerra a tarefa — append em STATUS/DECISIONS, build se houve codigo, git diff, commit e push. Use quando o usuario pedir /wrap ou para fechar a sessao de trabalho.
+description: Encerra a tarefa — append em STATUS/DECISIONS, confere o git diff, commita e empurra. Use quando o usuário pedir /wrap ou para fechar o trabalho.
 disable-model-invocation: true
 ---
-Encerre a tarefa:
+ANTES de escrever qualquer coisa: abra o relatório que carrega o COMMIT MAIS NOVO em `../AAMMDD-HHMM-code-*.txt` — ordene por commit, não por nome nem por data do arquivo, porque relatório antigo que foi REABERTO tem data nova — e confira o que ele AFIRMA contra `git status` e `git log`. **Sobre MEDIÇÃO você não conclui: cita e aponta.** O `1b` compara commit e estado do git — coisas que o git responde. Achado numérico do relatório anterior (quantos bytes, quantos itens, qual chave) o git NÃO desmente: ou você reroda a medição e diz que rerodou, ou escreve «medido no relatório X, não reconferido aqui». Contradizer sem remedir é o modo de falha caro — o log do dia guarda o relatório ERRADO, e desempatar dois registros que se negam custa uma sessão e exige os dois relatórios em mãos, que é o que se perde. Confira também qualquer relatório anterior que tenha declarado PENDÊNCIA: ele é o que uma sessão futura vai ler, e o `1b` que só olha o mais recente deixa a mentira no disco. Divergência vira uma linha de correção no log do dia; conferência que passa não vira linha.
+Encerre a tarefa: atualize `meta/STATUS.md` (append, não reescreva), acrescente `DEC-`/`FIX-` em `meta/DECISIONS.md` se houve decisão/bug,
+e confira o `git diff` — a forma esperada, nada além. Mensagem de commit SEM acento.
+Se houve mudança de código: rode `npm run build` e diga o que vale abrir e conferir na tela — caso feliz, borda e regressão provável. Este projeto não tem suíte de testes; o build sozinho não é a rede inteira.
+**Antes do commit, conte a ESTRUTURA que você editou.** No `STATUS.md`, o bloco da sessão anterior tem de continuar no arquivo depois da sua edição — procure o título dele: mover tem duas metades, e a que some é sempre a de apagar. Estrutura que costuma duplicar (`<details>`, o bloco do topo do STATUS) tem contagem esperada — `grep -c` da abertura e do fechamento, um de cada. Aviso em prosa já falhou duas vezes seguidas; contagem não.
+Se o commit toca `INSTRUCOES-DO-PROJETO.md`, meça os caracteres com `LC_ALL=C.UTF-8 wc -m` (sem o locale, `wc -m` conta bytes) e escreva o número no relatório, ao lado do teto do projeto (6900): teto que ninguém mede envelhece calado.
+O `HHMM` do nome do relatório sai de `date +%y%m%d-%H%M`, rodado na hora — nunca de cabeça.
+Ao mudar um número ou um estado no `STATUS.md` (contagem de testes/checagens, versão, «funciona até X»), procure o valor ANTIGO no arquivo INTEIRO e atualize todas as ocorrências — o cabeçalho não é o único lugar onde ele aparece, e a cópia esquecida no meio do texto passa a mentir.
+Escreva o log do dia em `logs/AAAA-MM-DD.md` (formato em `meta/LOG-TEMPLATE.md`). Se o arquivo do dia NÃO existe, CRIE — não regenerar é uma coisa, não criar é outra. Cinco linhas escritas hoje valem mais que uma página reconstituída na semana que vem: só você viu o que aconteceu aqui.
+Curadoria que REESCREVE documento (encolher, reordenar, mudar voz) não é trabalho do Code — reporte ao usuário para o chat cuidar.
+Resolva o push ANTES de escrever o relatorio, e escreva o campo do push com o RESULTADO REAL — nunca «pendente» por antecipacao. Se ele ficar mesmo pendente, REABRA o relatorio e corrija quando resolver: o arquivo que afirma o falso e o que a proxima sessao le. Confira tambem que nenhum relatorio `.txt` ficou DENTRO do repo (`git status` o mostraria como nao rastreado): o lugar dele e a pasta-pai, e relatorio na raiz vira `??` que ninguem identifica. Verde: `add`, `commit` e `push` sem perguntar. Vermelho: nao commite nem empurre — feche com MENU DE OPCOES pela ferramenta `AskUserQuestion`, com a recomendada em primeiro lugar e marcada `(Recomendado)`. **Nunca pergunte em prosa — e menu numerado escrito no corpo da mensagem TAMBEM e prosa**, porque obriga o dono a digitar a resposta em vez de clicar. Sem a ferramenta, caia no menu numerado em texto e DIGA que caiu no fallback. **O cartao serve para ESCOLHER, nao para DISPARAR:** ele nao contorna `disable-model-invocation`, entao nao o use para oferecer «rodar a skill agora». Grave o relatório de trabalho em `../AAMMDD-HHMM-code-<slug>-wrap-<alvo>.txt` (pasta-pai do repo) — o ato é sempre `wrap` nesta skill, e `<alvo>` é a WO que fechou (`wo0028`) ou, sem WO, duas ou três palavras com hífen. Se a escrita for negada, diga e siga.
 
-1. Atualize `meta/STATUS.md` por APPEND (nao reescreva o arquivo): o que passou a funcionar, o que ficou pendente, e o bloco «Ultima Sessao» com a data de hoje e o proximo passo obvio.
-2. Acrescente `DEC-` / `FIX-` em `meta/DECISIONS.md` se houve decisao de arquitetura ou bug grave resolvido.
-3. Se houve mudanca de codigo: rode `npm run build` e diga o que vale abrir e conferir na tela (nao ha suite de testes neste projeto).
-4. Mostre o `git diff`.
-5. Commit e push: `git add` dos arquivos tocados, `git commit` em Conventional Commits com mensagem SEM acento, `git push`.
 
-Curadoria que REESCREVE documento (encolher, reordenar, mudar voz) nao e trabalho do Code — reporte ao usuario para o chat cuidar.
+*Gerado pelo Kit de Contexto Universal v1.138.0 — 2026-11-14 — esta linha e do KIT: nao funda, substitua pela do pacote mais recente.*

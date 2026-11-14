@@ -1,18 +1,21 @@
 ---
 name: apply-wo
-description: Aplica uma WO de meta/workorders/ ao repo — localiza cada ancora exatamente, substitui, para se nao achar, e fecha com commit e push. Use quando o usuario pedir /apply-wo ou para aplicar uma WO nomeada.
+description: Aplica uma WO de meta/workorders/ ao repo — localiza cada âncora exatamente, substitui, e para se não achar. Use quando o usuário pedir /apply-wo ou para aplicar uma WO nomeada.
 disable-model-invocation: true
 ---
 Leia o arquivo de WO indicado em `meta/workorders/` e execute-o.
-
-1. Localize cada ancora EXATAMENTE. Se nao achar UMA que seja, PARE e reporte qual falhou — nao chute um lugar proximo, nao aplique as outras pela metade.
-2. Nao toque em nada fora das edicoes nomeadas na WO.
-3. Se a WO contiver um portao de diagnostico ("rode este teste; se o resultado for X, PARE"), obedeca ao portao antes de editar qualquer coisa. Hipotese de causa nao e permissao para corrigir.
-4. Rode `git diff` e confira que a forma bateu com o esperado.
-5. Se a WO tocou codigo (fora de `meta/`), rode `npm run build` antes de commitar.
-6. Feche o ciclo sem esperar novo pedido: `git add` incluindo o PROPRIO arquivo da WO, depois `git commit` (Conventional Commits, mensagem SEM acento) e `git push`.
-7. Nao apague a WO aplicada — ela e artefato versionado.
-
-Ao terminar, RELATE o trabalho: o que foi feito, o que voce encontrou que foge do que a WO pedia, os arquivos tocados, o resultado do build ou da conferencia, e o commit. Nao substitua o relatorio pelo bloco de fecho de turno do `meta/CEREBRO.md` — aquele e da raia de planejamento, e trocar um pelo outro perde a informacao que so quem executou tem.
-
+ANTES de editar: se a WO edita arquivo existente e o cabeçalho dela NÃO traz o campo «Âncoras lidas em» preenchido, RECUSE — não aplique, e diga que falta. Quem escreveu a WO é quem tem o viés; esta conferência é sua justamente por isso.
+Localize cada âncora EXATAMENTE; se não achar uma, PARE e reporte — não chute um lugar próximo.
+Antes de cada edição, confira a idempotência pelo texto NOVO INTEIRO: se ele já está no arquivo **e a âncora não** — salvo quando a âncora está dentro do texto novo, na forma «trocar» —, PULE e diga no relatório. Frase-chave não basta: na forma «trocar» o texto novo repete a âncora, e um trecho dele já existe antes de aplicar; e na REMOÇÃO o texto novo é um pedaço da âncora, presente antes de aplicar.
+Se o banner «Canal dos meta» disser CHAT e o corpo trouxer edição numerada num documento `meta/`, a WO é contraditória: PARE e pergunte. O banner decide quem APLICA; escolher um dos lados em silêncio já deixou o registro de uma WO inteira de fora.
+Se a WO contiver um portão de diagnóstico («rode este teste; se o resultado for X, PARE»), obedeça ao portão ANTES de editar qualquer coisa. Hipótese de causa não é permissão para corrigir — foi o que impediu o FIX-012 de entrar errado.
+Não toque em nada fora das edições nomeadas. Ao fim, rode `git diff` e confira a forma esperada antes de commitar.
+Se a WO tocou código fora de `meta/`, rode `npm run build` ANTES de commitar — este projeto não tem suíte de testes, então o build é metade da rede; a outra metade é dizer o que abrir e conferir na tela.
+Não apague a WO aplicada: ela é artefato versionado, e o `git add` inclui o PRÓPRIO arquivo da WO.
+Ao terminar, RELATE com corpo mínimo, nesta ordem: (1) o que foi feito, edição por edição; (2) a SAÍDA CRUA das conferências — o número e o comando que o produziu, nunca só «bate»; (3) o que fugiu do texto literal da WO; (4) o que muda para quem usa; (5) o que você olhou além da WO; (6) arquivos tocados; (7) build/validação; (8) commit e push. Relatório que só repete «bate, bate, bate» não foi escrito por quem olhou o diff.
+Resolva o push ANTES de escrever o relatorio, e escreva o campo do push com o RESULTADO REAL — nunca «pendente» por antecipacao. Se ele ficar mesmo pendente, REABRA o relatorio e corrija quando resolver: o arquivo que afirma o falso e o que a proxima sessao le. Confira tambem que nenhum relatorio `.txt` ficou DENTRO do repo (`git status` o mostraria como nao rastreado): o lugar dele e a pasta-pai, e relatorio na raiz vira `??` que ninguem identifica. Verde: `add`, `commit` e `push` sem perguntar — e, se a WO declarar um **Proximo comando**, termine o relatorio com ele CRU e SOZINHO na ultima linha, sem frase de apresentacao (texto em volta esconde o comando). Vermelho: nao commite nem empurre — feche com MENU DE OPCOES pela ferramenta `AskUserQuestion`, com a recomendada em primeiro lugar e marcada `(Recomendado)`. **Nunca pergunte em prosa — e menu numerado escrito no corpo da mensagem TAMBEM e prosa**, porque obriga o dono a digitar a resposta em vez de clicar. Sem a ferramenta, caia no menu numerado em texto e DIGA que caiu no fallback. **O cartao serve para ESCOLHER, nao para DISPARAR:** ele nao contorna `disable-model-invocation`, entao nao o use para oferecer «rodar a skill agora» — medido duas vezes, isso acrescenta um passo sem tirar nenhum. Grave o MESMO relatório em `../AAMMDD-HHMM-code-<slug>-apply-<alvo>.txt` (pasta-pai do repo) — o ato é sempre `apply` nesta skill, e `<alvo>` é a WO aplicada (`wo0028`). Se a escrita for negada, diga e siga.
+O `HHMM` do nome do relatório sai de `date +%y%m%d-%H%M`, rodado na hora — nunca de cabeça.
 WO: $ARGUMENTS
+
+
+*Gerado pelo Kit de Contexto Universal v1.138.0 — 2026-11-14 — esta linha e do KIT: nao funda, substitua pela do pacote mais recente.*

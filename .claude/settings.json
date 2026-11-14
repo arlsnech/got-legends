@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Read", "Edit", "Grep", "Glob",
+      "Read", "Write", "Edit", "Grep", "Glob",
       "Bash(git status:*)", "Bash(git diff:*)", "Bash(git add:*)", "Bash(git commit:*)", "Bash(git push:*)",
       "Bash(git mv:*)", "Bash(git log:*)",
       "Bash(npm run build:*)", "Bash(npm run dev:*)", "Bash(npm run preview:*)",
@@ -10,6 +10,7 @@
     "deny": [
       "Bash(rm -rf:*)",
       "Bash(npm run deploy:*)"
-    ]
+    ],
+    "additionalDirectories": ["../"]
   }
 }
