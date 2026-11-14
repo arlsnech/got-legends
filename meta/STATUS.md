@@ -424,3 +424,13 @@ Sessão de infraestrutura. O pacote de dezoito arquivos genéricos foi comparado
 `settings.json` ganhou `Write` e `additionalDirectories: ["../"]`; `apply-wo` e `wrap` foram fundidas com as do pacote (linha «Mostre o git diff» revogada saiu da `wrap`); `sondar` e `meta/workorders/_TEMPLATE.md` foram criados. Commit `1e8d716`, build dispensado.
 
 **Pendente:** Fatia 2 (varredura de cadencia, 42 pontos em 8 arquivos, uma WO por arquivo), Fatia 3 (merge do `meta/CEREBRO.md`, ainda com carimbo v1.73.0). `settings.json` novo pode so valer apos reabrir a sessao do Code.
+
+---
+
+### 2026-11-14 — Kit v1.138.0, Fatia 2 (wo0029), sem tocar no produto
+
+Fecha o «Pendente: Fatia 2» da entrada acima. As duas linhas revogadas saíram do `meta/CEREBRO.md` (entrega «arquivo completo para baixar» e «commit pronto ao final») e a cadência `sessão` virou `turno`/`conversa`/`log do dia` em `CEREBRO`, `LOG-TEMPLATE`, `CONTEXT`, `GLOSSARY`, `CLAUDE.md`, `.flatdropignore`, `.gitignore` e duas diretivas do `STATUS`. DEC-034 registrada. Commit `994d070`, build dispensado (só `meta/` e config).
+
+**Atenção para quem conferir a WO:** o passo 3 dela esperava 0 em `grep -c "costurar à mão..." meta/CEREBRO.md`, mas dá 1 — a frase está no texto novo da Edição 1a (modo antigo, projeto sem executor). Não é resíduo. `STATUS.md` fechou em 32 «sess», não 31: o baseline real já era 34.
+
+**Pendente:** Fatia 3 (merge do `meta/CEREBRO.md` com os 123 blocos do pacote, ainda com carimbo v1.73.0); âncoras serão escritas contra o texto de agora.
