@@ -416,3 +416,11 @@ Sessão de infraestrutura. O pacote de dezoito arquivos genéricos foi comparado
 **Higiene ainda não feita, agora com um ano de atraso próprio:** o `DECISIONS.md` passou de 1.100 linhas e este `STATUS.md` segue com a maior parte do corpo sob entradas de sessão antigas. Continua sendo curadoria de arquivo inteiro, e continua sendo trabalho do chat.
 
 **Próximo passo:** fechar as duas duplicações restantes do backlog, ou abrir a F4.
+
+---
+
+### 2026-11-14 — Kit v1.138.0, Fatia 1 (wo0028), sem tocar no produto
+
+`settings.json` ganhou `Write` e `additionalDirectories: ["../"]`; `apply-wo` e `wrap` foram fundidas com as do pacote (linha «Mostre o git diff» revogada saiu da `wrap`); `sondar` e `meta/workorders/_TEMPLATE.md` foram criados. Commit `1e8d716`, build dispensado.
+
+**Pendente:** Fatia 2 (varredura de cadencia, 42 pontos em 8 arquivos, uma WO por arquivo), Fatia 3 (merge do `meta/CEREBRO.md`, ainda com carimbo v1.73.0). `settings.json` novo pode so valer apos reabrir a sessao do Code.
