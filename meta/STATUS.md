@@ -1,7 +1,7 @@
 # STATUS.md — Estado Atual
 
 > Arquivo **rolante**: descreve só o AGORA. O assistente lê no início para saber onde retomar.
-> Item resolvido SAI daqui — vai para o CHANGELOG (se foi entrega) e/ou para o log da sessão.
+> Item resolvido SAI daqui — vai para o CHANGELOG (se foi entrega) e/ou para o log do dia.
 
 ---
 
@@ -72,7 +72,7 @@ O que resta do guia é a **Fase 3** (`generateBuildImage` via Canvas, ~470 linha
 
 ---
 
-## 📋 Backlog (curto prazo — acionáveis na próxima sessão)
+## 📋 Backlog (curto prazo — acionáveis no próximo turno)
 
 > O item "aplicar as 4 correções pendentes do `GUIA_CORRECOES_FASE3.md`" **saiu daqui em 2026-07-23**: as três de layout foram aplicadas pela spec0006 e a quarta pela spec0004. Estava contradizendo a seção «⏳ Pendente de Aplicação», que já dizia que não havia pendência.
 

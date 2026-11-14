@@ -8,12 +8,12 @@
 
 ---
 
-## Ritual de início de sessão
+## Ritual de início de turno
 
 1. Lê `CEREBRO.md` (este) — confirma comportamento e ritual.
 2. Lê `CONTEXT.md` — entende o projeto (panorama estável).
 3. Lê `STATUS.md` — descobre o estado atual e o próximo passo.
-4. Lê última entrada do `CHANGELOG.md` — vê o que mudou desde a sessão anterior.
+4. Lê última entrada do `CHANGELOG.md` — vê o que mudou desde o turno anterior.
 5. **Não lê por padrão:** IDEAS inteiro, logs antigos, arquivos de arquivo morto. Lê sob demanda quando a tarefa exigir.
 6. Antes de executar: confirma em uma frase o que entendeu. Se houver ambiguidade real, pergunta antes.
 
@@ -105,11 +105,11 @@ Cada arquivo tem um papel e um comportamento temporal distinto. **Respeite o pap
 | `DECISIONS.md` | Cresce devagar (ADR) | Por que as coisas são como são: decisões de arquitetura (DEC) e bugs graves resolvidos (FIX). Cresce devagar. |
 | `CHANGELOG.md` | Cresce (ordem reversa) | Histórico de versões entregues (SemVer + Keep a Changelog). Cresce no topo. |
 | `IDEAS.md` | Segundo cérebro (nunca perde) | Segundo cérebro: ideias suas e do assistente. Nunca perde nada — ideia muda de status, não some. |
-| `LOG-TEMPLATE.md` | Referência fixa | Modelo do log de sessão. Referência fixa — nunca substituído pelo conteúdo preenchido. |
+| `LOG-TEMPLATE.md` | Referência fixa | Modelo do log do dia. Referência fixa — nunca substituído pelo conteúdo preenchido. |
 | `ROADMAP.md` | Plano em fases | OPCIONAL — plano deliberado de evolução em fases. Use quando o projeto tem direção de médio/longo prazo. |
-| `GLOSSARY.md` | Estável | OPCIONAL — termos próprios do projeto. Use quando há jargão que se repete entre sessões. |
+| `GLOSSARY.md` | Estável | OPCIONAL — termos próprios do projeto. Use quando há jargão que se repete entre conversas. |
 | `HISTORY.md` | Cresce (histórico) | OPCIONAL — conhecimento consolidado de fases antigas (guias, análises que não cabem no CONTEXT enxuto). Lido sob demanda. |
-| `logs/AAAA-MM-DD.md` | Histórico | Ao final de cada sessão (formato em LOG-TEMPLATE). |
+| `logs/AAAA-MM-DD.md` | Histórico | Ao fechar o trabalho do dia; o `/wrap` cria o arquivo se não existir (formato em LOG-TEMPLATE). |
 | `SPEC.md` | Referência fixa | Molde da spec de feature: problema, critérios de aceite verificáveis, decisões, fora de escopo. Copie para `meta/specs/AAMMDD-nome.md`, uma por feature. |
 | `meta/workorders/AAMMDD-woNNNN-desc.md` | Cresce (uma por leva) | O texto exato de cada edição + a âncora. Artefato versionado; não se apaga depois de aplicada. |
 | `meta/analises/AAMMDD-ANALISE-<tema>.md` | Cresce (uma por decisão) | Antes de uma mudança não-trivial — a pasta nasce no primeiro uso. |
@@ -148,7 +148,7 @@ Se aparecerem no mount arquivos com sufixo `__template-update` junto de um `_UPD
 ## Regras de higiene (impedem inchaço e duplicação)
 
 - Referência cruzada, não duplicação: um dado tem UMA fonte de verdade. Quando uma ideia vira trabalho, ela aparece também no STATUS — mas continua no IDEAS, só mudando de status. Não copie o conteúdo para dois lugares.
-- STATUS é só o agora: item resolvido sai do STATUS e vai para o CHANGELOG (e para o log da sessão). Médio/longo prazo vive no ROADMAP, não no STATUS.
+- STATUS é só o agora: item resolvido sai do STATUS e vai para o CHANGELOG (e para o log do dia). Médio/longo prazo vive no ROADMAP, não no STATUS.
 - IDEAS nunca perde: ideia implementada vai para a seção «Concluídas»; ideia descartada vai para «Descartadas» com o motivo. Assim nunca se reabre discussão já resolvida.
 - DECISIONS cresce devagar: quando passar de ~700 linhas ou uma decisão for substituída, mova as antigas para um arquivo de arquivo morto.
 - Válvula de desvio registrado: os templates e a estrutura deste kit são PONTO DE PARTIDA, não contrato. Se a realidade do projeto não couber neles, adapte — dispense um arquivo que não serve, acrescente seção ou arquivo que falte — e REGISTRE o desvio (o que mudou e por quê) no DECISIONS, marcando-o também na seção «Feedback para o Kit» do IDEAS. Desviar SEM registrar é que é o erro; desviar registrando é como o kit aprende. E não duplique o que a estrutura já cobre.
@@ -158,26 +158,36 @@ Se aparecerem no mount arquivos com sufixo `__template-update` junto de um `_UPD
 
 ## Como o assistente entrega as atualizações dos documentos
 
-As mudanças nos documentos que decorrem do trabalho do assistente são registradas pelo PRÓPRIO assistente — quando ele faz algo, ele mesmo atualiza os docs afetados. O que o usuário quer acrescentar por conta (ele sabe onde e o quê) é decisão dele. Em ambos os casos, a entrega é por ARQUIVO COMPLETO, nunca por blocos soltos para o usuário costurar à mão.
+As mudanças nos documentos que decorrem do trabalho do assistente são registradas pelo PRÓPRIO assistente — quando ele faz algo, ele mesmo atualiza os docs afetados. O que o usuário quer acrescentar por conta (ele sabe onde e o quê) é decisão dele.
+
+**Como a entrega chega ao disco depende do canal.** Este projeto tem pasta vinculada e executor no repositório, então há dois caminhos, e escolher errado é o desperdício:
+- **Arquivo inteiro** — para reescrita de fundo, mudança de voz, ou arquivo novo/pequeno. O assistente escreve direto no repositório pela pasta vinculada; o usuário não baixa nem costura nada.
+- **WO** em `meta/workorders/` — para delta estruturado em documento grande. O assistente escreve a WO no repositório, com texto exato e âncora semântica, e o Claude Code posiciona com `/apply-wo`.
+
+Um canal por doc por ciclo. Quando NÃO há pasta vinculada nem executor — outro projeto, outra máquina —, aí sim vale o modo antigo: arquivo inteiro para o usuário baixar e substituir, nunca pedaços para ele costurar à mão. Aqui esse modo é a exceção, não a regra.
 
 **O assistente:**
-- Registra o que decorre do próprio trabalho: se a sessão mexeu em STATUS, decisões, ideias, etc., o assistente entrega esses arquivos atualizados — não espera o usuário pedir.
-- Entrega o arquivo INTEIRO já atualizado (não um trecho, não «adicione esta linha»). O usuário só substitui o antigo pelo novo.
+- Registra o que decorre do próprio trabalho: se o turno mexeu em STATUS, decisões, ideias, etc., o assistente entrega esses arquivos atualizados — não espera o usuário pedir.
+- Entrega a mudança já aplicável: arquivo inteiro escrito no repositório, ou WO com texto exato e âncora. Nunca «adicione esta linha» solto na conversa, que é trabalho empurrado para o usuário.
 - Entrega o conjunto consistente de uma vez: todos os arquivos afetados na mesma leva. Estado meio-atualizado (metade novo, metade antigo) é pior que não mexer.
 - Aplica as regras de higiene ao montar o arquivo (move o resolvido do STATUS, anexa no topo do CHANGELOG) — o usuário recebe o resultado já correto.
 
 **O usuário:**
 - DECIDE o que ele próprio quer acrescentar aos docs (pode fazer manualmente e avisar). Atualizar por conta é escolha dele.
-- APLICA de forma simples: baixa os arquivos completos e substitui os antigos na pasta (e sobe no Git/Projeto, se usar). Sem editar nada à mão.
+- APLICA de forma simples: roda `/apply-wo <arquivo>` quando a entrega é WO, ou confere o `git diff` quando o assistente escreveu direto no repositório. Sem editar nada à mão.
 - Pode ignorar, adiar ou pedir ajustes antes de aplicar.
 
-> Sobre os arquivos: os documentos já no Projeto chegam ao assistente como somente-leitura (ele lê, não salva por cima). Isso NÃO o impede de entregar versões novas — ele cria cada arquivo atualizado como arquivo novo para baixar. Sem ferramenta de download, entrega o conteúdo completo de cada arquivo no chat, um por bloco. Princípio único: arquivo inteiro, conjunto consistente, nunca pedaços para costurar.
+> Sobre os arquivos: com pasta vinculada, o assistente lê e escreve no repositório direto, e o `git diff` é a rede. Sem pasta vinculada, os documentos chegam como somente-leitura e ele entrega cada arquivo atualizado como arquivo novo para baixar; sem ferramenta de download, entrega o conteúdo completo no chat, um por bloco. Princípio único em qualquer canal: conjunto consistente, e nada que obrigue o usuário a montar o arquivo à mão.
 
-### Commit pronto ao final (se você versiona com Git)
+### Commit — quem roda, e o que o chat entrega
 
-Quando a entrega inclui arquivos que vão para um repositório Git/GitHub (código ou documentos), o assistente fecha a resposta com o bloco de commit pronto para copiar e colar, na convenção Conventional Commits (`tipo(escopo): descrição` — feat, fix, docs, refactor, chore), em TRÊS linhas separadas: `git add` listando os arquivos alterados (pode usar `git add .` quando o conjunto é pequeno e a árvore é conhecida/limpa), `git commit` com a mensagem completa, e `git push` — prontas para colar uma a uma e conferir entre elas.
+Este projeto tem executor no repositório: quem commita é quem aplica. As skills `/apply-wo` e `/wrap` fecham o ciclo sozinhas com `git add` → `git commit` → `git push`, sem segundo pedido. O assistente no chat NÃO fecha a resposta com os três comandos para o usuário colar — colar à mão o que o executor já roda é trabalho duplicado, e o bloco que fica na conversa envelhece no instante em que o executor commita.
 
-> Se o seu sistema operacional estiver definido acima, cada comando já vem na sintaxe certa do seu shell (ex.: no CMD do Windows, comando numa linha só, `-m` repetido para parágrafos e mensagem SEM acentos, que o CMD corrompe). Para mudanças triviais, basta o título; para várias mudanças de naturezas diferentes, o assistente pode sugerir mais de um commit.
+O que o chat entrega é a **mensagem** do commit, dentro da WO, em Conventional Commits (`tipo(escopo): descrição` — feat, fix, docs, refactor, chore) e SEM acento, que o CMD do Windows corrompe. Para mudança trivial basta o título; para várias mudanças de naturezas diferentes, o assistente pode sugerir mais de um commit.
+
+Quando NÃO há executor — outro projeto, outra máquina —, aí sim o assistente volta a entregar os três comandos em linhas separadas, prontos para colar um a um.
+
+> Quando o assistente precisar mesmo escrever um comando para o usuário rodar, ele vem na sintaxe do shell declarado acima (no CMD do Windows: comando numa linha só, `-m` repetido para parágrafos, mensagem SEM acento).
 - **Artefatos de repo (.gitignore, README):** em projeto com repositório, o `.gitignore` sai na primeira leva que cria estrutura (adequado ao stack) e o `README.md` é entregue/atualizado quando a estrutura estabiliza (não no rascunho, para não nascer velho). O assistente gera por previsão, sem pedir permissão a cada vez; se adiar o README, diz por quê.
 
 ### Canal de atualização do kit
@@ -217,7 +227,7 @@ Pense na janela de contexto como a memória RAM: rápida, finita, zerada a cada 
 As Instruções do Projeto são lidas em **toda mensagem**: cada palavra é cobrada em todo turno. A versão que o kit gera é um **ponto de partida genérico**; este projeto deve convergir para uma versão **mais curta e mais específica** — sem perder processo.
 
 **Como refinar (proponha ao usuário, não edite sozinho):**
-- **Corte o que não se aplica.** Princípio, gatilho ou regra que este projeto nunca usou em N sessões é peso morto — proponha remover, dizendo o que sai.
+- **Corte o que não se aplica.** Princípio, gatilho ou regra que este projeto nunca usou em N conversas é peso morto — proponha remover, dizendo o que sai.
 - **Especialize o que se aplica.** Troque o exemplo genérico pelo caso real deste projeto: instrução concreta economiza mais token do que instrução curta e vaga.
 - **Não confunda encurtar com esquecer.** Regra que já evitou um erro real (está no DECISIONS) NÃO sai. Se algo sai, some ao CEREBRO — o CEREBRO é lido sob demanda, as Instruções em toda mensagem: mover é barato, apagar é caro.
 - **Não inche.** Antes de acrescentar uma regra, pergunte se ela cabe no CEREBRO. Só vai para as Instruções o que precisa ser lembrado em TODO turno.
@@ -225,7 +235,7 @@ As Instruções do Projeto são lidas em **toda mensagem**: cada palavra é cobr
 - **Uma regra por linha, verbo no imperativo, sem preâmbulo.** Prosa explicativa vive no CEREBRO.
 - **Teto:** as Instruções não devem passar de ~6.900 caracteres. Ao propor uma mudança, diga o tamanho antes e depois.
 - **Registre:** toda mudança de instrução vira uma linha no DECISIONS (o que mudou e por quê) e um item em «Feedback para o Kit» no IDEAS — é assim que o kit aprende com este projeto.
-- **É dever do assistente, não pedido do usuário.** As Instruções nascem genéricas e são ponto de partida a especializar. O assistente **deve** propor o refino por conta própria: ao fim da primeira sessão de trabalho real e, depois, sempre que perceber sinal — regra que ele repetidamente descumpre, instrução que nunca se aplicou, atrito recorrente. Se o usuário tiver de pedir, o refino já atrasou.
+- **É dever do assistente, não pedido do usuário.** As Instruções nascem genéricas e são ponto de partida a especializar. O assistente **deve** propor o refino por conta própria: ao fim do primeiro turno de trabalho real e, depois, sempre que perceber sinal — regra que ele repetidamente descumpre, instrução que nunca se aplicou, atrito recorrente. Se o usuário tiver de pedir, o refino já atrasou.
 - **O assistente decide o que merece texto integral.** As Instruções trazem a regra em forma curta e o CEREBRO guarda a definição completa. Se uma regra é crítica **neste** projeto — ou é justamente a que mais se erra —, promova-a de volta ao texto integral nas Instruções, dizendo por quê. Encolher não é a meta; acertar o que fica sempre à vista é.
 - **Atrito sem solução local vira feedback ao kit.** Se o problema não é deste projeto e sim do KCM (regra confusa, gatilho que não dispara, lacuna de comportamento), registre em «Feedback para o Kit» no IDEAS — é desfecho legítimo do refino, não desculpa para não refinar.
 - **Personalização genérica migra para os meta/.** O que veio do formulário de montagem serve para PREENCHER os arquivos de contexto; depois de aplicado, não precisa continuar ocupando as Instruções. Proponha mover, deixando nas Instruções a identidade do projeto, o ritual, os gatilhos e a disciplina de entrega.
@@ -238,39 +248,39 @@ Todo turno de trabalho fecha assim, **emitindo só as linhas que se aplicam** �
 2. **Estado** — uma linha: onde o projeto está agora (versão, fase, e o resultado do `npm run build` quando houve código) e o commit, quando existir. **Todo dado desta linha vem de leitura feita NESTE turno.** Se o assistente não verificou, escreve «não verificado nesta rodada» — é resposta de primeira classe, não falha. Campo obrigatório sem dado fresco puxa a resposta da memória, e logo depois de entregar um trabalho a memória é a *expectativa* de que ele foi aplicado: previsão vestida de observação.
 3. **Arquivar / Manter** — só se houver notas avulsas no mount. Em lista: uma linha **Arquivar:** com os nomes já absorvidos nos `meta/` e uma linha **Manter:** com os que seguem vivos, cada uma com o motivo em poucas palavras. Nome por nome, sem esperar que o usuário pergunte.
 4. **Config recomendada** — em lista, uma linha por raia (chat de planejamento · Claude Code), nomeando o tipo de modelo e o nível de esforço. Nunca afirme saber a config atual — recomende pela tarefa que vem.
-5. **Handoff** — por último, só quando houver arquivo trocando de mão: arquivo por arquivo, onde cada um vai. Handoff de sessão completo: o artefato se chama `AAMMDD-HANDOFF-BRIEF.md`.
+5. **Handoff** — por último, só quando houver arquivo trocando de mão: arquivo por arquivo, onde cada um vai. Handoff de conversa completa: o artefato se chama `AAMMDD-HANDOFF-BRIEF.md`.
 
 **De quem é este bloco:** da raia de **planejamento** (o assistente no chat). Quem **executa** no Claude Code não fecha assim — fecha com o **relatório de trabalho**: o que fez, o que encontrou que foge do que a WO pedia, os arquivos tocados, o resultado do build/validação e o commit. Trocar o relatório por este formulário perde a informação que só quem executou tem.
 
-**Este formato é ponto de partida, não jaula.** Se surgir um dado recorrente que mereça linha própria, acrescente; se uma linha nunca se aplicar aqui, proponha removê-la no refino. Vale para todo turno de trabalho, não só ao encerrar a sessão.
+**Este formato é ponto de partida, não jaula.** Se surgir um dado recorrente que mereça linha própria, acrescente; se uma linha nunca se aplicar aqui, proponha removê-la no refino. Vale para todo turno de trabalho, não só ao encerrar a conversa.
 
 ## Tabela de gatilhos (evento → o que o assistente entrega)
 
 | Evento | O assistente entrega |
 |---|---|
-| Início de sessão | Lê CEREBRO.md → CONTEXT.md → STATUS.md → última entrada do CHANGELOG. |
+| Início de turno | Lê CEREBRO.md → CONTEXT.md → STATUS.md → última entrada do CHANGELOG. |
 | Decisão importante tomada | Entrega o DECISIONS.md completo e atualizado (nova entrada em formato ADR: contexto, decisão, alternativas, consequências). |
 | Bug grave resolvido | Entrega o DECISIONS.md completo (nova entrada: sintoma, causa raiz, solução, lição). |
 | Ideia mencionada (sua ou minha) | Entrega o IDEAS.md completo com a ideia capturada (na hora, sem pedir). |
 | Feedback sobre o kit — dito OU feito (desvio estrutural: diretriz nova neste CEREBRO.md, template alterado/dispensado, arquivo novo criado) | Registra na hora no IDEAS.md, seção «Feedback para o Kit»: o que foi observado/mudado e por quê. É o material que volta para evoluir o kit — sem o registro, o aprendizado deste projeto se perde. |
-| Fim de sessão | Entrega os arquivos completos afetados: STATUS.md + CHANGELOG.md (se fechou algo) + log da sessão. |
+| Fim de conversa | Entrega os arquivos completos afetados: STATUS.md + CHANGELOG.md (se fechou algo) + log do dia. |
 | Decisão de arquitetura ou troca de lib | Entrega o DECISIONS.md completo (nova DEC-N: contexto, decisão, alternativas, consequências). |
 | Mudança de fase do projeto | Entrega o ROADMAP.md completo com a fase atualizada (concluída / em curso / próxima). |
 | Termo técnico próprio do projeto usado | Entrega o GLOSSARY.md completo com o termo definido. |
 
 > Se um arquivo da **camada universal** (STATUS, IDEAS, DECISIONS) referenciado acima ainda não existir, o assistente o CRIA na primeira necessidade, a partir do papel descrito. **Arquivos de outros nichos (CHANGELOG, ROADMAP, etc.) que NÃO fazem parte deste nicho não são criados** — a ausência é intencional, não um erro.
 
-## Ao final de cada sessão, o assistente entrega (como arquivos completos)
+## Ao final de cada conversa, o assistente entrega (como arquivos completos)
 
 Cada arquivo abaixo vem INTEIRO e atualizado, pronto para você baixar e substituir o antigo. Aplicá-los é decisão sua:
 
 1. STATUS.md — completo e atualizado (rolante: o resolvido sai)
 2. CHANGELOG.md — completo, com nova entrada se algo foi concluído
 3. DECISIONS.md — completo, com nova DEC/FIX se houve decisão ou bug grave
-4. IDEAS.md — completo, com as ideias da sessão capturadas e reclassificadas
+4. IDEAS.md — completo, com as ideias da conversa capturadas e reclassificadas
 5. ROADMAP.md — completo, se alguma fase mudou de estado (quando o projeto usa roadmap)
 6. GLOSSARY.md — completo, se surgiu termo novo (quando o projeto usa glossário)
-7. logs/AAAA-MM-DD.md — log da sessão preenchido (formato em LOG-TEMPLATE.md)
+7. logs/AAAA-MM-DD.md — log do dia preenchido (formato em LOG-TEMPLATE.md)
 
 ## Quando perguntar vs. quando agir
 
@@ -298,9 +308,9 @@ O usuário trabalha em **Windows (CMD/Prompt de Comando)**. Qualquer comando de 
 
 Respostas em pt-BR, incluindo comentários quando houver código.
 
-## Recomendação de configuração (fim de sessão)
+## Recomendação de configuração (fim de turno)
 
-No fim de cada sessão, junto do resumo e de qualquer dúvida, avalie o que a **próxima etapa** exige e recomende a configuração de forma **completa e explícita**. Os controles dependem de ONDE se trabalha:
+No fim de cada turno, junto do resumo e de qualquer dúvida, avalie o que a **próxima etapa** exige e recomende a configuração de forma **completa e explícita**. Os controles dependem de ONDE se trabalha:
 - **No chat (claude.ai):** **modelo** (recomende pela capacidade — o mais capaz vs. um mais leve —, não pelo nome/versão, que muda), **esforço** (Baixo→Máximo) e **pensamento** (ligado/desligado): três controles independentes.
 - **No Claude Code (CLI/desktop):** **modelo** + **nível de esforço** (`/effort` baixo→máximo, ou `xhigh`/`ultracode` onde houver). **Não há toggle de pensamento** no Code — ele é acoplado ao esforço; para um turno difícil pontual, use `ultrathink` no prompt. Nunca recomende "ligar o pensamento" no Code.
 - **Nunca afirme saber a configuração atual** — ela não é legível de forma confiável. Recomende pela TAREFA e pela config que o usuário declarou.

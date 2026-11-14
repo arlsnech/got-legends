@@ -1117,3 +1117,31 @@ O `StatsPanel` passa a chamar `formatStatValue` e `isStatChanged` como o resto d
 - O painel e as duas exportações passam a ter uma fonte de verdade só para formatação de estatística. A próxima correção de formato entra em um lugar, não em dois — que foi o custo real cobrado na `spec0019`.
 - Fecha o último par de duplicações mapeadas no backlog. A família aberta pela `spec0012` está encerrada.
 - Registrado como aplicação da regra de processo «quando duas implementações divergem, a divergência é o achado»: a duplicação era conhecida desde julho, mas o que estava anotado era «é cópia» — e não era.
+
+---
+
+## DEC-034 — O chat deixa de entregar bloco de commit e arquivo-para-baixar
+**Data:** 2026-11-14 · **Status:** aceita · **Aplicada pela** `wo0029`
+
+### Contexto
+O template-update v1.138.0 trouxe uma seção que a comparação de arquivos não produz: **linhas revogadas** — texto que o kit apagou de propósito e que continua vivo nos projetos, invisível ao merge porque não é algo que falte, é algo que sobra. Duas delas estavam aqui, e as duas descreviam um projeto que este deixou de ser.
+
+A primeira (revogada em v1.106.0) mandava entregar sempre por arquivo completo, «nunca por blocos soltos para o usuário costurar à mão», e descrevia o usuário baixando arquivos e substituindo na pasta. A segunda (v1.104.0) mandava o assistente fechar a resposta com `add`/`commit`/`push` em três linhas, prontas para colar uma a uma.
+
+Nenhuma das duas sobrevive ao que o projeto tem hoje. O `/apply-wo` existe desde 22 de julho e roda o commit sozinho; a pasta vinculada existe desde hoje e deixa o chat escrever direto no repositório. Pior: o CEREBRO **se contradizia**, com a linha revogada a quinze seções de distância da substituta — a seção do Code manda virar WO com texto exato e âncora, que é exatamente o «bloco solto» que a outra proíbe.
+
+### Decisão
+As duas seções do CEREBRO foram reescritas em torno do canal, não do formato: com pasta vinculada e executor, a entrega é arquivo escrito no repositório ou WO aplicada pelo Code, e quem commita é quem aplica. O modo antigo — baixar, substituir, colar os três comandos — fica registrado como o que vale **quando não há executor nem pasta vinculada**, que é a situação de outro projeto, não desta.
+
+Junto, a cadência de `sessão` foi trocada por `turno` ou `conversa` em 34 pontos de 8 arquivos, pela mesma revogação de v1.106.0: o ritual roda a cada turno, não uma vez por fio.
+
+### O que NÃO mudou, e por quê
+- **49 ocorrências de relato histórico** (STATUS a partir de «Última Sessão», DECISIONS, IDEAS, HISTORY): entradas datadas são fato medido. Reescrever falsifica o registro para consertar a regra.
+- **131 ocorrências em `meta/workorders/`**: WO aplicada não se reescreve (DEC-030).
+- **6 ocorrências nas skills e no `_TEMPLATE.md`**: texto do kit em v1.138.0, a versão corrente — não revogado. «custa uma sessão» mede custo, não prescreve cadência.
+- **O rótulo `## 💬 Última Sessão` do STATUS**: é ponteiro. A skill `/wrap` procura o bloco da conversa anterior por ele, e ponteiro renomeado deixa órfão quem aponta — a mesma razão que preservou os nomes `spec0001`–`spec0020` na DEC-030.
+
+### Consequências
+- O CEREBRO deixa de se contradizer sobre a forma da entrega. Era a contradição mais cara do arquivo, porque as duas metades estavam certas para projetos diferentes e nenhuma dizia qual era este.
+- Fica registrado o método que achou isso: varrer pelo FATO, não pela frase. Nenhuma das duas linhas estava escrita com as palavras da tabela de revogação do kit — a busca por string acharia zero.
+- A Fatia 3 (merge dos 123 blocos do CEREBRO) escreve as âncoras contra o texto depois desta WO, não antes.

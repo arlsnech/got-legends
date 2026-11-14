@@ -16,7 +16,7 @@
 #
 # --- Por que cada regra esta la dentro ---
 #
-# logs/* — o "agora" fica no meta/STATUS.md; o diario de sessao nao precisa ir ao mount.
+# logs/* — o "agora" fica no meta/STATUS.md; o log do dia nao precisa ir ao mount.
 #
 # meta/workorders/* — WOs aplicadas: o desfecho vive em meta/DECISIONS.md e meta/CHANGELOG.md;
 #   o corpo pesa. Ate a wo0020 estes arquivos se chamavam spec e viviam em meta/specs/ (DEC-030).
@@ -36,7 +36,7 @@
 # --- O que fica DE FORA de proposito ---
 #
 # meta/specs/ (specs de feature) — NAO e ignorada. Sao curtas, olham para a frente e dizem o que
-#   esta sendo construido: e exatamente o que o assistente precisa ler no inicio da sessao.
+#   esta sendo construido: e exatamente o que o assistente precisa ler no inicio do turno.
 #
 # meta/analises/ — NAO e ignorada enquanto forem poucas. Analise "Em discussao" precisa ser
 #   relida no turno seguinte, e analise que o assistente nao ve nao e discutida: e reescrita do

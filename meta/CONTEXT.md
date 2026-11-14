@@ -1,6 +1,6 @@
 # CONTEXT.md — GoT Legends Build Planner
 
-> Arquivo **estável**. O assistente lê no início de cada sessão para se ambientar.
+> Arquivo **estável**. O assistente lê no início de cada turno para se ambientar.
 > Muda só em alteração estrutural (stack, arquitetura, escopo, nova armadilha descoberta).
 
 ---
@@ -50,7 +50,7 @@ projeto/
 │   ├── workorders/   — WOs: o texto exato de cada edição + âncora, aplicadas via /apply-wo
 │   ├── specs/        — specs de feature: o quê construir e os critérios de aceite (molde: SPEC.md)
 │   └── analises/     — a análise que precede mudança não-trivial (nasce no primeiro uso)
-├── logs/             — logs de sessão (AAAA-MM-DD.md)
+├── logs/             — log do dia (AAAA-MM-DD.md)
 ├── .claude/          — settings.json + skills /apply-wo e /wrap
 ├── CLAUDE.md         — guia raiz lido pelo Claude Code em todo turno
 ├── package.json      — React 18 + Vite 5 + Tailwind
@@ -150,7 +150,7 @@ Dois tipos de ícones com lógica diferente:
 
 12. **CDR de Arma Fantasma não empilha entre as armas** — propriedade de redução de recarga numa AF vale **só para aquela AF**; a mesma propriedade no Amuleto vale para as duas. Em qualquer dos casos o número é exibido **separado por arma**, nunca somado num total. Errar isso foi o defeito mais repetido da fase de origem.
 
-13. **3 colunas e 2 colunas não compartilham estilo** — os dois modos pedem comportamentos **opostos** para habilidades e vantagens de classe (empilhadas no 3-col, lado a lado no 2-col). Estilo aplicado sem olhar o `layoutMode` conserta um e quebra o outro — aconteceu três vezes seguidas. Mexeu num, confira o outro **na mesma sessão**. Ver DEC-023.
+13. **3 colunas e 2 colunas não compartilham estilo** — os dois modos pedem comportamentos **opostos** para habilidades e vantagens de classe (empilhadas no 3-col, lado a lado no 2-col). Estilo aplicado sem olhar o `layoutMode` conserta um e quebra o outro — aconteceu três vezes seguidas. Mexeu num, confira o outro **no mesmo turno**. Ver DEC-023.
 
 14. **`getAvailableProps(item, …)` e `getAvailablePerks(item, …)` recebem o ITEM, nunca o `id`** — e a assinatura é deliberada. Até 2026-07-29 elas resolviam por `id` internamente, o que devolvia lista incompleta **e sem erro** para amuleto com `classBinding` (o item cru do `GEAR` não tem os props e perks de classe): era a armadilha 7 disfarçada de utilitário. Hoje quem chama precisa ter o item **efetivo** em mãos — `getEffectiveCharm(itemId, linkedClass)` —, e o erro antigo virou impossível de escrever. Consumidores: `PropInput` e `PerkRow` no `App.jsx`. **Não reintroduza uma sobrecarga que aceite `id`** (DEC-032).
 
@@ -182,7 +182,7 @@ gridTemplateColumns: layoutMode === 'three-col'
   : '1fr 360px',
 ```
 
-Valores conferidos em 2026-07-25. Alterar a coluna de técnicas mexe com a armadilha 13 — confira **os dois modos** na mesma sessão.
+Valores conferidos em 2026-07-25. Alterar a coluna de técnicas mexe com a armadilha 13 — confira **os dois modos** no mesmo turno.
 
 ---
 

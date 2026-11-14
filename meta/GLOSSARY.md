@@ -1,6 +1,6 @@
 # GLOSSARY.md — Termos do Projeto
 
-> Termos próprios que se repetem entre sessões e que um recém-chegado não entenderia.
+> Termos próprios que se repetem entre conversas e que um recém-chegado não entenderia.
 
 ---
 
@@ -71,7 +71,8 @@
 - **spec de feature** — arquivo em `meta/specs/`, um por feature, no formato de `meta/SPEC.md`: o problema, os critérios de aceite verificáveis, as decisões de desenho e o fora-de-escopo. Diz **o quê** construir e quando está pronto — não como aplicar, que é papel da WO.
 - **análise** — arquivo em `meta/analises/AAMMDD-ANALISE-<tema>.md` que precede o compromisso numa mudança não-trivial: problema, o que foi medido, opções (inclusive as descartadas, com o motivo), recomendação única, riscos e ponto de decisão. Não decide nem abre trabalho sozinha; para no ponto de decisão. Funil: análise → WO → DECISIONS.
 - **`/apply-wo`** — comando do Claude Code que aplica uma WO (âncora exata, ou PARA e reporta).
-- **`/wrap`** — comando do Claude Code que fecha a sessão: append em STATUS/DECISIONS, build, `git diff`, commit e push.
+- **`/wrap`** — comando do Claude Code que fecha a tarefa: confere o relatório anterior contra o git, append em STATUS/DECISIONS, build quando houve código, escreve o log do dia, commit e push.
+- **`/sondar`** — comando do Claude Code que faz uma passada exploratória e devolve **candidatos a checagem, nunca veredito**: não conclui, não escreve no material, e todo achado vem com o comando que o reproduz. O relatório traz uma seção «o que olhei e NÃO achei nada», que é o que deixa a passada seguinte pular aquilo. Instalado pela `wo0028`.
 - **`.flatdropignore`** — lista do que NÃO sobe ao Projeto do Claude no achatamento (continua tudo no Git).
 - **KCM** — Kit de Contexto Universal, o gerador dos documentos de `meta/`. Um **template-update** do KCM traz arquivos genéricos do nicho, propositalmente vazios do específico desta obra.
 - **CEREBRO.md** — documento que define COMO o assistente age (≠ CONTEXT.md, que define O QUE o projeto é).

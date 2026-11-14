@@ -1,14 +1,14 @@
-# LOG-TEMPLATE.md — Formato do Log de Sessão
+# LOG-TEMPLATE.md — Formato do Log do Dia
 
 > **Referência fixa.** Este arquivo é o MOLDE — não é substituído pelo conteúdo preenchido.
-> Ao final de cada sessão, o assistente entrega um arquivo novo `logs/AAAA-MM-DD.md` preenchido neste formato.
-> Os logs vivem em `logs/` **no Git** (NÃO no Projeto do Claude — o `.flatdropignore` os mantém fora do mount) e são lidos só sob demanda, quando você precisar recuperar o detalhe de uma sessão antiga.
+> Ao fechar o trabalho do dia, o arquivo `logs/AAAA-MM-DD.md` é preenchido neste formato. O `/wrap` o CRIA se ainda não existir — não regenerar é uma coisa, não criar é outra.
+> Os logs vivem em `logs/` **no Git** (NÃO no Projeto do Claude — o `.flatdropignore` os mantém fora do mount) e são lidos só sob demanda, quando você precisar recuperar o detalhe de um dia antigo.
 
 ---
 
 # Log — AAAA-MM-DD
 
-## Objetivo da sessão
+## Objetivo do dia
 [O que se pretendia fazer ao começar.]
 
 ## Feito
@@ -36,4 +36,4 @@
 [Estado exato ao encerrar + próximo passo óbvio. Alimenta o «Última Sessão» do STATUS.]
 
 ## Próximos passos
-- [Ações concretas para a próxima sessão, em ordem de prioridade.]
+- [Ações concretas para o próximo turno, em ordem de prioridade.]

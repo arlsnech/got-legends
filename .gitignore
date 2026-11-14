@@ -9,7 +9,7 @@ dist/
 .env
 .env.local
 
-# Logs de ferramenta (NAO confundir com logs/ de sessao, que sao versionados)
+# Logs de ferramenta (NAO confundir com logs/ do dia, que sao versionados)
 *.log
 
 # Config de maquina do Claude Code: caminhos absolutos e permissoes acumuladas localmente.
