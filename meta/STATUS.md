@@ -85,3 +85,9 @@ Fecha o «Pendente: Fatia 3» da entrada acima (o carimbo v1.73.0 do CEREBRO nã
 Os cinco carimbos dizem v1.142.0; skills, `_TEMPLATE.md`, `CLAUDE.md`, `.flatdropignore`, `LOG-TEMPLATE`, CONTEXT e o STATUS reescrito (83 linhas; histórico em `meta/STATUS-archive.md`) foram gravados pelo chat e versionados pela wo0031, que também registrou a correção da DEC-034, «🛌 Adiadas» no IDEAS e a entrada do CHANGELOG. Commit `26b8080`, empurrado. O template-update v1.142.0 está fechado.
 
 **Pendente:** nada. O pacote `261115-kcm-update-v1.142.0` já está em `notas-arquivadas\` (conferido por `ls`). Sem pendência de código.
+
+### 2026-11-15 — Versão 1.0.0 (wo0032): etiqueta
+
+CHANGELOG: `[Não lançado]` esvaziado e `[1.0.0] — 2026-11-15` aberto sem reorganizar as subseções; a lista de junho «Pendente de aplicação» saiu (`Removido do registro`). Commit `180f586` na `v2-planner`, tag anotada `v1.0.0` nele, ambos empurrados. Build verde.
+
+**Pendente:** a `main` e o site publicado não têm a 1.0.0 (ver backlog). Arrumar os títulos repetidos dentro da 1.0.0 do CHANGELOG é curadoria do chat.
