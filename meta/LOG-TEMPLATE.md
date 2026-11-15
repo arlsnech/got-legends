@@ -1,7 +1,7 @@
 # LOG-TEMPLATE.md — Formato do Log do Dia
 
 > **Referência fixa.** Este arquivo é o MOLDE — não é substituído pelo conteúdo preenchido.
-> Ao fechar o trabalho do dia, o arquivo `logs/AAAA-MM-DD.md` é preenchido neste formato. O `/wrap` o CRIA se ainda não existir — não regenerar é uma coisa, não criar é outra.
+> O log entra ao bater um gatilho de evento — cortar versão, registrar decisão ou erro grave, virar o dia —, e não «no fim», que numa conversa longa nunca chega. O arquivo `logs/AAAA-MM-DD.md` é preenchido neste formato; o `/wrap` o CRIA se ainda não existir — não regenerar é uma coisa, não criar é outra.
 > Os logs vivem em `logs/` **no Git** (NÃO no Projeto do Claude — o `.flatdropignore` os mantém fora do mount) e são lidos só sob demanda, quando você precisar recuperar o detalhe de um dia antigo.
 
 ---

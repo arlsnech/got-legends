@@ -56,6 +56,21 @@ Quatro arquivos carregam tudo: `src/App.jsx` (UI inteira, ~2500 linhas), `src/da
 ## Ao fechar a tarefa, RELATE o trabalho
 O que fez, o que encontrou que foge do que a tarefa pedia, os arquivos tocados, o resultado do build ou da conferencia visual, e o commit. **Nao** copie o bloco de fecho de turno do `meta/CEREBRO.md`: aquele e da raia de planejamento, e trocar relatorio por formulario perde o que so voce viu.
 
+## Quando eu pedir medição
+- Eu leio a pasta com teto de contexto e de tempo por comando; você lê o repositório inteiro. Se eu pedir para **medir**, o pedido não tem âncora nem commit: não edite nada, não conserte nada, não sugira nada.
+- Responda com o **número cru e o comando que o produziu**. Sem interpretação, sem recomendação — se você achar que o número indica um problema, diga o número primeiro e a suspeita depois, separada.
+- Se o alvo estiver fora da raiz do repositório, isso depende de `permissions.additionalDirectories` no `.claude/settings.json` (a mesma chave do relatório em arquivo). Se a leitura for negada, DIGA — não estime.
+
+## Push e relatório — nesta ordem, sempre
+- **Verde** (validação passou, ou WO só de doc com o `git diff` conferido) → `add`, `commit` e **`push`, sem perguntar.** Não peça permissão para o que já está decidido.
+- **Vermelho** (validação falhou, âncora não encontrada, `git diff` com arquivo fora do previsto) → **não commite e não empurre.** E **não pergunte em prosa** («posso dar push?») — pergunta escrita no meio do texto passa despercebida. Feche com um **menu numerado** de saídas reais, a recomendada em **1** — ex.: `1) corrigir <o quê> e revalidar (recomendado)  2) reverter as edições  3) commitar local, sem push  4) empurrar assim mesmo`.
+- **O relatório é o ÚLTIMO passo** — só depois de resolvido o push. Ele diz o que de fato aconteceu: empurrado (com o hash), não empurrado (com o motivo), ou aguardando a escolha do menu. **Relatório escrito antes da decisão conta metade da história** e vira mentira assim que o push sai; se a escolha chegar depois, **reescreva o relatório**, não deixe a versão velha valendo.
+
+## Relatório em arquivo (sempre, sem pedir)
+- Ao fechar QUALQUER tarefa (`/apply-wo` ou `/wrap`), grave o MESMO relatório também em `../AAMMDD-HHMM-code-<slug>-<ato>-<alvo>.txt` — pasta-PAI do repo, fora do versionamento. **`<slug>`** = nome curto do projeto (a pasta-pai costuma ser compartilhada por vários repos). **`<ato>`** = vocabulário FECHADO: `apply` · `wrap` · `probe` · `explore` — nada fora desta lista. **`<alvo>`** = a WO (`wo0108`) quando houver uma; senão, duas ou três palavras com hífen sobre o que foi feito (`teto-narrative`). Exemplo: `260903-2011-code-kcm-apply-wo0108.txt`. O nome existe para responder «qual relatório trata do quê» sem abrir nenhum deles.
+- Exige `permissions.additionalDirectories` no `.claude/settings.json`. Se a escrita for negada, DIGA e siga — o relatório no chat continua sendo a entrega.
+- **Para desligar:** apague esta seção. O relatório no chat não muda.
+
 ## Config (modelo x esforco)
 - WO com diff exato ja validado -> **Sonnet**, esforco proporcional (mecanico = baixo/medio).
 - Tarefa com julgamento sem rede (refator no `App.jsx`, WO que delega decisao) -> **Opus**, esforco alto.

@@ -1128,6 +1128,8 @@ O template-update v1.138.0 trouxe uma seção que a comparação de arquivos nã
 
 A primeira (revogada em v1.106.0) mandava entregar sempre por arquivo completo, «nunca por blocos soltos para o usuário costurar à mão», e descrevia o usuário baixando arquivos e substituindo na pasta. A segunda (v1.104.0) mandava o assistente fechar a resposta com `add`/`commit`/`push` em três linhas, prontas para colar uma a uma.
 
+> **Correção da premissa (2026-11-15, DEC-035):** a linha que o kit revogou em v1.104.0 é a do **executor** — «Mostre o git diff e o bloco de commit», numa skill de fecho ou de aplicação —, e essa saiu da `/wrap` na `wo0028`. A seção «Commit pronto ao final» do CEREBRO **não** foi revogada: o kit a mantém para projeto sem executor e a **inverte** no modo Code. A decisão desta DEC segue valendo — neste projeto o chat não entrega bloco de commit —, mas pelo motivo certo, a inversão do modo Code, e não uma revogação. Desde a Fatia 3, o CEREBRO traz a seção do kit seguida da linha «Neste projeto a regra acima se inverte (DEC-034)».
+
 Nenhuma das duas sobrevive ao que o projeto tem hoje. O `/apply-wo` existe desde 22 de julho e roda o commit sozinho; a pasta vinculada existe desde hoje e deixa o chat escrever direto no repositório. Pior: o CEREBRO **se contradizia**, com a linha revogada a quinze seções de distância da substituta — a seção do Code manda virar WO com texto exato e âncora, que é exatamente o «bloco solto» que a outra proíbe.
 
 ### Decisão

@@ -186,6 +186,17 @@ Valores conferidos em 2026-07-25. Alterar a coluna de técnicas mexe com a armad
 
 ---
 
+## 📁 Arquivos Críticos (não mexer sem contexto)
+
+> Conhecimento **estável**, não estado do agora — por isso vive aqui, e não no STATUS, que é reescrito a cada conversa. Os prompts de debug, plano e auditoria procuram esta seção NESTE arquivo. *(Veio do STATUS em 2026-11-15.)*
+
+- `src/data.js` — banco de dados do jogo; IDs de itens são a chave de tudo; magistrais 100% explícitos
+- `src/logic.js` — `computeStats`, `getStatGroups`, `checkLegendaryLimit`, `changeClass`; assinaturas exatas importam
+- `src/App.jsx` — componente monolítico; ordem dos componentes importa para depuração
+- `src/icons.js` — mapeamento ID → URL; IDs devem ser idênticos aos de `data.js`
+
+---
+
 ## Contexto de Produto
 
 - **Usuário-alvo:** jogador BR de GoT: Legends, nível intermediário a avançado

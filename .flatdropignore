@@ -4,9 +4,11 @@
 # COMO ESTE ARQUIVO E ORGANIZADO (kit v1.90):
 # - Explicacao e comentario ficam AQUI EM CIMA, fora do bloco. Dentro do bloco eles somem:
 #   o editor do FlatDrop reescreve o bloco inteiro a cada salvamento.
-# - REGRA (o que some do mount) vai DENTRO do bloco "# >>> flatdrop-editor".
-# - NADA depois do "# <<<": vale a ULTIMA regra que casa, entao o que vier depois vence o
-#   bloco em silencio.
+# - REGRA (o que some do mount) vai DENTRO do bloco do editor, delimitado no fim do arquivo.
+# - NADA depois da linha que FECHA o bloco: vale a ULTIMA regra que casa, entao o que vier
+#   depois vence o bloco em silencio.
+# - NAO reproduza as linhas marcadoras aqui em cima: o editor as procura por substring, e um
+#   exemplo em comentario e indistinguivel de um segundo bloco. Descreva, nao cite.
 #
 # FORMA: use "pasta/*" (o CONTEUDO), nunca "pasta/" (a PASTA). A ferramenta poda o diretorio
 # casado antes de descer, e um "!" la dentro nunca chega a ser avaliado. Com "pasta/*" a
@@ -27,8 +29,8 @@
 #   quase identico. O que interessa deles ja esta consolidado em meta/HISTORY.md e
 #   meta/DECISIONS.md, e o src/v4/App.jsx e byte a byte igual ao src/App.jsx atual.
 #
-# INSTRUCOES-DO-PROJETO.md — o texto vive nas Instrucoes do Projeto do claude.ai; o arquivo do
-#   repo e so a copia versionada. Subi-lo ao mount duplicaria o que ja e lido em toda mensagem.
+# INSTRUCOES-DO-PROJETO.md — o arquivo do repo e a fonte (DEC-035); o texto e colado no painel
+#   do Projeto do claude.ai, que o le em toda mensagem. Subi-lo ao mount duplicaria o que ja e lido em toda mensagem.
 #
 # .claude/settings.local.json — arquivo de maquina: caminhos absolutos do Windows e a lista de
 #   permissoes que o Code foi acumulando. Nao e conhecimento do projeto (DEC-031).

@@ -313,4 +313,4 @@ git commit -m "tipo(escopo): descricao no imperativo curto" -m "Corpo explicando
 git push
 ```
 
-*Gerado pelo Kit de Contexto Universal v1.138.0 — 2026-11-14 — esta linha e do KIT: nao funda, substitua pela do pacote mais recente.*
+*Gerado pelo Kit de Contexto Universal v1.142.0 — 2026-11-15 — esta linha e do KIT: nao funda, substitua pela do pacote mais recente.*

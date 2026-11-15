@@ -48,6 +48,14 @@ Como não há backend, o app funciona offline se instalado como PWA. Adicionar `
 
 ---
 
+## 🛌 Adiadas
+
+> Decisão consciente de não fazer agora. Cada item com **o gatilho que a traz de volta** («quando o terceiro caso aparecer», «se o build passar de X»): ideia adiada sem gatilho é ideia perdida.
+
+- _(nenhuma ainda — seção adotada do template v1.142.0 em 2026-11-15)_
+
+---
+
 ## ✅ Concluídas
 
 - **Drawer lateral de saves** — implementado em 1.0.0-beta; substituiu `SavePanel` inline.
@@ -212,6 +220,10 @@ Nos prompts antigos o autor cogitou **remover o modo Estatístico** caso desse t
 - **As Instruções do pacote com `Code sim` ainda mandam «sem WO, ENTREGUE o `git commit` pronto».** O CEREBRO do mesmo pacote inverte a regra no modo Code, e a tabela de revogação (v1.104.0) tira o bloco de commit do executor. Num projeto com executor, a linha das Instruções é a única regra do pacote que o transplante teve de cortar por mérito, não por colisão local.
 - **O marcador `_(vazio — …)_` de «Técnicas específicas» conta como linha do pacote cortada** no inventário de corte. O manifesto podia dizer que marcador de seção vazia sai ao entrar o primeiro item e não entra na contagem.
 - **O pacote não diz que «Fatia» de CEREBRO e Instruções não fecha o merge.** As skills, o `_TEMPLATE.md` de WO e os demais `template` do v1.142.0 ainda pedem comparação (os cinco carimbos devem dizer v1.142.0), então a pasta do pacote não pode ir para o arquivo morto ao fim da fusão dos dois `fusao`.
+- **Desvio registrado — forma do feedback (B2 da Fatia 4):** o template põe uma seção «Feedback para o Kit» única no fim do IDEAS, com a nota «Fim do IDEAS»; aqui são levas datadas, uma por template-update, e «🔧 Correções de processo» por último. Mantido: as levas são relato datado, e reorganizá-las reescreveria o registro.
+- **A `/wrap` do kit ainda usa «sessão» como cadência** — «o bloco da sessão anterior», «uma sessão futura vai ler». A revogação v1.106.0 trocou essa cadência por turno/conversa; a skill, que é lida antes de trabalhar, ficou para trás.
+- **Comparar o pacote anterior com o novo barateou a Fatia 4.** O `diff` v1.138 × v1.142 mostrou que, fora o CEREBRO, mudaram 4 carimbos e um parágrafo; o resto do trabalho era dívida da v1.138, que comparara 4 de 21 arquivos. Sugestão: o `_UPDATE-PROMPT` mandar guardar o pacote anterior até o seguinte chegar, e começar por esse diff.
+- **O `.flatdropignore` deste repo citava os marcadores do editor num comentário** (o de abertura e o de fecho do bloco) desde a v1.90; o aviso só chegou ao template depois. Aviso sobre algo que o próprio kit ensinou a escrever podia vir como correção obrigatória no manifesto, não só como comentário novo no template.
 
 ---
 
