@@ -434,3 +434,11 @@ Fecha o «Pendente: Fatia 2» da entrada acima. As duas linhas revogadas saíram
 **Atenção para quem conferir a WO:** o passo 3 dela esperava 0 em `grep -c "costurar à mão..." meta/CEREBRO.md`, mas dá 1 — a frase está no texto novo da Edição 1a (modo antigo, projeto sem executor). Não é resíduo. `STATUS.md` fechou em 32 «sess», não 31: o baseline real já era 34.
 
 **Pendente:** Fatia 3 (merge do `meta/CEREBRO.md` com os 123 blocos do pacote, ainda com carimbo v1.73.0); âncoras serão escritas contra o texto de agora.
+
+---
+
+### 2026-11-15 — Kit v1.142.0, Fatia 3 (wo0030): CEREBRO e Instruções fundidos pela base do pacote
+
+Fecha o «Pendente: Fatia 3» da entrada acima (o carimbo v1.73.0 do CEREBRO não vale mais: agora é v1.142.0). `meta/CEREBRO.md` e `INSTRUCOES-DO-PROJETO.md` foram gravados pelo chat a partir do pacote, com o transplante do que é deste projeto (DEC-035); a wo0030 conferiu os hashes e registrou DECISIONS, CHANGELOG e IDEAS. Commit `9326145`, empurrado. `GIT_OPTIONAL_LOCKS=0` voltou às regras. Instruções em 6.778 caracteres (teto 6.900).
+
+**Pendente:** demais arquivos do pacote v1.142.0 (skills, `_TEMPLATE.md` de WO, `CLAUDE.md`, `settings.json`, exclusões, `template` de meta/) — próxima fatia; a pasta `../261115-kcm-update-v1.142.0/` fica onde está. Texto da DEC-034 a corrigir (o kit inverteu o «Commit pronto ao final» no modo Code, não o revogou). Reescrita de fundo do STATUS (curadoria do chat).
