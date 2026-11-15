@@ -205,6 +205,16 @@ Nos prompts antigos o autor cogitou **remover o modo Estatístico** caso desse t
 
 ---
 
+## 📌 Feedback para o Kit de Contexto — leva de 2026-11-15 (template-update v1.142.0, fusão pela base do pacote)
+
+- **Custo da fusão pela base do pacote (pedido da Carta 01):** 2 turnos de chat — inventário num, gravação e WO noutro — e 1 WO (wo0030). Inventário: 93 linhas, ~8.800 caracteres, 11 trechos transplantados no CEREBRO e 2 linhas do pacote cortadas, ambas colisões já julgadas. O que barateou: comparar linha a linha por similaridade (vivo × pacote, limiar 0,6) em vez de ler os 104 KB — 149 das 259 linhas vivas saíram idênticas e não pediram juízo.
+- **O que ela deixou passar, até aqui:** a lista de candidatos que veio na carta e no handoff estava meio errada — `taskkill` por PID, `LC_ALL=C.UTF-8 wc -m` e as 23 armadilhas não moravam no CEREBRO (`CLAUDE.md`, o próprio pacote e o CONTEXT). «Pista, não inventário» se confirmou. O resto só a aplicação e o uso dirão.
+- **As Instruções do pacote com `Code sim` ainda mandam «sem WO, ENTREGUE o `git commit` pronto».** O CEREBRO do mesmo pacote inverte a regra no modo Code, e a tabela de revogação (v1.104.0) tira o bloco de commit do executor. Num projeto com executor, a linha das Instruções é a única regra do pacote que o transplante teve de cortar por mérito, não por colisão local.
+- **O marcador `_(vazio — …)_` de «Técnicas específicas» conta como linha do pacote cortada** no inventário de corte. O manifesto podia dizer que marcador de seção vazia sai ao entrar o primeiro item e não entra na contagem.
+- **O pacote não diz que «Fatia» de CEREBRO e Instruções não fecha o merge.** As skills, o `_TEMPLATE.md` de WO e os demais `template` do v1.142.0 ainda pedem comparação (os cinco carimbos devem dizer v1.142.0), então a pasta do pacote não pode ir para o arquivo morto ao fim da fusão dos dois `fusao`.
+
+---
+
 ## 🔧 Correções de processo
 
 ### 2026-07-27 — Procure antes de inserir

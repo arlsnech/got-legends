@@ -1145,3 +1145,29 @@ Junto, a cadência de `sessão` foi trocada por `turno` ou `conversa` em 34 pont
 - O CEREBRO deixa de se contradizer sobre a forma da entrega. Era a contradição mais cara do arquivo, porque as duas metades estavam certas para projetos diferentes e nenhuma dizia qual era este.
 - Fica registrado o método que achou isso: varrer pelo FATO, não pela frase. Nenhuma das duas linhas estava escrita com as palavras da tabela de revogação do kit — a busca por string acharia zero.
 - A Fatia 3 (merge dos 123 blocos do CEREBRO) escreve as âncoras contra o texto depois desta WO, não antes.
+
+---
+
+## DEC-035 — Fatia 3 do kit v1.142.0: CEREBRO e Instruções fundidos partindo do pacote; autoria dos documentos registrada
+
+**Data:** 2026-11-15 · **Origem:** Carta 01 do KCM (`261115-kcm-para-got-01-o-update-pela-base-do-pacote.md`), inventário `261115-fatia3-inventario.md` (pasta-pai) e as decisões D1–D6 do dono.
+
+**Contexto.** As fusões v1.87, v1.90 e v1.138 partiram do CEREBRO vivo e enxertaram o pacote bloco a bloco. O merge só soma: a Fatia 3 planejava 50 blocos de um CEREBRO de 104 KB num vivo de 55 KB, e a fusão das Instruções perdeu a linha `Git só leitura (GIT_OPTIONAL_LOCKS=0)` — no turno seguinte, o chat rodou `git add`. O kit v1.142.0 passou a dizer de onde partir: do pacote.
+
+**Decisão.**
+- `meta/CEREBRO.md` e `INSTRUCOES-DO-PROJETO.md` passam a ser o arquivo do pacote v1.142.0 com o transplante do que é deste projeto. CEREBRO: 11 trechos (convenções, «Build e validação deste projeto», DEC-026, DEC-030 em dois lugares, bloco DEC-008, override do commit, ciclo de vida da WO, kit instalado, 4 itens em «Técnicas específicas deste projeto»). Instruções: título, convenções, DEC-008, armadilhas comprimidas, commit, Git Bash.
+- Linhas do pacote cortadas — e só estas: no CEREBRO, «nomes em inglês» e «commit em PT-BR no imperativo» (colisões DEC-008 #1 e #2) e o marcador de seção vazia de «Técnicas»; nas Instruções, as mesmas duas convenções, o título genérico e «sem WO, ENTREGUE o `git commit` pronto» (DEC-034).
+- **D1:** a seção «Commit pronto ao final» do pacote fica, seguida da linha «Neste projeto a regra acima se inverte (DEC-034)».
+- **D2 — autoria:** o chat autora inteiros CEREBRO, CONTEXT, Instruções, GLOSSARY e análises, e muda por WO CHANGELOG, DECISIONS, IDEAS e ROADMAP; o Code (`/wrap`) escreve o STATUS rolante, a sua seção do log do dia e o código, e acrescenta DEC/FIX quando a decisão nasce na execução. A reescrita de fundo do STATUS é curadoria do chat, pontual. Ajusta o padrão «Um dono por documento» do pacote, que permite mudar a divisão desde que escrita.
+- **D3:** nas Instruções, 6 das 23 armadilhas, comprimidas; a lista completa segue no CONTEXT.
+- **D4:** «Correspondência entre projetos» entra pela base — a Carta 01 é exatamente esse caso.
+- **D6:** «Kit de arranque» fica com o texto do pacote e uma nota «Neste repo (DEC-007)».
+
+**Alternativas.** Continuar enxertando no vivo (a «WO enxuta» de `261115-0728.txt`): descartada pela carta. Base do pacote sem transplante: apagaria o que o projeto aprendeu.
+
+**Consequências.**
+- `GIT_OPTIONAL_LOCKS` volta ao CEREBRO e às Instruções.
+- Saíram do vivo, porque o pacote agora cobre: a reescrita da Fatia 2 de «Como o assistente entrega», a seção «Ao final de cada conversa… arquivos completos» (modo sem executor) e o corolário «as Instruções não são arquivo do repo», que era falso.
+- Instruções em 6.778 caracteres (`LC_ALL=C.UTF-8 wc -m`), teto 6.900.
+- No próximo template-update a base é de novo o pacote; o transplante se acha pelas marcas «Neste projeto», pelo número de DEC e pelas duas seções próprias.
+- A premissa da DEC-034 sobre o «Commit pronto ao final» («revogado pelo kit») segue para correção à parte: o kit não o revogou, inverteu-o no modo Code.

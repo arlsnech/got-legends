@@ -1,57 +1,68 @@
 # Projeto: GoT Legends Build Planner
 SPA React 18 + Vite 5, sem backend. Planejador de builds de Ghost of Tsushima: Legends, bilíngue PT-BR/EN.
 
-> Comportamento detalhado, higiene e gatilhos: **CEREBRO.md**. Aqui só o essencial, lido em toda mensagem.
+> Comportamento detalhado, higiene e gatilhos: **CEREBRO.md**.
 
-## Ritual de início
-Leia nesta ordem: `CEREBRO.md` → `CONTEXT.md` → `STATUS.md` → última entrada do `CHANGELOG.md`.
-Sem o mount (`/mnt/project/`), avise para ativar a ferramenta de código ANTES de trabalhar. Havendo `_MANIFEST.md`, ele é a fonte de verdade de nomes: entregue pelo nome real, sem o sufixo `__pasta`.
-**Reveja o mount a CADA turno**, sem esperar que eu sinalize upload, e compare com o que lembrava: se difere, estude a diferença; se bate mas eu afirmo ter aplicado algo que não aparece, faça o que dá e AVISE — não infira nem regenere.
-Confirme em uma frase o que entendeu. Só pergunte se houver ambiguidade real.
+## Ritual de início de turno
+Ao ABRIR a conversa, leia nesta ordem: `CEREBRO.md` → `CONTEXT.md` → `STATUS.md` → última entrada do `CHANGELOG.md`. Em TODO turno, ANTES de responder e de qualquer ferramenta: `git log -3`, `git status` e a pasta-pai, nunca de memória.
+Mensagem cheia de pedidos é onde essa releitura mais falha. Nota `.txt` da pasta-pai: leia inteira, funda nos meta/ e arquive MOVENDO.
+Confirme em uma frase o que entendeu da tarefa antes de executar. Se houver ambiguidade real, pergunte antes.
+**Canal — pasta vinculada:** arquivo seu vai direto ao lugar definitivo, em LF, relido antes de sobrescrever; o que eu rodo, grave e confira com `ls` antes de citar. Git só leitura (`GIT_OPTIONAL_LOCKS=0`). Resto: CEREBRO, «Canal do chat».
+**Config:** no fim, sempre, recomende-a por raia — no chat: modelo + esforço (Baixo→Máximo) + pensamento (lig/desl); no Claude Code: modelo + `/effort` (ou `ultrathink`/`ultracode`), SEM toggle de pensamento. Nunca afirme saber a atual; recomende pela tarefa. Pesada com config fraca → peça aumento; folga → diga que pode baixar.
+**Log:** nomeie `logs/AAAA-MM-DD.md` (data ISO, sem a palavra "log" no nome).
+**Análise antes do compromisso:** não-trivial → `meta/analises/AAMMDD-ANALISE-<tema>.md`; QUÊ já decidido = execução, vá direto. Gatilho e abandono no CEREBRO.
+**Arquivo não lido não se deduz — leia do disco; o Code mede o que roda.**
+**WO nunca vai sozinha:** `/apply-wo <arquivo>` em bloco cercado; roteiro do dono, se houver, no chat.
+**Commit: quem aplica commita.** O `/apply-wo` e o `/wrap` rodam `add` → `commit` → `push` sozinhos. O chat entrega só a MENSAGEM, dentro da WO, em Conventional Commits (`feat(escopo): descricao`) e **SEM acento** — não feche a resposta com comandos para eu colar.
+**Entregáveis de repo (sem eu pedir):** `.gitignore` do stack na PRIMEIRA leva com estrutura; `README.md` quando ela estabilizar — se for cedo, DIGA e por quê. Detalhe no CEREBRO.
 
 ## Como trabalhar comigo
-Definições completas no CEREBRO. Em resumo: analisa antes de aceitar · não desperdiça meus tokens · direto, sem bajulação · admite incerteza · explica trade-offs · instruções cuidadosas · verifica antes de pedir arquivo · captura ideias sem eu pedir · trabalha em fases sem fragmentar o trivial · usa a versão mais recente, não mistura nem regride · higiene ao encolher arquivo-chave · pesquisa para refinar E para refutar.
-- **Causa raiz, não sintoma.** Investigue antes de corrigir. Paliativo declarado é aceitável; silencioso não.
-- **Mudança mínima que resolve.** Melhoria maior vira sugestão à parte, não vem embutida.
-- **Preserva o existente.** Mantém comentários válidos; não reescreve o que funciona.
-- **Docstring em função pública**; comentário onde a lógica não é óbvia. Explique o PORQUÊ, não o QUÊ.
-- **Sinalize o que testar.** Não há suíte de testes: ao terminar, diga o que abrir e conferir na tela (caso feliz, borda, regressão provável).
-- **Pedido ambíguo ou de escala de feature:** exponha lacunas e premissas ANTES de construir. Tarefa pequena: faça.
-- **Procure antes de inserir.** Antes de acrescentar termo, item ou armadilha num doc, busque se já existe.
+Princípios universais (definição completa no CEREBRO.md): analisa antes de aceitar · não desperdiça meus tokens · direto e objetivo · admite incerteza · explica trade-offs · instruções sempre cuidadosas · estuda o domínio antes de estruturar · verifica antes de pedir arquivo · captura ideias · trabalho em fases, sem fragmentar o trivial · usa a versão mais recente; não mistura nem regride · higiene ao encolher arquivos-chave · pesquisa para refinar e para refutar.
+- **Código comentado com propósito.** Docstring em função pública; comentário onde a lógica não é óbvia.
+- **Preserva comentários e código existente.** Ao editar, mantém comentários válidos e só remove os órfãos.
+- **Vai à causa raiz, não ao sintoma.** Diante de um bug, investiga a causa antes de propor correção.
+- **Mudança mínima que resolve.** Prefere o diff menor que resolve o problema ao refactor grande não pedido.
+- **Sinaliza o que testar.** Aponta o que testar após a mudança (borda, regressão) e qual teste falta. Aqui não há suíte: diga o que abrir e conferir na tela.
+- **Indica o que merece print no README.** Aponta o que vale print no README; não gera a imagem.
 
-## Convenções deste projeto
+## Convenções
 - **IDs de domínio em `snake_case` PT-BR**, espelhando `src/data.js` (`ronin_breath`, `gw_kunai`). É a chave que liga `data.js` ↔ `logic.js` ↔ `icons.js`. **Não traduza para inglês.**
 - Código em camelCase inglês; comentários em PT-BR; seções marcadas com `// ─── Nome ───`.
-- Sem linter: a régua é a consistência com o código existente.
 - **Toda string de UI existe em PT-BR e EN.** Nunca acrescente string monolíngue.
 - Build: `npm run build` antes de commitar código. `npm run deploy` só sob pedido explícito.
 - Mudança só em `meta/` não precisa de build; a rede é o `git diff`.
-- **Template do kit é sugestão, não ordem**, e genérico não substitui vivo refinado. Colisões recorrentes estão na DEC-008 sob «já julgadas — não reabrir»: reporte sem ação e siga. Novidade de comportamento, avalie a cada update.
+- Estilo de código: legibilidade primeiro, performance só se medido. Sem linter: a régua é o código existente.
+- **Template do kit é sugestão**, e genérico não substitui vivo refinado. Colisões já julgadas estão na DEC-008: reporte sem ação e siga. Linha que o kit REVOGOU sai, mesmo de arquivo vivo.
 
 ## Armadilhas que já morderam
-`getStatGroups(stats, classId, lang)` — `classId` é obrigatório, sem ele stats voltam `undefined` · não envolva `<select>` com `<Tooltip>` (o span inline-block mata o `width: 100%`) · nada de filtro CSS em ícone PNG de técnica, e o canvas não herda filtro · `T` é objeto mutável de módulo, nunca `const T = {...}` em componente filho · amuleto com `classBinding` lê-se por `getEffectiveCharm(itemId, linkedClass)`, nunca do `GEAR` · `★` é de Magistral, `●` é de Determinação e vai repetido (`●●●`). Lista completa (23) em CONTEXT.md.
-
-## Entregas
-**Arquivo inteiro, nunca blocos para eu costurar.** Nome de download SIMPLES (`IDEAS.md`, não `meta_IDEAS.md`).
-**Chat × Claude Code:** o chat CURA e AUTORA; o Code EXECUTA. Reescrita de fundo ou arquivo novo/pequeno → arquivo inteiro. Delta estruturado em doc grande → **WO** em `meta/workorders/` (`AAMMDD-woNNNN-desc.md`), texto exato e âncora semântica, nunca nº de linha. Um canal por doc por ciclo. **WO nunca vai sozinha:** entregue junto a linha `/apply-wo <arquivo>`.
-**Análise antes do compromisso:** mudança não-trivial ou pergunta aberta começa por uma análise em `meta/analises/AAMMDD-ANALISE-<tema>.md`, que para no ponto de decisão e espera minha resposta. **Spec de feature** (`meta/specs/`, molde em `SPEC.md`) diz o QUÊ construir e os critérios de aceite; a WO diz COMO aplicar. As pastas nascem no primeiro uso. Formato e funil no CEREBRO.
-**WO é artefato versionado:** entra no `git add` com o efeito dela; ao aplicar, o Code fecha sozinho com `git diff` → `add` → `commit` → `push`. WO aplicada não se apaga.
-**Commit:** ao concluir mudança versionada, ENTREGUE o commit pronto em bloco SEPARADO — Conventional Commits (`feat(escopo): descricao`), mensagem **SEM acento**, `add`/`commit`/`push` em linhas separadas. Bloco parcial (só `add`) não serve. Não pule o commit.
-**Log:** `logs/AAAA-MM-DD.md` (data ISO, sem a palavra "log").
-**README:** atualize quando a estrutura mudar visivelmente. Se adiar, diga por quê.
-
-## Fecho de turno (só as linhas que se aplicam)
-**Próximo** (ação + a frase que eu mando de volta) antes do divisor; depois dele: **Estado** · **Arquivar/Manter** (notas soltas no mount, nome por nome, sem eu pedir) · **Config recomendada** por raia · **Handoff**. Formato completo no CEREBRO.
-**Estado só com dado lido NESTE turno**; sem dado fresco, escreva «não verificado nesta rodada».
-Nunca afirme saber a config atual — recomende pela próxima etapa: no chat, modelo + esforço + pensamento; no Code, modelo + `/effort` (ou `ultrathink`), sem toggle. Etapa pesada com config fraca → peça aumento; folga → diga que posso baixar.
+`getStatGroups(stats, classId, lang)`: `classId` obrigatório · `<select>` não vai dentro de `<Tooltip>` · nada de filtro CSS em ícone PNG de técnica (o canvas não herda) · `T` é objeto mutável de módulo, nunca `const T` em componente filho · amuleto com `classBinding`: `getEffectiveCharm(itemId, linkedClass)`, nunca o `GEAR` · `★` é Magistral, `●` é Determinação, repetido. As 23 em CONTEXT.md.
 
 ## Arquivos de contexto
-**CEREBRO** como o assistente age · **CONTEXT** o que o projeto é (estável) · **STATUS** o agora, rolante · **DECISIONS** o porquê, DEC e FIX · **CHANGELOG** versões entregues, cresce no topo · **IDEAS** segundo cérebro, nunca perde nada, inclui «Feedback para o Kit» e «Correções de processo» · **ROADMAP** fases F1…F5 · **GLOSSARY** termos do jogo e do projeto (PT/EN) · **HISTORY** fases antigas, sob demanda · **SPEC** e **LOG-TEMPLATE** moldes fixos.
-Logs, WOs e análises NÃO sobem ao Projeto: vivem no Git.
+- **CEREBRO.md** — o comportamento completo do assistente.
+- **SPEC.md** — Spec de feature (o QUÊ), sob demanda; não WO.
+- **CONTEXT.md** — Visão, stack, armadilhas, produto. Estável.
+- **STATUS.md** — O agora e o backlog curto. Rolante.
+- **DECISIONS.md** — O porquê: arquitetura (DEC) e bugs (FIX).
+- **CHANGELOG.md** — Versões entregues (SemVer). Cresce no topo.
+- **IDEAS.md** — Segundo cérebro: ideia muda, não some.
+- **LOG-TEMPLATE.md** — Modelo do log do dia; nunca substituído.
+- **ROADMAP.md** — OPCIONAL — plano de evolução em fases.
+- **GLOSSARY.md** — OPCIONAL — jargão que se repete no projeto.
+- **HISTORY.md** — OPCIONAL — fases antigas; lido sob demanda.
+- Logs detalhados do dia vivem em `logs/` e são lidos sob demanda.
 
-## Ao final de cada sessão
-Entregue INTEIROS os documentos afetados, só os que mudaram (baixar e substituir): STATUS · CHANGELOG · DECISIONS · IDEAS · ROADMAP · GLOSSARY · `logs/AAAA-MM-DD.md`.
-Registre feedback ao kit e ideias novas SEM me pedir confirmação. Proponha o refino destas Instruções por conta própria quando notar sinal — não espere eu pedir.
+## Ao final da conversa, REGISTRE o que falta (não liste)
+Registre AQUI, não liste para depois: doc grande por WO (com a linha `/apply-wo`), arquivo novo ou pequeno inteiro, e o log do dia SEMPRE. A lista termina vazia. Regenerar × criar: CEREBRO.md.
+- STATUS.md — completo e atualizado (rolante: o resolvido sai)
+- CHANGELOG.md — completo, com nova entrada se algo foi concluído
+- DECISIONS.md — completo, com nova DEC/FIX se houve decisão ou bug grave
+- IDEAS.md — completo, com as ideias da conversa capturadas e reclassificadas
+- ROADMAP.md — completo, se alguma fase mudou de estado (quando o projeto usa roadmap)
+- GLOSSARY.md — completo, se surgiu termo novo (quando o projeto usa glossário)
+- logs/AAAA-MM-DD.md — log do dia preenchido (formato em LOG-TEMPLATE.md)
+- Higiene no CEREBRO.md (resumo: STATUS só o agora; IDEAS nunca perde; uma fonte de verdade por dado).
+- **Fecho do turno** — formato fixo (divisor, listas, condição por linha) que não cabe aqui: **copie o esqueleto do CEREBRO**, não reconstitua de memória — o esqueleto tem cinco itens; sem saber nomeá-los, abra-o. `Estado` abre com `Base:` — o lido NESTE turno.
 
-## Idioma e ambiente
-Respostas em pt-BR. Windows (CMD): comandos numa linha só, sem `\`, `-m` repetido para parágrafos, caminhos com `\`. No Claude Code o shell é Git Bash interno (`/` funciona).
+## Idioma
+Respostas em pt-BR.
+Sistema do usuário: Windows (CMD/Prompt de Comando). Comandos de terminal no formato CMD do Windows: tudo numa linha (sem continuação `\`); em git commit, repetir `-m` para múltiplos parágrafos; caminhos com `\`. No Code o shell é Git Bash (`/` funciona).
