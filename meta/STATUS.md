@@ -9,7 +9,7 @@
 
 ## Versão Atual
 
-**[1.0.0-beta]** — 2026-06-24 — última versão **etiquetada**, e já não descreve o produto. O `[Não lançado]` do CHANGELOG acumula a Fase 3 inteira (imagem PNG nos três níveis, painel de exportação reconstruído, custo do Supremo em pips, comando dos Supremos), as correções FIX-009 a FIX-014, as limpezas DEC-032 e DEC-033 e a infraestrutura dos template-updates v1.87 → v1.142. Etiquetar é o primeiro item do backlog.
+**[1.0.0]** — 2026-11-15 — primeira versão estável, com tag Git `v1.0.0` na `v2-planner`. Fecha F1–F3 do ROADMAP: planejador, exportação em texto e exportação em imagem (Fase 3, com painel de exportação reconstruído e custo do Supremo em pips). A `main` e o site publicado ainda não têm esta versão (ver backlog).
 
 ---
 
@@ -65,7 +65,6 @@ _Nada._
 
 ## 📋 Backlog (curto prazo — acionáveis no próximo turno)
 
-- [ ] **Etiquetar a versão** acumulada no `[Não lançado]` do CHANGELOG. O número é decisão do dono.
 - [ ] **Escolher a próxima frente do produto:** abrir a F4 (Polimento e Mobile) ou a análise dos quatro caminhos de compartilhamento por link (Base64 × URL × link curto × QR), parada desde 2026-07-27. A segunda é candidata à primeira análise em `meta/analises/`.
 - [ ] **`main` × `v2-planner`:** a `main` está 45 commits atrás e parada desde 2026-07-22 (medido em 2026-11-15). Decidir se é de propósito.
 - [ ] **`DECISIONS.md` com 1.173 linhas** (limiar ~700): mover as entradas antigas para `DECISIONS-archive.md`. Curadoria do chat.

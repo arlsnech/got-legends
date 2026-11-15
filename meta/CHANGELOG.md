@@ -7,6 +7,14 @@
 
 ## [Não lançado]
 
+_Nada ainda._
+
+---
+
+## [1.0.0] — 2026-11-15
+
+> Primeira versão estável. Fecha as fases F1–F3 do ROADMAP: planejador, exportação em texto e exportação em imagem. Tag Git `v1.0.0` no commit desta versão, na `v2-planner`; a `main` e o site publicado ainda não a têm.
+
 ### Infraestrutura de repositório
 - **Template-update do KCM v1.87.0 comparado e fundido** — sem efeito no produto. `meta/specs/` passou a `meta/workorders/`, a skill `/apply-spec` passou a `/apply-wo`, e o nome `meta/specs/` ficou reservado para specs de feature (DEC-030). Os vinte arquivos existentes e as menções históricas a `spec0001`–`spec0020` foram preservados.
 - **`meta/SPEC.md`** — molde novo da spec de feature: problema, critérios de aceite verificáveis, decisões de desenho, fora de escopo.
@@ -81,11 +89,8 @@
 - Campo de valor das propriedades: as setinhas nativas do `type="number"` foram escondidas — eram redundantes com os botões de passo e reservavam uma faixa que descentrava o número
 - Botões de passo passam de ▼ ▲ para **−** e **+**, seguindo a recomendação da Nielsen Norman Group para steppers horizontais (▲▼ são a convenção de steppers verticais; ◀▶ sugeririam navegar entre itens, não alterar um valor)
 
-### Pendente de aplicação (código precisa ser reescrito — guia original perdido)
-- `Tooltip` com prop `wrapperStyle` para controle de layout
-- `TechRow` independente por modo (3-col full-width uniforme; 2-col side-by-side em grid)
-- Contador de Magistrais com nome completo e maior espaçamento
-- `generateBuildText` stats: fix de `classId` + `fmtStatTxt` + filtro `value === base`
+### Removido do registro
+- A lista «Pendente de aplicação (código precisa ser reescrito — guia original perdido)», que vinha de junho, saiu ao fechar esta versão. Os quatro itens dela entraram de fato e estão acima: `wrapperStyle` no `Tooltip`, `TechRow` por modo e contador de Magistrais por extenso (spec0006, em «Modificado (interface)»), e as estatísticas do texto exportado (FIX-005, em «Corrigido»).
 
 ---
 
