@@ -47,7 +47,6 @@
 
 ## 🔧 Em Progresso
 
-- **Fechamento do template-update do KCM v1.142.0 — `wo0031`.** CEREBRO e Instruções já foram fundidos (`wo0030`, DEC-035). Esta leva grava os carimbos v1.142.0 nas três skills e no molde de WO, as novidades em `CLAUDE.md`, `/apply-wo`, `/wrap`, `.flatdropignore`, `IDEAS` e `LOG-TEMPLATE`, corrige a premissa da DEC-034 e traz esta reescrita do STATUS. Sai daqui quando a `wo0031` for aplicada.
 - **Produto:** nada em curso. A última mudança foi a `wo0027`, em 2026-08-24.
 
 ---
@@ -60,7 +59,7 @@ _Nada ativo._ (Bug com sintoma observável entra aqui; quando resolvido e se foi
 
 ## ⏳ Pendente de Aplicação
 
-- `meta/workorders/261115-wo0031-fatia4-fecha-kit-v1142.md` — escrita pelo chat em 2026-11-15; aguarda `/apply-wo` e `/wrap`.
+_Nada._
 
 ---
 
@@ -81,3 +80,9 @@ _Nada ativo._ (Bug com sintoma observável entra aqui; quando resolvido e se foi
 Fecha o «Pendente: Fatia 3» da entrada acima (o carimbo v1.73.0 do CEREBRO não vale mais: agora é v1.142.0). `meta/CEREBRO.md` e `INSTRUCOES-DO-PROJETO.md` foram gravados pelo chat a partir do pacote, com o transplante do que é deste projeto (DEC-035); a wo0030 conferiu os hashes e registrou DECISIONS, CHANGELOG e IDEAS. Commit `9326145`, empurrado. `GIT_OPTIONAL_LOCKS=0` voltou às regras. Instruções em 6.778 caracteres (teto 6.900).
 
 **Pendente:** demais arquivos do pacote v1.142.0 (skills, `_TEMPLATE.md` de WO, `CLAUDE.md`, `settings.json`, exclusões, `template` de meta/) — próxima fatia; a pasta `../261115-kcm-update-v1.142.0/` fica onde está. Texto da DEC-034 a corrigir (o kit inverteu o «Commit pronto ao final» no modo Code, não o revogou). Reescrita de fundo do STATUS (curadoria do chat).
+
+### 2026-11-15 — Kit v1.142.0, Fatia 4 (wo0031): fecha o update
+
+Os cinco carimbos dizem v1.142.0; skills, `_TEMPLATE.md`, `CLAUDE.md`, `.flatdropignore`, `LOG-TEMPLATE`, CONTEXT e o STATUS reescrito (83 linhas; histórico em `meta/STATUS-archive.md`) foram gravados pelo chat e versionados pela wo0031, que também registrou a correção da DEC-034, «🛌 Adiadas» no IDEAS e a entrada do CHANGELOG. Commit `26b8080`, empurrado. O template-update v1.142.0 está fechado.
+
+**Pendente:** nada. O pacote `261115-kcm-update-v1.142.0` já está em `notas-arquivadas\` (conferido por `ls`). Sem pendência de código.
