@@ -7,7 +7,8 @@
 
 ## [Não lançado]
 
-_Nada ainda._
+### Infraestrutura de repositório
+- **A `main` voltou a ser o branch de trabalho** (DEC-036): alcançou a `v2-planner` por avanço rápido, e a `v2-planner` foi aposentada.
 
 ---
 

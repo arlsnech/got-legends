@@ -1173,3 +1173,25 @@ Junto, a cadência de `sessão` foi trocada por `turno` ou `conversa` em 34 pont
 - Instruções em 6.778 caracteres (`LC_ALL=C.UTF-8 wc -m`), teto 6.900.
 - No próximo template-update a base é de novo o pacote; o transplante se acha pelas marcas «Neste projeto», pelo número de DEC e pelas duas seções próprias.
 - A premissa da DEC-034 sobre o «Commit pronto ao final» («revogado pelo kit») segue para correção à parte: o kit não o revogou, inverteu-o no modo Code.
+
+---
+
+## DEC-036 — A `main` volta a ser o branch de trabalho; a `v2-planner` é aposentada
+
+**Data:** 2026-11-16 · **Status:** aceita · **Aplicada pela** `wo0033`
+
+### Contexto
+A `v2-planner` nasceu em 2026-07-22 a partir da `main`, para abrigar o estado atual da ferramenta sem mexer na `main` nem no site publicado. Desde então a `main` ficou parada em `8a99244`. Em 2026-11-16 ela estava 49 commits atrás e sem nenhum commit próprio — ancestral direta da `v2-planner` (medido com `git merge-base --is-ancestor` e `git rev-list --count` nos dois sentidos). A versão 1.0.0, etiquetada em 2026-11-15 (`v1.0.0`, `180f586`), tirou o motivo de manter os dois.
+
+### Decisão
+- A `main` alcança a `v2-planner` por **avanço rápido** (`git merge --ff-only`): nenhum commit novo, nenhuma reescrita de histórico.
+- O trabalho passa a ser na `main`. A `v2-planner` é apagada no remoto e no local; a tag `v1.0.0` e o histórico inteiro continuam no Git.
+- O push da `main` pode publicar a 1.0.0, caso o Netlify esteja ligado a ela — autorizado pelo dono.
+
+### Alternativas consideradas
+- **Seguir na `v2-planner` e avançar a `main` só a cada versão** — descartada: com um autor só e sem revisão, dois branches só multiplicam a pergunta «onde está o estado?».
+- **Merge com commit** — desnecessário: a `main` não tinha nada próprio.
+
+### Consequências
+- Os relatos datados que citam a `v2-planner` (STATUS-archive, logs, DECISIONS, relatórios na pasta-pai, a entrada da 1.0.0 no CHANGELOG) ficam como estão: eram verdade quando escritos.
+- O link do README aponta para o GitHub Pages (branch `gh-pages`, último deploy manual em 2026-04-21), que não muda com isto. Publicar lá continua sendo um passo à parte.

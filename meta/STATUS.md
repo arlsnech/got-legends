@@ -9,7 +9,7 @@
 
 ## Versão Atual
 
-**[1.0.0]** — 2026-11-15 — primeira versão estável, com tag Git `v1.0.0` na `v2-planner`. Fecha F1–F3 do ROADMAP: planejador, exportação em texto e exportação em imagem (Fase 3, com painel de exportação reconstruído e custo do Supremo em pips). A `main` e o site publicado ainda não têm esta versão (ver backlog).
+**[1.0.0]** — 2026-11-15 — primeira versão estável, com tag Git `v1.0.0`. Fecha F1–F3 do ROADMAP: planejador, exportação em texto e exportação em imagem (Fase 3, com painel de exportação reconstruído e custo do Supremo em pips). Na `main` desde 2026-11-16, que voltou a ser o branch de trabalho (DEC-036).
 
 ---
 
@@ -66,7 +66,6 @@ _Nada._
 ## 📋 Backlog (curto prazo — acionáveis no próximo turno)
 
 - [ ] **Escolher a próxima frente do produto:** abrir a F4 (Polimento e Mobile) ou a análise dos quatro caminhos de compartilhamento por link (Base64 × URL × link curto × QR), parada desde 2026-07-27. A segunda é candidata à primeira análise em `meta/analises/`.
-- [ ] **`main` × `v2-planner`:** a `main` está 45 commits atrás e parada desde 2026-07-22 (medido em 2026-11-15). Decidir se é de propósito.
 - [ ] **`DECISIONS.md` com 1.173 linhas** (limiar ~700): mover as entradas antigas para `DECISIONS-archive.md`. Curadoria do chat.
 - [ ] **Cópias soltas de `GUIA_COMPLETO*.md`** em `notas-arquivadas\` (pasta-pai): as duas têm o mesmo md5 (`7fa3bda4…`) que `meta/legacy/GUIA_COMPLETO_v4.md` no Git, antes de `c232da3` — que a tirou da árvore. O conteúdo está salvo no histórico; apagar ou manter é decisão do dono.
 
