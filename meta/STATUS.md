@@ -98,3 +98,9 @@ CHANGELOG: `[Não lançado]` esvaziado e `[1.0.0] — 2026-11-15` aberto sem reo
 A `main` avançou por fast-forward até `1690156` (49 commits, nenhum próprio dela) e foi empurrada; a `v2-planner` foi apagada local e remotamente (`branch -d`, sem `-D`). A tag `v1.0.0` e o `gh-pages` seguem. O trabalho agora é na `main`. DEC-036 registrada; item de backlog «`main` × `v2-planner`» fechado.
 
 **Fecha o «Pendente» da entrada da wo0032:** a `main` já tem a 1.0.0. **Pendente:** o site (GitHub Pages, `gh-pages`) segue no deploy de 2026-04-21 — publicar é passo à parte e só sob pedido; conferir no painel do Netlify se o push da `main` publicou. Títulos repetidos na 1.0.0 do CHANGELOG continuam sendo curadoria do chat.
+
+### 2026-11-16 — GitHub Pages por workflow (wo0034, DEC-037)
+
+`.github/workflows/deploy-gh-pages.yml` monta a `main` em Linux a cada push, com `VITE_BASE_URL=/got-legends/`, e empurra o `dist/` para a `gh-pages`; `src/icons.js` prefixa os quatro caminhos-base com `import.meta.env.BASE_URL`. Commit `e99edf8`, empurrado. A primeira execução do workflow terminou `completed success` (19s, medido com `gh run list`).
+
+**Fecha o «Pendente» da entrada da wo0033** (site do GitHub Pages parado desde 2026-04-21): o deploy foi feito, falta só a conferência visual. **Pendente:** o dono abrir o site do GitHub Pages e ver se os ícones carregam; depois, `npm run dev` para confirmar que a raiz segue igual.
