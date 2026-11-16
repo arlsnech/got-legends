@@ -24,6 +24,18 @@ Gerar um QR Code da URL compartilhável direto na ferramenta para facilitar comp
 ### 2026-11 — Importar build arrastando um `.json` para a tela
 Soltar o arquivo em qualquer ponto da ferramenta, com o painel lateral aberto ou não, carrega a build quando o arquivo for compatível — o mesmo caminho do «Importar JSON» do painel de saves. Vai para a análise de compartilhamento por link como mais uma via de ENTRADA de build: todas passam pela mesma validação (`deserializeBuild`). Lacunas a decidir lá: arquivo com várias builds (o export do painel é uma lista), substituir a build aberta com ou sem confirmação, e o aviso bilíngue de arquivo incompatível.
 
+**Decisões preliminares do dono (2026-11-16) `[relatado pelo dono]`**, para a análise confirmar ou recusar com UX:
+- **Arquivo com várias builds:** pode importar todas, mas de preferência por um **modal com a lista**, em que o usuário marca quais importar e quais descartar — prático e intuitivo.
+- **Build aberta:** **não** é substituída sem confirmação. A confirmação pode oferecer **salvar e nomear a build aberta** antes de importar.
+- **Pergunta em aberto do dono:** importar para os saves **sem abrir** nenhuma das builds importadas.
+- **Aviso de arquivo incompatível:** aceita a recomendação (aviso bilíngue).
+
+### 2026-11 — Exportar só as builds escolhidas
+Hoje o «Exportar JSON» do painel exporta a lista inteira. A ideia é exportar **uma build específica** ou **marcar quais** exportar, com UI/UX prática. Par natural do modal de importação seletiva — o mesmo componente de lista com seleção pode servir aos dois sentidos. Vai para a mesma análise.
+
+### 2026-11 — Filtrar, ordenar e agrupar as builds salvas
+Ordenar por nome (alfabético), por data de criação ou de edição; agrupar por classe; filtrar por classe, por equipamento presente, por vantagem ativa ou outra regra. O dono pediu que o assistente pese e **barre se for desnecessário**, com critério, estudo e pesquisa de UX. A pergunta que decide é **a partir de quantas builds salvas** uma lista simples deixa de servir. Observação técnica: hoje o save guarda só `createdAt`; ordenar por edição pede um campo novo (`updatedAt`) e cuidado com os saves antigos, que não o têm. Vai para a mesma análise.
+
 ---
 
 ## 🤖 Ideias Ativas — Assistente

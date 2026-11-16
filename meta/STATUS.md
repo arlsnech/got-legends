@@ -65,7 +65,7 @@ _Nada._
 
 ## 📋 Backlog (curto prazo — acionáveis no próximo turno)
 
-- [ ] **Escolher a próxima frente do produto:** abrir a F4 (Polimento e Mobile) ou a análise dos quatro caminhos de compartilhamento por link (Base64 × URL × link curto × QR), parada desde 2026-07-27. A segunda é candidata à primeira análise em `meta/analises/`.
+- [ ] **Próxima frente, escolhida pelo dono em 2026-11-16: a análise de ENTRADA e SAÍDA de builds** — a primeira em `meta/analises/` (a pasta nasce com ela, junto com o `_TEMPLATE.md` do kit). Escopo: as vias de entrada (arrastar `.json` para a tela, código Base64, URL na query string, link curto, QR) e a gestão dos saves que elas pedem (importar escolhendo quais builds, exportar escolhendo quais, e filtrar/ordenar/agrupar a lista). Ideias e decisões preliminares do dono no `IDEAS.md`, sob «💡 Ideias Ativas — Usuário».
 - [ ] **`DECISIONS.md` com 1.173 linhas** (limiar ~700): mover as entradas antigas para `DECISIONS-archive.md`. Curadoria do chat.
 - [ ] **Cópias soltas de `GUIA_COMPLETO*.md`** em `notas-arquivadas\` (pasta-pai): as duas têm o mesmo md5 (`7fa3bda4…`) que `meta/legacy/GUIA_COMPLETO_v4.md` no Git, antes de `c232da3` — que a tirou da árvore. O conteúdo está salvo no histórico; apagar ou manter é decisão do dono.
 - [ ] **O botão Texto mostra ✓ mesmo quando a cópia falha** (`handleCopyText`, `App.jsx`: o `.catch` também chama `flash('txt')`). Quando falha, o que se cola é o texto anterior, sem aviso. Achado em 2026-11-16.
@@ -104,3 +104,13 @@ A `main` avançou por fast-forward até `1690156` (49 commits, nenhum próprio d
 `.github/workflows/deploy-gh-pages.yml` monta a `main` em Linux a cada push, com `VITE_BASE_URL=/got-legends/`, e empurra o `dist/` para a `gh-pages`; `src/icons.js` prefixa os quatro caminhos-base com `import.meta.env.BASE_URL`. Commit `e99edf8`, empurrado. A primeira execução do workflow terminou `completed success` (19s, medido com `gh run list`).
 
 **Fecha o «Pendente» da entrada da wo0033** (site do GitHub Pages parado desde 2026-04-21): o deploy foi feito, falta só a conferência visual. **Pendente:** o dono abrir o site do GitHub Pages e ver se os ícones carregam; depois, `npm run dev` para confirmar que a raiz segue igual.
+
+### 2026-11-16 — Chat: confirmações do dono e transferência de conversa (wo0035)
+
+Fatos que só existiam no chat, registrados com a origem:
+- **GitHub Pages:** workflow verde e ícones carregando em `arlsnech.github.io/got-legends/` — `[relatado pelo dono]`; o verde também `[medido por instrumento]` pelo Code (`gh run list`: success, 19s, run 43879422833). **Fecha o «Pendente» da entrada acima.**
+- **Netlify publicou a 1.0.0** depois do push da `main` — `[relatado pelo dono]`. Vercel (`got-legends.vercel.app`) e Cloudflare Pages (`got-legends.pages.dev`) mostravam a interface nova às 10:24 — `[medido em captura de tela do dono]`.
+- **Texto do Estatístico funciona:** numa aba só, 🎲 → Imagem → Texto → Salvar saiu completo — `[relatado pelo dono]`, com o texto colado como evidência. O primeiro relato de «texto vazio» veio de abas diferentes: o JSON salvo junto estava vazio também, e Texto, Imagem e Salvar leem a mesma `build` (`App.jsx`).
+- **Próxima frente escolhida:** a análise de entrada e saída de builds (backlog). Nenhum código mudou neste turno.
+
+**Pendente:** abrir a análise na conversa nova (ver `../AAMMDD-HANDOFF-BRIEF.md` mais recente na pasta-pai).
