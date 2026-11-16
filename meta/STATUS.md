@@ -90,3 +90,9 @@ Os cinco carimbos dizem v1.142.0; skills, `_TEMPLATE.md`, `CLAUDE.md`, `.flatdro
 CHANGELOG: `[Não lançado]` esvaziado e `[1.0.0] — 2026-11-15` aberto sem reorganizar as subseções; a lista de junho «Pendente de aplicação» saiu (`Removido do registro`). Commit `180f586` na `v2-planner`, tag anotada `v1.0.0` nele, ambos empurrados. Build verde.
 
 **Pendente:** a `main` e o site publicado não têm a 1.0.0 (ver backlog). Arrumar os títulos repetidos dentro da 1.0.0 do CHANGELOG é curadoria do chat.
+
+### 2026-11-16 — `main` alcança a `v2-planner` (wo0033, DEC-036)
+
+A `main` avançou por fast-forward até `1690156` (49 commits, nenhum próprio dela) e foi empurrada; a `v2-planner` foi apagada local e remotamente (`branch -d`, sem `-D`). A tag `v1.0.0` e o `gh-pages` seguem. O trabalho agora é na `main`. DEC-036 registrada; item de backlog «`main` × `v2-planner`» fechado.
+
+**Fecha o «Pendente» da entrada da wo0032:** a `main` já tem a 1.0.0. **Pendente:** o site (GitHub Pages, `gh-pages`) segue no deploy de 2026-04-21 — publicar é passo à parte e só sob pedido; conferir no painel do Netlify se o push da `main` publicou. Títulos repetidos na 1.0.0 do CHANGELOG continuam sendo curadoria do chat.
