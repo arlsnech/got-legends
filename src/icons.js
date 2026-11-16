@@ -5,10 +5,14 @@
 // ============================================================
 
 // ─── BASE PATHS ───────────────────────────────────────────────
-const G  = '/icons/gear/'          // gear: katanas, arcos, amuletos
-const GW = '/icons/ghost_weapons/' // ghost weapons
-const T  = '/icons/techniques/'    // técnicas e habilidades (PNG)
-const CL = '/icons/class/'         // classes (SVG)
+// Prefixo do caminho-base do site: '/' na raiz (Netlify, Vercel, Cloudflare Pages) e
+// '/got-legends/' no GitHub Pages (VITE_BASE_URL, ver vite.config.js e DEC-037). Caminho
+// absoluto fixo ('/icons/...') quebrava todo icone de site servido fora da raiz.
+const BASE = import.meta.env.BASE_URL
+const G  = `${BASE}icons/gear/`          // gear: katanas, arcos, amuletos
+const GW = `${BASE}icons/ghost_weapons/` // ghost weapons
+const T  = `${BASE}icons/techniques/`    // técnicas e habilidades (PNG)
+const CL = `${BASE}icons/class/`         // classes (SVG)
 
 // ─── ÍCONES DE GEAR POR ITEM ID ───────────────────────────────
 // ATENÇÃO: as chaves DEVEM ser os IDs exatos dos itens em data.js

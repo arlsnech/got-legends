@@ -1195,3 +1195,25 @@ A `v2-planner` nasceu em 2026-07-22 a partir da `main`, para abrigar o estado at
 ### Consequências
 - Os relatos datados que citam a `v2-planner` (STATUS-archive, logs, DECISIONS, relatórios na pasta-pai, a entrada da 1.0.0 no CHANGELOG) ficam como estão: eram verdade quando escritos.
 - O link do README aponta para o GitHub Pages (branch `gh-pages`, último deploy manual em 2026-04-21), que não muda com isto. Publicar lá continua sendo um passo à parte.
+
+---
+
+## DEC-037 — O GitHub Pages passa a ser publicado por workflow, e os ícones seguem o caminho-base
+
+**Data:** 2026-11-16 · **Status:** aceita · **Aplicada pela** `wo0034` · **Substitui em parte** a DEC-016 (a via manual do GitHub Pages)
+
+### Contexto
+Depois da DEC-036, o push da `main` publicou a 1.0.0 no Netlify, na Vercel e no Cloudflare Pages, que montam a `main` sozinhos. O GitHub Pages — o link do README — seguiu na versão de 2026-04-21: ele serve a branch `gh-pages`, publicada à mão, porque o `npm run deploy` quebra no Windows (DEC-016). A leitura do código mostrou um segundo problema, que a primeira publicação automática teria exposto: `src/icons.js` monta todo caminho de ícone a partir de `/icons/...`, absoluto. No GitHub Pages o site vive em `/got-legends/`, e esses caminhos apontariam para `arlsnech.github.io/icons/...`, que não existe — o app abriria sem nenhum ícone. A `gh-pages` de abril nem tem a pasta `icons/` (medido com `git ls-tree origin/gh-pages`): era de antes dos ícones.
+
+### Decisão
+- O workflow `.github/workflows/deploy-gh-pages.yml` monta a `main` a cada push, no runner Linux do GitHub, com `VITE_BASE_URL=/got-legends/`, e empurra o `dist/` para a `gh-pages` com `peaceiris/actions-gh-pages@v4`. A fonte do Pages nas configurações do repositório não muda.
+- `src/icons.js` prefixa os quatro caminhos-base com `import.meta.env.BASE_URL`, que é `/` nos hosts de raiz e `/got-legends/` no GitHub Pages.
+
+### Alternativas consideradas
+- **`actions/deploy-pages` (o deploy oficial)** — exigiria trocar a fonte do Pages para «GitHub Actions» nas configurações, um passo manual a mais, sem ganho aqui.
+- **Aposentar o GitHub Pages e apontar o README para o Netlify** — fica como plano B. Se o workflow não funcionar, a `gh-pages` pode virar uma página de aviso que redireciona para o Netlify.
+
+### Consequências
+- Quatro hosts com a mesma `main`. Três servem na raiz, e o GitHub Pages em `/got-legends/`.
+- O `npm run deploy` do `package.json` continua quebrado no Windows e não é mais necessário.
+- Se o passo de deploy falhar com 403: Settings → Actions → General → Workflow permissions.

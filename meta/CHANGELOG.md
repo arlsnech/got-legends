@@ -9,6 +9,10 @@
 
 ### Infraestrutura de repositório
 - **A `main` voltou a ser o branch de trabalho** (DEC-036): alcançou a `v2-planner` por avanço rápido, e a `v2-planner` foi aposentada.
+- **O GitHub Pages volta a ser publicado, agora por workflow** (DEC-037): `.github/workflows/deploy-gh-pages.yml` monta a `main` em Linux a cada push e empurra o `dist/` para a `gh-pages`. Estava parado desde 2026-04-21.
+
+### Corrigido
+- Os ícones usavam caminho absoluto (`/icons/...`) e sumiriam em qualquer site servido fora da raiz, como o GitHub Pages (`/got-legends/`). Agora seguem o caminho-base do build (DEC-037).
 
 ---
 

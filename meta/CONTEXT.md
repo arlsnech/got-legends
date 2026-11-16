@@ -22,7 +22,7 @@ Planejador de builds para **Ghost of Tsushima: Legends** — modo cooperativo do
 - **Build tool:** Vite 5.4
 - **CSS:** Tailwind CSS (usado minimamente; estilização via inline styles com objeto `T`)
 - **Persistência:** `localStorage` (key `gotlegends_v1_builds`)
-- **Deploy:** Netlify (primário) e Vercel (alternativo); GitHub Pages via `gh-pages`
+- **Deploy:** Netlify (primário), Vercel e Cloudflare Pages publicam a `main` sozinhos a cada push, servindo na raiz. GitHub Pages (`/got-legends/`, o link do README) é publicado pelo workflow `.github/workflows/deploy-gh-pages.yml`, que monta com `VITE_BASE_URL=/got-legends/` e empurra o `dist/` para a branch `gh-pages` (DEC-037). O `npm run deploy` não serve no Windows (DEC-016).
 - **Sem backend, sem banco, sem autenticação**
 
 ---

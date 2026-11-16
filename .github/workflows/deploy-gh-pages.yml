@@ -1,0 +1,48 @@
+# Publica o GitHub Pages (https://arlsnech.github.io/got-legends/) a cada push na main.
+#
+# Por que existe (DEC-037): o `npm run deploy` quebra no Windows (ENAMETOOLONG no gh-pages,
+# DEC-016), e o GitHub Pages ficou parado em 2026-04-21 enquanto Netlify, Vercel e Cloudflare
+# Pages publicavam a main sozinhos. Aqui o build roda em Linux, no runner do GitHub.
+#
+# O site do GitHub Pages vive em /got-legends/, nao na raiz: por isso o VITE_BASE_URL.
+# Os outros hosts servem na raiz e nao definem a variavel (base = '/').
+#
+# A acao empurra o dist/ para a branch gh-pages, que e a fonte do Pages nas configuracoes do
+# repositorio. Se o passo de deploy falhar com 403, confira em Settings → Actions → General →
+# Workflow permissions se escrita esta permitida.
+
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gh-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+        env:
+          VITE_BASE_URL: /got-legends/
+
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist

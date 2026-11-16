@@ -21,6 +21,9 @@ Seção "Builds populares" com presets curados do meta atual. Usuário clica e c
 ### 2026-06 — Exportar build como link QR Code
 Gerar um QR Code da URL compartilhável direto na ferramenta para facilitar compartilhamento mobile.
 
+### 2026-11 — Importar build arrastando um `.json` para a tela
+Soltar o arquivo em qualquer ponto da ferramenta, com o painel lateral aberto ou não, carrega a build quando o arquivo for compatível — o mesmo caminho do «Importar JSON» do painel de saves. Vai para a análise de compartilhamento por link como mais uma via de ENTRADA de build: todas passam pela mesma validação (`deserializeBuild`). Lacunas a decidir lá: arquivo com várias builds (o export do painel é uma lista), substituir a build aberta com ou sem confirmação, e o aviso bilíngue de arquivo incompatível.
+
 ---
 
 ## 🤖 Ideias Ativas — Assistente
