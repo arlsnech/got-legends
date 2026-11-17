@@ -1395,8 +1395,17 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName }) {
   }, [])
 
   const persist = (list) => {
+    // Grava primeiro e só então mostra: cota cheia ou armazenamento bloqueado
+    // lançam aqui, e a lista na tela não pode dizer «salvo» se o navegador não
+    // gravou (análise 261116, D6). Devolve false para quem chamou não mostrar ✓.
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
+    } catch {
+      showFlash(lang === 'en' ? '✗ Could not write to browser storage' : '✗ Não foi possível gravar no navegador')
+      return false
+    }
     setSaves(list)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
+    return true
   }
 
   // Flash com posição fixa — não empurra conteúdo
@@ -1408,7 +1417,7 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName }) {
   const save = () => {
     const name = buildName.trim() || (lang === 'en' ? 'Unnamed' : 'Sem nome')
     const entry = serializeBuild(build, name)
-    persist([entry, ...saves.filter(s => s.name !== name)])
+    if (!persist([entry, ...saves.filter(s => s.name !== name)])) return
     showFlash(lang === 'en' ? `✓ "${name}" saved` : `✓ "${name}" salvo`)
   }
 
@@ -1416,6 +1425,9 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName }) {
     const r = deserializeBuild(entry)
     if (r.ok) {
       window.__loadBuild?.(r.build)
+      // O nome acompanha a build: sem isto o campo guarda o nome da anterior, e o
+      // próximo Salvar grava esta build por cima daquela (análise 261116, D1).
+      setBuildName(entry.name || '')
       showFlash(lang === 'en' ? `✓ "${entry.name}" loaded` : `✓ "${entry.name}" carregado`)
     } else {
       showFlash(lang === 'en' ? '✗ Error loading' : '✗ Erro ao carregar')
@@ -1428,7 +1440,7 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName }) {
     if (window.confirm(lang === 'en'
       ? 'Delete ALL saved builds? This cannot be undone.'
       : 'Apagar TODAS as builds salvas? Esta ação não pode ser desfeita.')) {
-      persist([])
+      if (!persist([])) return
       showFlash(lang === 'en' ? 'All builds cleared' : 'Todas as builds apagadas')
     }
   }
@@ -1440,9 +1452,11 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName }) {
       { type: 'application/json' }
     )
     const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
+    const url = URL.createObjectURL(blob)
+    a.href = url
     a.download = 'got-legends-builds.json'
     a.click()
+    URL.revokeObjectURL(url)   // mesmo padrão do generateBuildImage (análise 261116, D5)
   }
 
   const importFile = (e) => {
@@ -1452,9 +1466,18 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName }) {
       try {
         const json = JSON.parse(ev.target.result)
         const incoming = json.builds ?? [json]
-        const valid = incoming.filter(b => b.build?.classId)
-        persist([...valid, ...saves.filter(s => !valid.find(v => v.id === s.id))])
-        showFlash(`${valid.length} ${lang === 'en' ? 'builds imported' : 'builds importados'}`)
+        // A mesma validação do clique num salvo: o que não abriria não entra no
+        // localStorage, onde só falharia depois, ao clicar (análise 261116, D2).
+        const valid = incoming.filter(b => deserializeBuild(b).ok)
+        const skipped = incoming.length - valid.length
+        if (!valid.length) {
+          showFlash(lang === 'en' ? '✗ No valid build in the file' : '✗ Nenhuma build válida no arquivo')
+          return
+        }
+        if (!persist([...valid, ...saves.filter(s => !valid.find(v => v.id === s.id))])) return
+        showFlash(skipped
+          ? (lang === 'en' ? `✓ ${valid.length} imported, ${skipped} ignored` : `✓ ${valid.length} importadas, ${skipped} ignoradas`)
+          : (lang === 'en' ? `✓ ${valid.length} builds imported` : `✓ ${valid.length} builds importadas`))
       } catch {
         showFlash(lang === 'en' ? '✗ Invalid file' : '✗ Arquivo inválido')
       }
@@ -1475,6 +1498,7 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName }) {
     if (r.ok) {
       window.__loadBuild?.(r.build)
       setShareCode('')
+      setBuildName(r.name || '')   // mesma razão do load() acima (D1)
       showFlash(lang === 'en' ? '✓ Build loaded!' : '✓ Build carregada!')
     } else {
       showFlash(lang === 'en' ? '✗ Invalid code' : '✗ Código inválido')

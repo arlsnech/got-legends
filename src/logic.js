@@ -1106,6 +1106,31 @@ function countLegBonus(build, cls) {
 
 // ─── SAVE / LOAD ─────────────────────────────────────────────
 
+// Os cinco slots que createEmptyBuild cria. O cálculo e a tela leem cada um,
+// e o p1/p2 dele, sem checar se existem (análise 261116, M3).
+const BUILD_GEAR_SLOTS = ['katana', 'ranged', 'charm', 'gw1', 'gw2'];
+
+/** Objeto comum: não nulo e não array. */
+function isPlainObject(v) {
+  return v !== null && typeof v === 'object' && !Array.isArray(v);
+}
+
+/**
+ * Confere a forma mínima de um build vindo de fora (salvo, arquivo, código).
+ * Sem ela, computeStats lança dentro do useMemo do App e a tela inteira cai.
+ * NÃO confere se os ids existem em data.js: id desconhecido não quebra o
+ * cálculo (medido em 2026-11-16) e o aviso dele é trabalho da Fatia 2 (link).
+ * @param {Object} build
+ * @returns {boolean}
+ */
+function hasBuildShape(build) {
+  if (!isPlainObject(build.techs) || !isPlainObject(build.gear)) return false;
+  return BUILD_GEAR_SLOTS.every(name => {
+    const slot = build.gear[name];
+    return isPlainObject(slot) && isPlainObject(slot.p1) && isPlainObject(slot.p2);
+  });
+}
+
 /**
  * Serializa um build para JSON (para salvar/exportar).
  * @param {Object} build
@@ -1133,7 +1158,7 @@ export function deserializeBuild(saved) {
   if (!saved || saved.game !== 'got-legends') {
     return { ok: false, error: 'Arquivo inválido ou de jogo diferente.' };
   }
-  if (!saved.build || !saved.build.classId) {
+  if (!saved.build || !saved.build.classId || !hasBuildShape(saved.build)) {
     return { ok: false, error: 'Estrutura de build inválida.' };
   }
   // Verifica se a classe existe

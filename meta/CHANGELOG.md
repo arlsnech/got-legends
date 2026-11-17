@@ -13,6 +13,10 @@
 
 ### Corrigido
 - Os ícones usavam caminho absoluto (`/icons/...`) e sumiriam em qualquer site servido fora da raiz, como o GitHub Pages (`/got-legends/`). Agora seguem o caminho-base do build (DEC-037).
+- **Carregar uma build salva, ou colar um código, agora põe o nome dela no campo de nome.** Antes o campo guardava o nome da build anterior, e o Salvar seguinte gravava a build carregada por cima daquela, sem aviso (DEC-038).
+- **Build sem equipamentos ou sem técnicas é recusada ao abrir**, com o aviso de erro, em vez de derrubar a tela (DEC-038).
+- **Importar `.json` valida cada build antes de gravar:** as inválidas ficam de fora e o aviso diz quantas; arquivo sem nenhuma válida não muda os salvos (DEC-038).
+- **Se o navegador não deixar gravar** (armazenamento cheio ou bloqueado), Salvar, Importar e Apagar tudo mostram o erro em vez de ✓, e a lista na tela continua igual à gravada (DEC-038).
 
 ---
 

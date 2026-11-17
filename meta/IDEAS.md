@@ -7,6 +7,7 @@
 ## 💡 Ideias Ativas — Usuário
 
 ### 2026-06 — URL compartilhável com build encodada
+**Status (2026-11-17):** aprovada na DEC-038, Fatia 2 — no fragmento (`#b=`), não na query string, e comprimida.
 Ao invés de copiar um código Base64 separado, o link já teria a build na query string (`?b=eyJ...`). Usuário abre o link e a build carrega automaticamente.
 
 ### 2026-06 — Mais opções de layout / temas visuais
@@ -19,9 +20,11 @@ Hoje temos dark/light e 2-col/3-col. Possibilidade de adicionar mais layouts (ex
 Seção "Builds populares" com presets curados do meta atual. Usuário clica e carrega a build inteira.
 
 ### 2026-06 — Exportar build como link QR Code
+**Status (2026-11-17):** adiada com gatilho (DEC-038; ver «🛌 Adiadas»).
 Gerar um QR Code da URL compartilhável direto na ferramenta para facilitar compartilhamento mobile.
 
 ### 2026-11 — Importar build arrastando um `.json` para a tela
+**Status (2026-11-17):** aprovada na DEC-038, Fatia 1. Importar não abre nada por padrão — responde à pergunta em aberto do dono abaixo. A frase «todas passam pela mesma validação» era premissa e era falsa para o arquivo (análise, M1); a Fatia 0 a tornou verdadeira.
 Soltar o arquivo em qualquer ponto da ferramenta, com o painel lateral aberto ou não, carrega a build quando o arquivo for compatível — o mesmo caminho do «Importar JSON» do painel de saves. Vai para a análise de compartilhamento por link como mais uma via de ENTRADA de build: todas passam pela mesma validação (`deserializeBuild`). Lacunas a decidir lá: arquivo com várias builds (o export do painel é uma lista), substituir a build aberta com ou sem confirmação, e o aviso bilíngue de arquivo incompatível.
 
 **Decisões preliminares do dono (2026-11-16) `[relatado pelo dono]`**, para a análise confirmar ou recusar com UX:
@@ -31,9 +34,11 @@ Soltar o arquivo em qualquer ponto da ferramenta, com o painel lateral aberto ou
 - **Aviso de arquivo incompatível:** aceita a recomendação (aviso bilíngue).
 
 ### 2026-11 — Exportar só as builds escolhidas
+**Status (2026-11-17):** aprovada na DEC-038, Fatia 1 — o mesmo componente de lista da importação.
 Hoje o «Exportar JSON» do painel exporta a lista inteira. A ideia é exportar **uma build específica** ou **marcar quais** exportar, com UI/UX prática. Par natural do modal de importação seletiva — o mesmo componente de lista com seleção pode servir aos dois sentidos. Vai para a mesma análise.
 
 ### 2026-11 — Filtrar, ordenar e agrupar as builds salvas
+**Status (2026-11-17):** barrada em parte na DEC-038. Filtros e agrupamento: «🚫 Descartadas». Ordenar por edição **já é a ordem atual** — o `createdAt` é regravado a cada Salvar, então o `updatedAt` não é necessário. Busca por nome: «🛌 Adiadas».
 Ordenar por nome (alfabético), por data de criação ou de edição; agrupar por classe; filtrar por classe, por equipamento presente, por vantagem ativa ou outra regra. O dono pediu que o assistente pese e **barre se for desnecessário**, com critério, estudo e pesquisa de UX. A pergunta que decide é **a partir de quantas builds salvas** uma lista simples deixa de servir. Observação técnica: hoje o save guarda só `createdAt`; ordenar por edição pede um campo novo (`updatedAt`) e cuidado com os saves antigos, que não o têm. Vai para a mesma análise.
 
 ---
@@ -67,7 +72,8 @@ Como não há backend, o app funciona offline se instalado como PWA. Adicionar `
 
 > Decisão consciente de não fazer agora. Cada item com **o gatilho que a traz de volta** («quando o terceiro caso aparecer», «se o build passar de X»): ideia adiada sem gatilho é ideia perdida.
 
-- _(nenhuma ainda — seção adotada do template v1.142.0 em 2026-11-15)_
+- **QR Code do link** («Exportar build como link QR Code», 2026-06) — **gatilho:** o link da Fatia 2 no ar **e** alguém pedir para passar build do PC para o celular. Precisa de biblioteca: não há API nativa de QR. DEC-038.
+- **Busca por nome nos salvos** (de «Filtrar, ordenar e agrupar», 2026-11) — **gatilho:** relato de uma lista de salvos em que não se acha mais a build. Um campo só, visível a partir de ~12 salvos (estimativa: o que cabe na gaveta sem rolar). DEC-038.
 
 ---
 
@@ -100,6 +106,8 @@ Como não há backend, o app funciona offline se instalado como PWA. Adicionar `
 - **Emoji ✨ e ⭐ nas técnicas** — descartados; ícones PNG do jogo substituem com mais fidelidade visual.
 - **Botão de Layout separado no header** — incorporado no SettingsModal (⚙️); header já estava cheio.
 - **Barra de HP mostrando os 100 HP base** — descartado; ficava com aspecto de "barra cheia pré-preenchida" o tempo todo. Só bônus é mostrado.
+- **Link curto para a build** — barrado na DEC-038: exige serviço externo num projeto sem backend, o link passaria a depender da vida de um terceiro, e a build iria para um servidor alheio. Com a compressão (~530 caracteres), o ganho não paga.
+- **Filtros por classe, equipamento e vantagem, e agrupamento dos salvos** — barrados na DEC-038: resolvem problema de catálogo, não de uma lista pessoal; a cor e o ícone da classe já agrupam; cada controle custa altura numa gaveta de 300 px.
 
 ---
 

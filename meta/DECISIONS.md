@@ -1217,3 +1217,27 @@ Depois da DEC-036, o push da `main` publicou a 1.0.0 no Netlify, na Vercel e no 
 - Quatro hosts com a mesma `main`. Três servem na raiz, e o GitHub Pages em `/got-legends/`.
 - O `npm run deploy` do `package.json` continua quebrado no Windows e não é mais necessário.
 - Se o passo de deploy falhar com 403: Settings → Actions → General → Workflow permissions.
+
+---
+
+## DEC-038 — Entrada e saída de builds: um validador para todas as portas, e o pacote em três fatias
+
+**Data:** 2026-11-17 · **Status:** aceita · **Aplicada em parte pela** `wo0036` (Fatia 0) · **Análise:** `meta/analises/261116-ANALISE-entrada-e-saida-de-builds.md`
+
+### Contexto
+O dono escolheu a entrada e saída de builds como próxima frente e pediu análise com pesquisa de UX. A leitura do código derrubou a premissa de que toda build que entra passa por `deserializeBuild`: a importação de `.json` só conferia `build.classId`. Achou também perda de dado no uso comum — carregar uma build não trocava o nome no campo, e o Salvar seguinte gravava por cima de outra — e mediu que o validador aceitava build sem `gear` ou sem `techs`, que o cálculo não aguenta. Medido também: o código Base64 atual tem ~1.480 caracteres por build; só o `build`, comprimido, ~530.
+
+### Decisão
+Pacote da análise aprovado pelo dono como está, em 2026-11-17:
+- **Fatia 0 (`wo0036`):** um validador para todas as portas — `deserializeBuild`, agora exigindo a forma mínima (os cinco slots, cada um com `p1`/`p2`, e `techs`), usado também pela importação; o nome acompanha a build carregada; gravação no `localStorage` com erro avisado; `revokeObjectURL` no export.
+- **Fatia 1:** um componente de lista com seleção, o mesmo para importar (pelo botão e arrastando o arquivo em qualquer ponto da tela) e para exportar só as escolhidas. Importar não abre nada por padrão; «Importar e abrir» só com uma marcada. A build aberta é protegida por Desfazer, e o modal «Salvar como…» só aparece quando ela tem alteração não salva.
+- **Fatia 2:** link com a build comprimida (deflate-raw nativo + base64url, com prefixo de versão) no fragmento `#b=`; o código antigo continua aceito na leitura; o texto exportado anexa o link no lugar do código.
+- **Barrados:** link curto e filtros/agrupamento dos salvos. **Adiados com gatilho:** QR e busca por nome (`IDEAS.md`, «🛌 Adiadas»).
+
+### Alternativas consideradas
+Todas na análise, eixo por eixo (E1 a E9), com o motivo de cada descarte. As de mais peso: codificação por índice de `data.js` (a menor, mas corrompe links antigos em silêncio a cada reordenação), query string em vez de fragmento (vai ao servidor e aos logs sem ganho num site estático) e confirmação antes de toda troca de build (fadiga de confirmação, contra a pesquisa).
+
+### Consequências
+- Build salva sem algum dos cinco slots, ou sem `p1`/`p2`, deixa de abrir: mostra «✗ Erro ao carregar» em vez de derrubar a tela. A ferramenta não gera essa forma (`createEmptyBuild` cria todos; conferido em 800 builds de `randomBuild`); saves de versões muito antigas **não foram conferidos**.
+- Id que não existe em `data.js` continua passando: não quebra o cálculo, e o aviso dele é trabalho da Fatia 2.
+- As mensagens de erro de `deserializeBuild` continuam só em PT-BR e não são exibidas. Quando a Fatia 1 as mostrar no modal, viram código + texto bilíngue (D4 da análise).

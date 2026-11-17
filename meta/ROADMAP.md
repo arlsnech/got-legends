@@ -79,7 +79,7 @@
 
 - Layout mobile dedicado (1 coluna com tabs entre seções)
 - ~~Altura dinâmica do canvas na geração de imagem~~ — **feito na F3** (DEC-026, D2): sem isso o modo Detalhado cortava mais da metade do conteúdo, então virou requisito e não polimento
-- URL compartilhável com build encodada na query string (`?b=eyJ...`)
+- URL compartilhável com a build comprimida no fragmento (`#b=`) — **aprovada na DEC-038 (Fatia 2)**; a query string (`?b=`) foi descartada na análise de 2026-11-16
 - Animações de transição suaves entre layouts
 - PWA: `manifest.json` + service worker para uso offline
 
@@ -92,7 +92,7 @@
 - Modo "comparar builds" side-by-side com diffs em verde/vermelho
 - Presets de builds populares/meta curadas
 - Undo/Redo (o estado imutável já facilita — basta um array de snapshots)
-- QR Code de link compartilhável
+- QR Code de link compartilhável — **adiado com gatilho** (DEC-038; `IDEAS.md`, «🛌 Adiadas»)
 - Gerador de tier list de equipamentos por classe
 
 ---
