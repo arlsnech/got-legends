@@ -34,7 +34,7 @@
 - Ícones SVG de classe (com `T.iconFilter`) e gear (com `T.iconFilter`)
 - Ícones PNG de técnicas/habilidades (sem filtro — cores originais)
 - `BookmarkTab` (aba lateral) → abre `SaveDrawer`
-- `SaveDrawer`: salvar/carregar/excluir builds, exportar/importar JSON, código Base64
+- `SaveDrawer`: salvar/carregar/excluir builds, exportar/importar JSON, código Base64 — toda build que entra passa por `deserializeBuild` (forma mínima), carregar põe o nome da build no campo, e falha de gravação no navegador avisa em vez de mostrar ✓ (DEC-038)
 - Build aleatória (🎲)
 - Troca de classe preservando itens compatíveis e técnicas magistrais equivalentes
 - `SettingsModal`: tema, modo de layout, modo de ícone de gear, código no export, créditos
@@ -47,7 +47,7 @@
 
 ## 🔧 Em Progresso
 
-- **Produto:** nada em curso. A última mudança foi a `wo0027`, em 2026-08-24.
+- **Produto:** entrada e saída de builds (DEC-038). Fatia 0 aplicada (`wo0036`) e conferida na tela pelo dono em 2026-11-17; a Fatia 1 é a próxima, começando por uma spec em `meta/specs/`.
 
 ---
 
@@ -65,7 +65,6 @@ _Nada._
 
 ## 📋 Backlog (curto prazo — acionáveis no próximo turno)
 
-- [ ] **Próxima frente, escolhida pelo dono em 2026-11-16: a análise de ENTRADA e SAÍDA de builds** — a primeira em `meta/analises/` (a pasta nasce com ela, junto com o `_TEMPLATE.md` do kit). Escopo: as vias de entrada (arrastar `.json` para a tela, código Base64, URL na query string, link curto, QR) e a gestão dos saves que elas pedem (importar escolhendo quais builds, exportar escolhendo quais, e filtrar/ordenar/agrupar a lista). Ideias e decisões preliminares do dono no `IDEAS.md`, sob «💡 Ideias Ativas — Usuário».
 - [ ] **`DECISIONS.md` com 1.173 linhas** (limiar ~700): mover as entradas antigas para `DECISIONS-archive.md`. Curadoria do chat.
 - [ ] **Cópias soltas de `GUIA_COMPLETO*.md`** em `notas-arquivadas\` (pasta-pai): as duas têm o mesmo md5 (`7fa3bda4…`) que `meta/legacy/GUIA_COMPLETO_v4.md` no Git, antes de `c232da3` — que a tirou da árvore. O conteúdo está salvo no histórico; apagar ou manter é decisão do dono.
 - [ ] **O botão Texto mostra ✓ mesmo quando a cópia falha** (`handleCopyText`, `App.jsx`: o `.catch` também chama `flash('txt')`). Quando falha, o que se cola é o texto anterior, sem aviso. Achado em 2026-11-16.
@@ -73,7 +72,6 @@ _Nada._
 
 - [ ] **Fatia 1 da DEC-038** (proxima WO): componente de lista com selecao para importar (botao e arrastar `.json`) e exportar so as escolhidas; Desfazer na build aberta; modal «Salvar como…» so com alteracao nao salva. Mensagens de erro de `deserializeBuild` viram codigo + texto bilingue.
 - [ ] **Fatia 2 da DEC-038:** link com a build comprimida no fragmento `#b=`, codigo antigo aceito na leitura, aviso de id desconhecido em `data.js`.
-- [ ] **Conferencia visual da wo0036 pelo dono** (ver «Ultima Sessao» abaixo).
 
 ---
 
@@ -124,3 +122,11 @@ Fatos que só existiam no chat, registrados com a origem:
 `deserializeBuild` agora exige a forma minima (cinco slots com `p1`/`p2`, e `techs`) e a importacao de `.json` passa por ele; carregar salvo ou codigo poe o nome no campo (antes o Salvar seguinte sobrescrevia outra build); `persist` grava em `try` e avisa se o navegador nao gravar; `exportAll` libera o `objectURL`. Commit `e452ce1`, empurrado. Build verde; prova de vida no Node: `vazia true sem_gear false aleatorias_recusadas 0`. A analise e o molde de `meta/analises/` entraram no mesmo commit.
 
 **Pendente:** o dono conferir na tela — carregar uma salva e ver o nome no campo; importar um `.json` com uma build quebrada (o aviso diz quantas ficaram de fora) e outro sem nenhuma valida (salvos intactos). Saves muito antigos nao foram conferidos contra a nova forma minima. As secoes «Em Progresso» e «Funcionando» do STATUS nao foram reescritas (curadoria do chat).
+
+### 2026-11-17 — Chat: a Fatia 0 conferida na tela (wo0037)
+
+- **Roteiro de tela da `wo0036`, itens 1–7: todos certos** — `[relatado pelo dono]`. O nome acompanha a build carregada (salvo e código), o Salvar seguinte não sobrescreve outra build, a importação do arquivo de teste mostrou «✓ 1 importadas, 1 ignoradas» (e o equivalente em EN) sem chip duplicado, e o Exportar segue baixando. **Fecha o «Pendente» da entrada acima**, menos três casos que o roteiro declarou não testar: armazenamento cheio, `.json` sem nenhuma build válida e id de item inexistente na tela.
+- «Em Progresso» e «Funcionando» atualizados (curadoria do chat).
+- **Correção de registro:** o relatório da `wo0036` disse que `src/` e `meta/` estão em LF; estão em CRLF (`git ls-files --eol`, medido pelo chat). Ver IDEAS, «🔧 Correções de processo».
+
+**Pendente:** a spec da Fatia 1 (próxima conversa ou próximo turno).

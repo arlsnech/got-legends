@@ -252,6 +252,12 @@ Nos prompts antigos o autor cogitou **remover o modo Estatístico** caso desse t
 
 ## 🔧 Correções de processo
 
+### 2026-11-17 — Fim de linha se mede com o Git, não com o shell
+
+A `wo0036` avisou que `src/` e `meta/` estão em CRLF na árvore de trabalho. O relatório de aplicação disse que não («crlf=0 por wc/grep»), e o log do dia gravou isso como aprendizado. Remedido pelo chat no mesmo dia, com dois instrumentos que concordam: `git ls-files --eol src/App.jsx` → `i/lf w/crlf`, e `grep -c $'\r$'` → 3.611 linhas com CR em `App.jsx`, 1.581 em `logic.js`, 1.243 em `DECISIONS.md`. Só `STATUS.md` e o log do dia, regravados pelo Code, estão em LF. A causa da leitura errada não foi apurada (suspeita, não conferida: o `grep` do Git Bash não vê o `\r` como o do Linux). Sem dano: as âncoras de uma linha casam nos dois casos — e foi por isso que a WO as usou.
+
+**Regra que fica:** fim de linha se mede com `git ls-files --eol <arquivo>`, que lê os bytes pelo próprio Git e não depende do shell. Contagem de `\r` que contradiz o `git ls-files --eol` acusa o instrumento, não o arquivo — e quem aplica relata a divergência como suspeita, não como correção da WO.
+
 ### 2026-07-27 — Procure antes de inserir
 
 A `spec0019` criou uma entrada *Determinação* no `GLOSSARY.md` sem verificar que já havia outra três linhas abaixo. O executor seguiu a âncora — que é o comportamento certo — e reportou; as duas tiveram de ser consolidadas depois.
