@@ -71,6 +71,10 @@ _Nada._
 - [ ] **O botão Texto mostra ✓ mesmo quando a cópia falha** (`handleCopyText`, `App.jsx`: o `.catch` também chama `flash('txt')`). Quando falha, o que se cola é o texto anterior, sem aviso. Achado em 2026-11-16.
 - [ ] **Passada de defeitos e segurança por funcionalidade** (pedido do dono, 2026-11-16): uma `/sondar` por área, no Code. Ponto de partida medido em 2026-11-16: nenhum `dangerouslySetInnerHTML`, `innerHTML`, `eval` ou `new Function` em `src/`; as três entradas de dado externo passam por `JSON.parse` — os saves no `localStorage` (`App.jsx`), o arquivo importado (`App.jsx`) e o código Base64 (`logic.js`).
 
+- [ ] **Fatia 1 da DEC-038** (proxima WO): componente de lista com selecao para importar (botao e arrastar `.json`) e exportar so as escolhidas; Desfazer na build aberta; modal «Salvar como…» so com alteracao nao salva. Mensagens de erro de `deserializeBuild` viram codigo + texto bilingue.
+- [ ] **Fatia 2 da DEC-038:** link com a build comprimida no fragmento `#b=`, codigo antigo aceito na leitura, aviso de id desconhecido em `data.js`.
+- [ ] **Conferencia visual da wo0036 pelo dono** (ver «Ultima Sessao» abaixo).
+
 ---
 
 ## 💬 Última Sessão
@@ -114,3 +118,9 @@ Fatos que só existiam no chat, registrados com a origem:
 - **Próxima frente escolhida:** a análise de entrada e saída de builds (backlog). Nenhum código mudou neste turno.
 
 **Pendente:** abrir a análise na conversa nova (ver `../AAMMDD-HANDOFF-BRIEF.md` mais recente na pasta-pai).
+
+### 2026-11-17 — Fatia 0 da entrada de builds (wo0036, DEC-038)
+
+`deserializeBuild` agora exige a forma minima (cinco slots com `p1`/`p2`, e `techs`) e a importacao de `.json` passa por ele; carregar salvo ou codigo poe o nome no campo (antes o Salvar seguinte sobrescrevia outra build); `persist` grava em `try` e avisa se o navegador nao gravar; `exportAll` libera o `objectURL`. Commit `e452ce1`, empurrado. Build verde; prova de vida no Node: `vazia true sem_gear false aleatorias_recusadas 0`. A analise e o molde de `meta/analises/` entraram no mesmo commit.
+
+**Pendente:** o dono conferir na tela — carregar uma salva e ver o nome no campo; importar um `.json` com uma build quebrada (o aviso diz quantas ficaram de fora) e outro sem nenhuma valida (salvos intactos). Saves muito antigos nao foram conferidos contra a nova forma minima. As secoes «Em Progresso» e «Funcionando» do STATUS nao foram reescritas (curadoria do chat).
