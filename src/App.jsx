@@ -1378,14 +1378,19 @@ function BookmarkTab({ open, onToggle, lang }) {
   )
 }
 
-// ─── SaveDrawer — painel lateral de gerenciamento de builds ──
-function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName }) {
-  const [saves, setSaves]         = useState([])
-  const [shareCode, setShareCode] = useState('')
-  // Flash: string quando mensagem ativa, null quando silencioso
-  const [flash, setFlash]         = useState(null)
-  const fileRef = useRef()
-  const STORAGE_KEY = 'gotlegends_v1_builds'
+// ─── useSavedBuilds — a lista de builds salvas e o localStorage ──
+// Mora no App, e não na gaveta: o arrasto de .json (Fatia 1, WO B) precisa
+// gravar com a gaveta fechada (spec 261117, «Decisões de design»).
+const STORAGE_KEY = 'gotlegends_v1_builds'
+
+/**
+ * Lista de builds salvas e a gravação dela no localStorage.
+ * @returns {{ saves: Object[], writeSaves: (list: Object[]) => boolean }}
+ *   writeSaves grava primeiro e só então atualiza a lista; devolve false se o
+ *   navegador recusar (cota cheia, armazenamento bloqueado). Quem chama avisa.
+ */
+function useSavedBuilds() {
+  const [saves, setSaves] = useState([])
 
   useEffect(() => {
     try {
@@ -1394,18 +1399,32 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName }) {
     } catch {}
   }, [])
 
-  const persist = (list) => {
-    // Grava primeiro e só então mostra: cota cheia ou armazenamento bloqueado
-    // lançam aqui, e a lista na tela não pode dizer «salvo» se o navegador não
-    // gravou (análise 261116, D6). Devolve false para quem chamou não mostrar ✓.
+  const writeSaves = (list) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
     } catch {
-      showFlash(lang === 'en' ? '✗ Could not write to browser storage' : '✗ Não foi possível gravar no navegador')
       return false
     }
     setSaves(list)
     return true
+  }
+
+  return { saves, writeSaves }
+}
+
+// ─── SaveDrawer — painel lateral de gerenciamento de builds ──
+function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName, saves, writeSaves }) {
+  const [shareCode, setShareCode] = useState('')
+  // Flash: string quando mensagem ativa, null quando silencioso
+  const [flash, setFlash]         = useState(null)
+  const fileRef = useRef()
+
+  // A lista e a gravação são do App (useSavedBuilds); aqui fica só o aviso
+  // quando o navegador recusa gravar (análise 261116, D6).
+  const persist = (list) => {
+    if (writeSaves(list)) return true
+    showFlash(lang === 'en' ? '✗ Could not write to browser storage' : '✗ Não foi possível gravar no navegador')
+    return false
   }
 
   // Flash com posição fixa — não empurra conteúdo
@@ -3305,6 +3324,8 @@ export default function App() {
   const [settingsOpen,     setSettingsOpen]     = useState(false)
   const [includeShareCode, setIncludeShareCode] = useState(false)
   const [theme,            setTheme]            = useState('dark')
+  // Builds salvas: do App, não da gaveta — o arrasto da WO B grava com ela fechada
+  const { saves, writeSaves } = useSavedBuilds()
 
   // ── Aplica tema ANTES de qualquer render (síncrono, single-thread)
   Object.assign(T, theme === 'dark' ? THEME_DARK : THEME_LIGHT)
@@ -3578,6 +3599,8 @@ export default function App() {
         lang={lang}
         buildName={buildName}
         setBuildName={setBuildName}
+        saves={saves}
+        writeSaves={writeSaves}
       />
 
       {/* Modal de configurações */}

@@ -1152,19 +1152,21 @@ export function serializeBuild(build, name) {
  * Deserializa um build de um objeto salvo.
  * Valida versão e retorna build state.
  * @param {Object} saved
- * @returns {{ ok: boolean, build?: Object, error?: string }}
+ * @returns {{ ok: boolean, build?: Object, error?: string, code?: string }}
+ *   code: 'not_got_legends' | 'bad_structure' | 'unknown_class' — estável, para a
+ *   interface traduzir (análise 261116, D4); error segue em PT-BR, como antes.
  */
 export function deserializeBuild(saved) {
   if (!saved || saved.game !== 'got-legends') {
-    return { ok: false, error: 'Arquivo inválido ou de jogo diferente.' };
+    return { ok: false, error: 'Arquivo inválido ou de jogo diferente.', code: 'not_got_legends' };
   }
   if (!saved.build || !saved.build.classId || !hasBuildShape(saved.build)) {
-    return { ok: false, error: 'Estrutura de build inválida.' };
+    return { ok: false, error: 'Estrutura de build inválida.', code: 'bad_structure' };
   }
   // Verifica se a classe existe
   const cls = getClass(saved.build.classId);
   if (!cls) {
-    return { ok: false, error: `Classe desconhecida: ${saved.build.classId}` };
+    return { ok: false, error: `Classe desconhecida: ${saved.build.classId}`, code: 'unknown_class' };
   }
   return { ok: true, build: normalizeLegendaryProps(saved.build) };
 }
@@ -1188,7 +1190,7 @@ export function decodeBuild(code) {
     if (!result.ok) return result;
     return { ok: true, name: json.name, build: result.build };
   } catch {
-    return { ok: false, error: 'Código inválido ou corrompido.' };
+    return { ok: false, error: 'Código inválido ou corrompido.', code: 'bad_code' };
   }
 }
 
