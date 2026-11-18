@@ -130,3 +130,9 @@ Fatos que só existiam no chat, registrados com a origem:
 - **Correção de registro:** o relatório da `wo0036` disse que `src/` e `meta/` estão em LF; estão em CRLF (`git ls-files --eol`, medido pelo chat). Ver IDEAS, «🔧 Correções de processo».
 
 **Pendente:** a spec da Fatia 1 (próxima conversa ou próximo turno).
+
+### 2026-11-17 — Fatia 1, WO A: a lista de salvos sobe para o App (wo0038, DEC-038)
+
+`useSavedBuilds` (em `src/App.jsx`) passa a ser dono de `saves` e da gravação no `localStorage`; o `SaveDrawer` recebe `saves` e `writeSaves` por prop e só mostra o aviso quando a gravação falha. `deserializeBuild` e `decodeBuild` devolvem `code` estável (`not_got_legends`, `bad_structure`, `unknown_class`, `bad_code`) para a WO B traduzir. A spec `meta/specs/261117-entrada-de-builds-fatia1.md` entrou versionada. Commit `779e3f9`, empurrado. Build verde; prova de vida no Node: `not_got_legends bad_structure unknown_class bad_code true`. Sem mudança visível.
+
+**Pendente:** conferência de tela pelo dono (roteiro do chat): abrir a gaveta, salvar, remover, exportar e importar seguem iguais, e a contagem de salvos persiste após recarregar. Depois, a WO B (modal e arrasto).
