@@ -1412,8 +1412,293 @@ function useSavedBuilds() {
   return { saves, writeSaves }
 }
 
+// ─── Entrada e saída de builds (Fatia 1, WO B — spec 261117) ──
+// O modal da lista serve aos dois sentidos (importar e exportar), o aviso de
+// rodapé fala pelo App quando a gaveta está fechada, e o arrasto só abre o modal.
+
+/** Motivo de recusa de uma linha do modal, pelo código de deserializeBuild (D4). */
+const IMPORT_REASON = {
+  not_got_legends: { pt: 'não é uma build do GoT Legends', en: 'not a GoT Legends build' },
+  bad_structure:   { pt: 'estrutura incompleta',           en: 'incomplete structure' },
+  unknown_class:   { pt: 'classe desconhecida',            en: 'unknown class' },
+}
+
+/** Botão de texto (Selecionar todas / Nenhuma). Função, para ler o T do tema ativo. */
+const linkBtn = () => ({
+  background: 'none', border: 'none', padding: 0, color: T.accent,
+  cursor: 'pointer', fontSize: 11, fontWeight: 600,
+})
+
+/** Botão neutro lido na hora do render — o btnNeutral do módulo congela o tema da carga. */
+const plainBtn = () => ({
+  background: T.cardHov, border: `1px solid ${T.borderHov}`, color: T.text,
+  borderRadius: 6, padding: '6px 12px', cursor: 'pointer', fontSize: 12,
+  fontWeight: 600, whiteSpace: 'nowrap',
+})
+
+/**
+ * Lê o texto de um .json e devolve as entradas de build, ou null quando o
+ * arquivo não é uma exportação desta ferramenta (spec A8).
+ * Aceita a lista do Exportar ({ game, builds: [...] }) e a build solta (A10).
+ * @param {string} text
+ * @returns {Object[]|null}
+ */
+function readExportEntries(text) {
+  let json
+  try { json = JSON.parse(text) } catch { return null }
+  if (!json || typeof json !== 'object') return null
+  if (Array.isArray(json.builds)) return json.builds.length ? json.builds : null
+  return json.game === 'got-legends' ? [json] : null
+}
+
+/**
+ * Monta as linhas do modal de importação a partir das entradas do arquivo.
+ * Cada linha diz se a build abre (validação da Fatia 0), se o nome já existe
+ * nos salvos (A4) e se ela é idêntica à salva de mesmo nome (A5).
+ * @param {Object[]} entries
+ * @param {Object[]} saves
+ * @param {string} lang
+ * @returns {Object[]} { key, name, classId, build, valid, code, conflict, identical, checked, mode }
+ */
+function buildImportRows(entries, saves, lang) {
+  return entries.map((entry, i) => {
+    const r = deserializeBuild(entry)
+    const name = (typeof entry?.name === 'string' && entry.name.trim())
+      || (lang === 'en' ? 'Unnamed' : 'Sem nome')
+    const same = r.ok ? saves.filter(s => s.name === name) : []
+    const identical = same.some(s => JSON.stringify(s.build) === JSON.stringify(r.build))
+    return {
+      key: i, name,
+      classId: r.ok ? r.build.classId : entry?.build?.classId,
+      build: r.ok ? r.build : null,
+      valid: r.ok, code: r.code,
+      conflict: same.length > 0, identical,
+      checked: r.ok && !identical, mode: 'both',
+    }
+  })
+}
+
+/** Nome livre na lista: «Nome (2)», «Nome (3)»… (spec A4). */
+function freeName(name, taken) {
+  if (!taken.has(name)) return name
+  let n = 2
+  while (taken.has(`${name} (${n})`)) n++
+  return `${name} (${n})`
+}
+
+/**
+ * Aplica a importação: as linhas marcadas entram no topo dos salvos, cada uma
+ * com id novo (spec, «Decisões de design»). «Substituir» tira a salva de mesmo
+ * nome; «Manter as duas» dá à importada o próximo nome livre.
+ * @param {Object[]} rows
+ * @param {Object[]} saves
+ * @returns {{ list: Object[], added: Object[] }}
+ */
+function mergeImport(rows, saves) {
+  const chosen = rows.filter(r => r.checked && r.valid)
+  const replaced = new Set(chosen.filter(r => r.conflict && r.mode === 'replace').map(r => r.name))
+  const kept = saves.filter(s => !replaced.has(s.name))
+  const taken = new Set(kept.map(s => s.name))
+  const added = chosen.map(r => {
+    const name = freeName(r.name, taken)
+    taken.add(name)
+    return serializeBuild(r.build, name)
+  })
+  return { list: [...added, ...kept], added }
+}
+
+/**
+ * Baixa as builds escolhidas num .json. Com uma só, o arquivo leva o nome
+ * dela; com várias, o nome de sempre (spec D2).
+ * @param {Object[]} entries
+ */
+function downloadBuilds(entries) {
+  const one = entries.length === 1
+  const safe = one ? entries[0].name.replace(/[^a-z0-9_-]/gi, '_').toLowerCase() : 'builds'
+  const blob = new Blob(
+    [JSON.stringify({ version: '1.0', game: 'got-legends', builds: entries }, null, 2)],
+    { type: 'application/json' }
+  )
+  const a = document.createElement('a')
+  const url = URL.createObjectURL(blob)
+  a.href = url
+  a.download = `got-legends-${safe}.json`
+  a.click()
+  URL.revokeObjectURL(url)   // mesmo padrão do generateBuildImage (análise 261116, D5)
+}
+
+/**
+ * Aviso de rodapé do App: fala pelo que acontece fora da gaveta (arrasto,
+ * modal). Altura fixa para não empurrar nada (armadilha 23); centrado por
+ * flexbox, sem transform (armadilha 17).
+ */
+function Toast({ msg }) {
+  if (!msg) return null
+  const bad = msg.startsWith('✗')
+  const col = bad ? T.red : T.green
+  return (
+    <div style={{
+      position: 'fixed', left: 0, right: 0, bottom: 18, zIndex: 1000,
+      display: 'flex', justifyContent: 'center', pointerEvents: 'none',
+    }}>
+      <div role="status" aria-live="polite" style={{
+        height: 34, display: 'flex', alignItems: 'center', padding: '0 16px',
+        borderRadius: 8, fontSize: 12, fontWeight: 600,
+        background: T.panel, color: col, border: `1px solid ${col}66`,
+        boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
+        whiteSpace: 'nowrap', maxWidth: '92vw', overflow: 'hidden', textOverflow: 'ellipsis',
+      }}>
+        {msg}
+      </div>
+    </div>
+  )
+}
+
+/** Camada do arrasto: cobre a tela enquanto há arquivo sobre a janela (spec B1). */
+function DropOverlay({ show, lang }) {
+  if (!show) return null
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 950,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'rgba(0,0,0,0.55)', pointerEvents: 'none',
+    }}>
+      <div style={{
+        padding: '22px 30px', borderRadius: 14, border: `2px dashed ${T.accent}`,
+        background: T.panel, color: T.text, fontSize: 15, fontWeight: 700,
+      }}>
+        ⬆ {lang === 'en' ? 'Drop the .json to import' : 'Solte o .json para importar'}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Modal da lista de builds, nos dois sentidos (spec 261117, seções A e D).
+ * mode 'import': linhas do arquivo, com validade, conflito de nome e cópia idêntica.
+ * mode 'export': os salvos, todos marcados.
+ * As caixas são estado do próprio modal; quem abre passa as linhas iniciais.
+ */
+function BuildListModal({ mode, initialRows, lang, onCancel, onImport, onExport }) {
+  const [rows, setRows] = useState(initialRows)
+  const L = lang === 'en'
+  const tx = (pt, en) => (L ? en : pt)
+  const isImport = mode === 'import'
+
+  // Esc fecha sem gravar (A9)
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onCancel() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onCancel])
+
+  const patch = (key, p) => setRows(rs => rs.map(r => (r.key === key ? { ...r, ...p } : r)))
+  const setAll = (checked) => setRows(rs => rs.map(r => (r.valid ? { ...r, checked } : r)))
+  const chosen = rows.filter(r => r.valid && r.checked)
+  const n = chosen.length
+
+  return (
+    <>
+      <div onClick={onCancel} style={{
+        position: 'fixed', inset: 0, zIndex: 800, background: 'rgba(0,0,0,0.55)',
+      }} />
+      {/* Centralização por flexbox, sem transform — o mesmo motivo do SettingsModal (FIX-011, armadilha 17) */}
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 900,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        pointerEvents: 'none',
+      }}>
+        <div role="dialog" aria-modal="true" style={{
+          pointerEvents: 'auto',
+          background: T.panel, border: `1px solid ${T.borderHov}`,
+          borderRadius: 13, padding: '16px 18px',
+          width: 440, maxWidth: '92vw', maxHeight: '80vh',
+          display: 'flex', flexDirection: 'column',
+          boxShadow: '0 20px 56px rgba(0,0,0,0.75)',
+        }}>
+          <div style={{ fontWeight: 700, fontSize: 14, color: T.text, marginBottom: 8 }}>
+            {isImport ? tx('Importar builds', 'Import builds') : tx('Exportar builds', 'Export builds')}
+          </div>
+          <div style={{ display: 'flex', gap: 12, marginBottom: 8 }}>
+            <button onClick={() => setAll(true)} style={linkBtn()}>{tx('Selecionar todas', 'Select all')}</button>
+            <button onClick={() => setAll(false)} style={linkBtn()}>{tx('Nenhuma', 'None')}</button>
+          </div>
+
+          {/* A lista rola por dentro (E3): o modal não passa de 80% da altura */}
+          <div style={{
+            flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden',
+            display: 'flex', flexDirection: 'column', gap: 4, paddingRight: 2,
+          }}>
+            {rows.map(r => {
+              const col = (r.classId && T.cls[r.classId]) || T.muted
+              const note = !r.valid
+                ? (IMPORT_REASON[r.code]?.[L ? 'en' : 'pt'] ?? tx('não abre', 'cannot be opened'))
+                : r.identical ? tx('já está nos salvos', 'already saved')
+                : r.conflict ? tx('já existe uma build com este nome', 'a build with this name already exists')
+                : ''
+              return (
+                <div key={r.key} style={{
+                  display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0,
+                  padding: '5px 8px', borderRadius: 7,
+                  border: `1px solid ${T.border}`, background: T.card,
+                  opacity: r.valid ? 1 : 0.5,
+                }}>
+                  <input type="checkbox" checked={r.checked} disabled={!r.valid}
+                    onChange={e => patch(r.key, { checked: e.target.checked })} />
+                  {CLASS_ICON[r.classId] && (
+                    <img src={CLASS_ICON[r.classId]} width={12} height={12} alt=""
+                      style={{ filter: T.iconFilter, opacity: 0.7, flexShrink: 0 }}
+                      onError={e => { e.target.style.display = 'none' }} />
+                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{
+                      fontSize: 12, fontWeight: 700, color: col,
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>{r.name}</div>
+                    {/* Linha de motivo com altura fixa: o texto muda e a lista não pula (armadilha 23) */}
+                    <div style={{
+                      fontSize: 10, color: T.muted, height: 13, lineHeight: '13px',
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>{note}</div>
+                  </div>
+                  {isImport && r.valid && r.conflict && r.checked && (
+                    <select value={r.mode} onChange={e => patch(r.key, { mode: e.target.value })}
+                      style={{
+                        fontSize: 10, background: T.card, color: T.text,
+                        border: `1px solid ${T.borderHov}`, borderRadius: 5, padding: '2px 4px',
+                      }}>
+                      <option value="both">{tx('Manter as duas', 'Keep both')}</option>
+                      <option value="replace">{tx('Substituir', 'Replace')}</option>
+                    </select>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+            <button onClick={onCancel} style={plainBtn()}>{tx('Cancelar', 'Cancel')}</button>
+            {isImport && n === 1 && (
+              <button onClick={() => onImport(rows, true)} style={btnAction('#2475ad')}>
+                {tx('Importar e abrir', 'Import and open')}
+              </button>
+            )}
+            <button disabled={!n}
+              onClick={() => (isImport ? onImport(rows, false) : onExport(chosen))}
+              style={{ ...btnAction(T.accent), opacity: n ? 1 : 0.4, cursor: n ? 'pointer' : 'default' }}>
+              {isImport
+                ? tx(`Importar ${n} para os salvos`, `Import ${n} to saved`)
+                : tx(`Exportar ${n}`, `Export ${n}`)}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
 // ─── SaveDrawer — painel lateral de gerenciamento de builds ──
-function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName, saves, writeSaves }) {
+function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName, saves, writeSaves, onImportFile, onRequestExport }) {
   const [shareCode, setShareCode] = useState('')
   // Flash: string quando mensagem ativa, null quando silencioso
   const [flash, setFlash]         = useState(null)
@@ -1464,45 +1749,14 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName, saves
     }
   }
 
-  const exportAll = () => {
-    if (!saves.length) return
-    const blob = new Blob(
-      [JSON.stringify({ version: '1.0', game: 'got-legends', builds: saves }, null, 2)],
-      { type: 'application/json' }
-    )
-    const a = document.createElement('a')
-    const url = URL.createObjectURL(blob)
-    a.href = url
-    a.download = 'got-legends-builds.json'
-    a.click()
-    URL.revokeObjectURL(url)   // mesmo padrão do generateBuildImage (análise 261116, D5)
-  }
+  // Exportar abre o modal da lista no App (WO B): quem escolhe quais builds é ele
 
+  // Importar passa pelo modal da lista, que é do App (WO B): o arrasto abre o
+  // mesmo modal com a gaveta fechada. Aqui só se entrega o arquivo escolhido.
   const importFile = (e) => {
-    const file = e.target.files[0]; if (!file) return
-    const reader = new FileReader()
-    reader.onload = (ev) => {
-      try {
-        const json = JSON.parse(ev.target.result)
-        const incoming = json.builds ?? [json]
-        // A mesma validação do clique num salvo: o que não abriria não entra no
-        // localStorage, onde só falharia depois, ao clicar (análise 261116, D2).
-        const valid = incoming.filter(b => deserializeBuild(b).ok)
-        const skipped = incoming.length - valid.length
-        if (!valid.length) {
-          showFlash(lang === 'en' ? '✗ No valid build in the file' : '✗ Nenhuma build válida no arquivo')
-          return
-        }
-        if (!persist([...valid, ...saves.filter(s => !valid.find(v => v.id === s.id))])) return
-        showFlash(skipped
-          ? (lang === 'en' ? `✓ ${valid.length} imported, ${skipped} ignored` : `✓ ${valid.length} importadas, ${skipped} ignoradas`)
-          : (lang === 'en' ? `✓ ${valid.length} builds imported` : `✓ ${valid.length} builds importadas`))
-      } catch {
-        showFlash(lang === 'en' ? '✗ Invalid file' : '✗ Arquivo inválido')
-      }
-    }
-    reader.readAsText(file)
+    const file = e.target.files[0]
     e.target.value = ''
+    if (file) onImportFile(file)
   }
 
   const copyCode = () => {
@@ -1653,9 +1907,9 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName, saves
           </div>
           <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
             <Tooltip text={lang === 'en'
-              ? 'Export all saved builds to a .json file'
-              : 'Exportar todas as builds salvas para .json'}>
-              <button onClick={exportAll}
+              ? 'Choose which saved builds to export to a .json file'
+              : 'Escolher quais builds salvas exportar para .json'}>
+              <button onClick={onRequestExport}
                 disabled={!saves.length}
                 style={{ ...btnNeutral, opacity: saves.length ? 1 : 0.4, fontSize: 11 }}>
                 ⬇ {lang === 'en' ? 'Export' : 'Exportar'}
@@ -3326,6 +3580,12 @@ export default function App() {
   const [theme,            setTheme]            = useState('dark')
   // Builds salvas: do App, não da gaveta — o arrasto da WO B grava com ela fechada
   const { saves, writeSaves } = useSavedBuilds()
+  // Entrada e saída de builds (WO B): modal da lista, aviso de rodapé e arrasto
+  const [listModal, setListModal] = useState(null)   // { mode, rows, id } ou null
+  const [toast,     setToast]     = useState(null)
+  const [dragging,  setDragging]  = useState(false)
+  const toastTimer  = useRef()
+  const dropFileRef = useRef()
 
   // ── Aplica tema ANTES de qualquer render (síncrono, single-thread)
   Object.assign(T, theme === 'dark' ? THEME_DARK : THEME_LIGHT)
@@ -3337,6 +3597,110 @@ export default function App() {
   useEffect(() => {
     window.__loadBuild = (b) => setBuild(b)
     return () => { delete window.__loadBuild }
+  }, [])
+
+  // ── Entrada e saída de builds (WO B, spec 261117) ─────────────
+  const tl = (pt, en) => (lang === 'en' ? en : pt)
+
+  /** Aviso de rodapé por alguns segundos; um aviso novo substitui o anterior. */
+  const showToast = (msg) => {
+    clearTimeout(toastTimer.current)
+    setToast(msg)
+    toastTimer.current = setTimeout(() => setToast(null), 3500)
+  }
+
+  /** Lê o arquivo escolhido ou solto e abre o modal; arquivo estranho só avisa (A8). */
+  const openImportFile = (file) => {
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const entries = readExportEntries(String(ev.target.result))
+      if (!entries) {
+        showToast(tl('✗ Este arquivo não é uma exportação do GoT Legends Planner',
+                     '✗ This file is not a GoT Legends Planner export'))
+        return
+      }
+      setListModal({ mode: 'import', rows: buildImportRows(entries, saves, lang), id: Date.now() })
+    }
+    reader.readAsText(file)
+  }
+
+  /** Grava as linhas marcadas; com «Importar e abrir», abre a única marcada (A6, A7). */
+  const confirmImport = (rows, open) => {
+    const { list, added } = mergeImport(rows, saves)
+    if (!writeSaves(list)) {
+      showToast(tl('✗ Não foi possível gravar no navegador', '✗ Could not write to browser storage'))
+      return
+    }
+    setListModal(null)
+    if (open && added.length === 1) {
+      // A proteção da build aberta (Desfazer, «Salvar como…») chega na WO C
+      setBuild(added[0].build)
+      setBuildName(added[0].name)
+      showToast(tl(`✓ "${added[0].name}" importada e aberta`, `✓ "${added[0].name}" imported and opened`))
+    } else {
+      showToast(tl(`✓ ${added.length} importadas`, `✓ ${added.length} imported`))
+    }
+  }
+
+  /** Abre o modal em modo exportar, com todos os salvos marcados (D1). */
+  const openExport = () => {
+    if (!saves.length) return
+    setListModal({
+      mode: 'export', id: Date.now(),
+      rows: saves.map((s, i) => ({
+        key: i, name: s.name, classId: s.build?.classId, entry: s,
+        valid: true, checked: true, conflict: false, identical: false, mode: 'both',
+      })),
+    })
+  }
+
+  const confirmExport = (chosen) => {
+    downloadBuilds(chosen.map(r => r.entry))
+    setListModal(null)
+  }
+
+  /** Arquivos soltos na janela: um .json só abre o modal (B2–B4). */
+  dropFileRef.current = (files) => {
+    if (files.length !== 1) {
+      showToast(tl('✗ Solte um arquivo por vez', '✗ Drop one file at a time'))
+      return
+    }
+    if (!files[0].name.toLowerCase().endsWith('.json')) {
+      showToast(tl('✗ Só arquivos .json podem ser importados', '✗ Only .json files can be imported'))
+      return
+    }
+    openImportFile(files[0])
+  }
+
+  // Arrasto de arquivo para qualquer ponto da tela (B1–B6). Sem isto o navegador
+  // abre o arquivo NO LUGAR da ferramenta, e a build aberta se perde.
+  // O contador resolve o dragleave que dispara ao passar de um filho para outro;
+  // o dragstart marca o arrasto que nasceu na própria página (texto, imagem),
+  // que não é importação. O handler de soltar vem por ref, para ler os salvos atuais.
+  useEffect(() => {
+    let depth = 0
+    let internal = false
+    const isFile = (e) => !internal && [...(e.dataTransfer?.types ?? [])].includes('Files')
+    const onStart = () => { internal = true }
+    const onEnd   = () => { internal = false }
+    const onEnter = (e) => { if (!isFile(e)) return; depth++; setDragging(true) }
+    const onOver  = (e) => { if (isFile(e)) e.preventDefault() }
+    const onLeave = (e) => {
+      if (!isFile(e)) return
+      depth = Math.max(0, depth - 1)
+      if (!depth) setDragging(false)
+    }
+    const onDrop = (e) => {
+      if (!isFile(e)) return
+      e.preventDefault()
+      depth = 0
+      setDragging(false)
+      dropFileRef.current?.(e.dataTransfer.files)
+    }
+    const on = [['dragstart', onStart], ['dragend', onEnd], ['dragenter', onEnter],
+                ['dragover', onOver], ['dragleave', onLeave], ['drop', onDrop]]
+    on.forEach(([ev, fn]) => window.addEventListener(ev, fn))
+    return () => on.forEach(([ev, fn]) => window.removeEventListener(ev, fn))
   }, [])
 
   // Estilo base do body (atualiza com o tema)
@@ -3601,6 +3965,8 @@ export default function App() {
         setBuildName={setBuildName}
         saves={saves}
         writeSaves={writeSaves}
+        onImportFile={openImportFile}
+        onRequestExport={openExport}
       />
 
       {/* Modal de configurações */}
@@ -3617,6 +3983,23 @@ export default function App() {
         theme={theme}
         setTheme={setTheme}
       />
+
+      {/* Modal da lista de builds — importar e exportar (WO B) */}
+      {listModal && (
+        <BuildListModal
+          key={listModal.id}
+          mode={listModal.mode}
+          initialRows={listModal.rows}
+          lang={lang}
+          onCancel={() => setListModal(null)}
+          onImport={confirmImport}
+          onExport={confirmExport}
+        />
+      )}
+
+      {/* Camada do arrasto e aviso de rodapé (WO B) */}
+      <DropOverlay show={dragging} lang={lang} />
+      <Toast msg={toast} />
 
       {/* Estilos globais */}
       <style>{`

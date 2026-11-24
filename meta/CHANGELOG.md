@@ -7,6 +7,12 @@
 
 ## [Não lançado]
 
+### Adicionado
+- **Importar escolhendo quais builds** (DEC-038, spec `meta/specs/261117-entrada-de-builds-fatia1.md`): o «⬆ Importar» abre uma lista com as builds do arquivo, todas marcadas; as que não abrem aparecem desmarcadas, com o motivo; nome repetido oferece «Manter as duas» (a importada vira «Nome (2)») ou «Substituir»; uma build idêntica a uma salva vem desmarcada. «Importar N para os salvos» não troca a build aberta; com uma marcada, «Importar e abrir».
+- **Arrastar um `.json` para qualquer ponto da tela** abre a mesma lista, com a gaveta aberta ou fechada. Antes, soltar um arquivo na página fazia o navegador abri-lo no lugar da ferramenta.
+- **Exportar escolhendo quais builds**: o «⬇ Exportar» abre a mesma lista; com uma build só, o arquivo leva o nome dela.
+- Aviso no rodapé da tela para o que acontece fora da gaveta.
+
 ### Infraestrutura de repositório
 - **A `main` voltou a ser o branch de trabalho** (DEC-036): alcançou a `v2-planner` por avanço rápido, e a `v2-planner` foi aposentada.
 - **O GitHub Pages volta a ser publicado, agora por workflow** (DEC-037): `.github/workflows/deploy-gh-pages.yml` monta a `main` em Linux a cada push e empurra o `dist/` para a `gh-pages`. Estava parado desde 2026-04-21.
