@@ -256,6 +256,7 @@ Nos prompts antigos o autor cogitou **remover o modo Estatístico** caso desse t
 - **A `/wrap` do kit segue com «sessão» como cadência em v1.155.0** («o bloco da sessão anterior», «uma sessão futura vai ler») — já registrado na leva de 2026-11-15; não mudou.
 - **As Instruções no painel envelhecem sem ninguém ver.** Neste projeto, o painel ficou anterior à fusão de 2026-11-15 por oito dias: o arquivo do repositório tinha voltado a ter a linha `Git só leitura (GIT_OPTIONAL_LOCKS=0)`, e o painel não. As Instruções não têm carimbo de versão; uma linha final curta («Instruções do kit vX.Y.Z — AAAA-MM-DD») tornaria a divergência visível em toda mensagem.
 - **O Git da VM do chat não tem o `core.autocrlf` da máquina do dono.** Num repositório em CRLF na árvore de trabalho, o `git diff --stat` rodado pelo chat acusa o arquivo inteiro como mudado (634 linhas no molde de WO, que mudou 12). `git -c core.autocrlf=true diff --stat` mostra o diff real. Vale uma linha no «Canal do chat»: o diff medido pelo chat em projeto CRLF se lê com essa opção.
+- **`wc -m` conta o `\r`, e o teto das Instruções é medido no arquivo errado.** Com o `INSTRUCOES-DO-PROJETO.md` em CRLF na árvore de trabalho, `LC_ALL=C.UTF-8 wc -m` deu 6.909 (acima do teto de 6.900) para um texto de 6.840 — o painel recebe o texto sem `\r`. A regra «meça com `wc -m`» do kit (no CEREBRO e na `/wrap`) pede `tr -d '\r' <` na frente, ou medir o blob: `git show :INSTRUCOES-DO-PROJETO.md | LC_ALL=C.UTF-8 wc -m`. Corrigido na `/wrap` deste projeto pela `wo0040`.
 
 ---
 

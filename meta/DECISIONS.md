@@ -1246,7 +1246,7 @@ Todas na análise, eixo por eixo (E1 a E9), com o motivo de cada descarte. As de
 
 ## DEC-039 — Template-update do kit v1.155.0, em duas fatias; decisões do dono sobre o que o pacote não cobre
 
-**Data:** 2026-11-23 · **Status:** aceita · **Aplicada em parte pela** `wo0039` (Fatia 1)
+**Data:** 2026-11-23 · **Status:** aceita · **Aplicada pelas** `wo0039` (Fatia 1) e `wo0040` (Fatia 2, 2026-11-24)
 
 ### Contexto
 O dono descompactou o pacote v1.155.0 em 2026-11-20. Antes de comparar: versão do pacote igual à anunciada; projeto em `main` @ `46c4d0d`; as quatro superfícies existem; sem `.claude/commands/`. Linhas revogadas: 13 ocorrências varridas (1 do texto literal, a DEC-034 relatando a correção; 12 de «sessão»), 0 corrigidas, 13 justificadas — relato, contraste, o ponteiro `## 💬 Última Sessão`, o rodapé `Claude-Session` e cinco no texto que o próprio pacote mantém nas skills. Carimbo de modos coerente, sem sobra. As três correções obrigatórias do `settings.json` já estavam feitas. Comparado o pacote v1.142.0 com o v1.155.0: nove arquivos sem nenhuma mudança; o grosso do delta é o CEREBRO, que passa quatro seções para o `GUIA-DO-KIT.md`.

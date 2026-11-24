@@ -27,6 +27,22 @@ Planejador de builds para **Ghost of Tsushima: Legends** — modo cooperativo do
 
 ---
 
+## Build e validação (a rede deste projeto)
+
+> *(Veio do CEREBRO, «Build e validação deste projeto», em 2026-11-23 — DEC-039: o kit v1.155.0 declara a rede no CONTEXT, e o CEREBRO guarda só a regra geral, «A rede deste projeto».)*
+
+- **Rede automática:** **não há suíte de testes.** A rede é o `npm run build` (Vite), que roda antes de commitar qualquer mudança de código. Mudança só em `meta/` não precisa de build: a rede é o `git diff`.
+- **Linha de base:** nenhuma ainda. As provas de vida de `src/logic.js` pelo Node (`node -e "import('./src/logic.js').then(...)"`, usadas nas `wo0036` e `wo0038`) são pontuais, escritas dentro da WO, e não ficam versionadas como instrumento.
+- **Na tela, pelo dono:** como não há suíte, toda mudança de código sai com a lista do que abrir e olhar — caso feliz, borda, regressão provável —, em forma de roteiro entregue pelo chat no MESMO turno da WO (princípio 18 do CEREBRO).
+- **O que o ambiente do chat não roda:** a interface (React no navegador). O chat simula a WO numa cópia do repositório e roda o build na VM Linux dele; a conferência visual é sempre do dono. O Code também não sobe servidor de preview (encerrar por nome mata todo processo Node).
+- **Comandos:**
+  - `npm run dev` — servidor Vite em `localhost:5173`.
+  - `npm run build` — build de produção em `dist/`.
+  - `npm run preview` — serve o `dist/` gerado, para conferir o build.
+  - `npm run deploy` — build + publicação no GitHub Pages via `gh-pages`. **Não funciona no Windows** (DEC-016) e não é mais necessário: o GitHub Pages sai pelo workflow (DEC-037). Só sob pedido explícito, e está no `deny` do `.claude/settings.json`.
+
+---
+
 ## Estrutura do Projeto
 
 ```
