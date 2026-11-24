@@ -47,7 +47,7 @@
 
 ## 🔧 Em Progresso
 
-- **Produto:** entrada e saída de builds (DEC-038). Fatia 0 (`wo0036`) e WO A da Fatia 1 (`wo0038`) aplicadas e conferidas na tela pelo dono; spec da Fatia 1 em `meta/specs/261117-entrada-de-builds-fatia1.md`. A WO B vem depois do template-update do kit.
+- **Produto:** entrada e saída de builds (DEC-038). Fatia 0 (`wo0036`) e WO A da Fatia 1 (`wo0038`) aplicadas e conferidas na tela pelo dono; WO B (`wo0041`, modal de lista, arrasto de `.json`, aviso de rodapé) aplicada em 2026-11-24 e **ainda sem conferência de tela**; falta a WO C (Desfazer e «Salvar como…»). Spec da Fatia 1 em `meta/specs/261117-entrada-de-builds-fatia1.md`.
 - **Kit:** template-update v1.155.0 **fechado** (DEC-039) — Fatia 1 na `wo0039`, Fatia 2 na `wo0040`; os seis carimbos dizem v1.155.0. Falta só o dono colar as Instruções no painel (backlog).
 
 ---
@@ -71,7 +71,7 @@ _Nada._
 - [ ] **O botão Texto mostra ✓ mesmo quando a cópia falha** (`handleCopyText`, `App.jsx`: o `.catch` também chama `flash('txt')`). Quando falha, o que se cola é o texto anterior, sem aviso. Achado em 2026-11-16.
 - [ ] **Passada de defeitos e segurança por funcionalidade** (pedido do dono, 2026-11-16): uma `/sondar` por área, no Code. Ponto de partida medido em 2026-11-16: nenhum `dangerouslySetInnerHTML`, `innerHTML`, `eval` ou `new Function` em `src/`; as três entradas de dado externo passam por `JSON.parse` — os saves no `localStorage` (`App.jsx`), o arquivo importado (`App.jsx`) e o código Base64 (`logic.js`).
 
-- [ ] **Fatia 1 da DEC-038** (proxima WO): componente de lista com selecao para importar (botao e arrastar `.json`) e exportar so as escolhidas; Desfazer na build aberta; modal «Salvar como…» so com alteracao nao salva. Mensagens de erro de `deserializeBuild` viram codigo + texto bilingue.
+- [ ] **Fatia 1 da DEC-038, WO C** (proxima WO): Desfazer na build aberta; modal «Salvar como…» so com alteracao nao salva. A lista com selecao, o arrasto e os codigos de erro bilingues entraram na `wo0041`.
 - [ ] **Fatia 2 da DEC-038:** link com a build comprimida no fragmento `#b=`, codigo antigo aceito na leitura, aviso de id desconhecido em `data.js`.
 - [ ] **Colar as Instruções no painel do Projeto — agora:** o `INSTRUCOES-DO-PROJETO.md` fundido em 2026-11-24 (`wo0040`, 6.840 caracteres de texto). O painel está anterior ao `9326145` e não tem a linha `Git só leitura (GIT_OPTIONAL_LOCKS=0)` (DEC-039). Do dono.
 - [ ] **README desatualizado:** manda abrir `localhost:5173/got-legends/` (o caminho-base local hoje é `/`), e a árvore de «Estrutura do Projeto» fala em `App.jsx` de ~1.2k linhas e não cita o `icons.js`. Achado em 2026-11-23.
@@ -152,3 +152,9 @@ Skills (`apply-wo`, `wrap`, `sondar`), molde de WO, `settings.json` e `meta/GUIA
 `meta/CEREBRO.md` e `INSTRUCOES-DO-PROJETO.md` foram fundidos pelo chat a partir do pacote, com o transplante aprovado pelo dono; «Build e validação» passou ao `meta/CONTEXT.md` e `meta/SETUP.md` entrou. A wo0040 conferiu os quatro `sha1sum` e registrou CHANGELOG, DECISIONS (DEC-039 «Aplicada pelas wo0039 e wo0040»), STATUS, IDEAS e uma linha da `/wrap` (medir o teto das Instruções com `tr -d '\r'`). Os seis carimbos dizem v1.155.0. Instruções em 6.840 caracteres (teto 6.900). Commit `6aafc82`, empurrado. Sem código, sem build.
 
 **Fecha o «Pendente» da entrada da wo0039** (Fatia 2 do kit). **Pendente:** o dono colar as Instruções no painel (backlog); depois, a WO B da Fatia 1 do produto. O chat move a pasta do pacote depois de conferir o commit.
+
+### 2026-11-24 — Fatia 1, WO B: modal da lista, arrasto e aviso de rodapé (wo0041, DEC-038)
+
+`src/App.jsx` ganhou `BuildListModal` (importar e exportar escolhendo; validade por linha, «Manter as duas»/«Substituir», cópia idêntica desmarcada, «Importar e abrir»), `Toast`, `DropOverlay` e o arrasto de `.json` em qualquer ponto da tela; `exportAll` saiu da gaveta. CHANGELOG («Adicionado») e backlog (botões neutros fora do tema claro) atualizados. `npm run build` com 0 erros (33 módulos); contagens da WO conferidas. Commit `1692ed4`, empurrado.
+
+**Pendente:** conferência de tela pelo dono com `../261124-teste-fatia1-wob.json` (importar, nome repetido, idêntica, arrasto com gaveta aberta e fechada, exportar uma e várias); depois, a WO C.
