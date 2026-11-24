@@ -145,3 +145,9 @@ Fatos que só existiam no chat, registrados com a origem:
 Skills (`apply-wo`, `wrap`, `sondar`), molde de WO, `settings.json` e `meta/GUIA-DO-KIT.md` — gravados pelo chat antes da WO — foram versionados; `sha1sum` dos seis conferido contra a WO. CHANGELOG, DECISIONS (DEC-039), IDEAS e STATUS («Em Progresso», backlog) atualizados. Cinco dos seis carimbos dizem v1.155.0 (o do CEREBRO sobe na Fatia 2). Commit `05b4a2a`, empurrado. Sem código, sem build.
 
 **Pendente:** Fatia 2 do kit (CEREBRO, Instruções, CONTEXT «Build e validação», `meta/SETUP.md`); depois, a WO B da Fatia 1 do produto.
+
+### 2026-11-24 — Kit v1.155.0, Fatia 2 (wo0040, DEC-039): o update fecha
+
+`meta/CEREBRO.md` e `INSTRUCOES-DO-PROJETO.md` foram fundidos pelo chat a partir do pacote, com o transplante aprovado pelo dono; «Build e validação» passou ao `meta/CONTEXT.md` e `meta/SETUP.md` entrou. A wo0040 conferiu os quatro `sha1sum` e registrou CHANGELOG, DECISIONS (DEC-039 «Aplicada pelas wo0039 e wo0040»), STATUS, IDEAS e uma linha da `/wrap` (medir o teto das Instruções com `tr -d '\r'`). Os seis carimbos dizem v1.155.0. Instruções em 6.840 caracteres (teto 6.900). Commit `6aafc82`, empurrado. Sem código, sem build.
+
+**Fecha o «Pendente» da entrada da wo0039** (Fatia 2 do kit). **Pendente:** o dono colar as Instruções no painel (backlog); depois, a WO B da Fatia 1 do produto. O chat move a pasta do pacote depois de conferir o commit.
