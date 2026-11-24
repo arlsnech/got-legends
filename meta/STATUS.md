@@ -138,3 +138,9 @@ Fatos que só existiam no chat, registrados com a origem:
 `useSavedBuilds` (em `src/App.jsx`) passa a ser dono de `saves` e da gravação no `localStorage`; o `SaveDrawer` recebe `saves` e `writeSaves` por prop e só mostra o aviso quando a gravação falha. `deserializeBuild` e `decodeBuild` devolvem `code` estável (`not_got_legends`, `bad_structure`, `unknown_class`, `bad_code`) para a WO B traduzir. A spec `meta/specs/261117-entrada-de-builds-fatia1.md` entrou versionada. Commit `779e3f9`, empurrado. Build verde; prova de vida no Node: `not_got_legends bad_structure unknown_class bad_code true`. Sem mudança visível.
 
 **Pendente:** conferência de tela pelo dono (roteiro do chat): abrir a gaveta, salvar, remover, exportar e importar seguem iguais, e a contagem de salvos persiste após recarregar. Depois, a WO B (modal e arrasto).
+
+### 2026-11-23 — Kit v1.155.0, Fatia 1 (wo0039, DEC-039)
+
+Skills (`apply-wo`, `wrap`, `sondar`), molde de WO, `settings.json` e `meta/GUIA-DO-KIT.md` — gravados pelo chat antes da WO — foram versionados; `sha1sum` dos seis conferido contra a WO. CHANGELOG, DECISIONS (DEC-039), IDEAS e STATUS («Em Progresso», backlog) atualizados. Cinco dos seis carimbos dizem v1.155.0 (o do CEREBRO sobe na Fatia 2). Commit `05b4a2a`, empurrado. Sem código, sem build.
+
+**Pendente:** Fatia 2 do kit (CEREBRO, Instruções, CONTEXT «Build e validação», `meta/SETUP.md`); depois, a WO B da Fatia 1 do produto.
