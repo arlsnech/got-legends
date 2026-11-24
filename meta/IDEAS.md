@@ -250,6 +250,15 @@ Nos prompts antigos o autor cogitou **remover o modo Estatístico** caso desse t
 
 ---
 
+## 📌 Feedback para o Kit de Contexto — leva de 2026-11-23 (template-update v1.155.0)
+
+- **O sistema operacional esquecido no gerador some sem aviso.** O pacote v1.155.0 veio sem a seção «Ambiente (sistema operacional)» do CEREBRO e sem a linha do Windows das Instruções, porque o dono não marcou o sistema ao gerar. Só a comparação com o pacote anterior mostrou isso. O sistema operacional podia entrar no carimbo de modos do manifesto, com o marcador `## Ambiente (sistema operacional)`, como os outros.
+- **A `/wrap` do kit segue com «sessão» como cadência em v1.155.0** («o bloco da sessão anterior», «uma sessão futura vai ler») — já registrado na leva de 2026-11-15; não mudou.
+- **As Instruções no painel envelhecem sem ninguém ver.** Neste projeto, o painel ficou anterior à fusão de 2026-11-15 por oito dias: o arquivo do repositório tinha voltado a ter a linha `Git só leitura (GIT_OPTIONAL_LOCKS=0)`, e o painel não. As Instruções não têm carimbo de versão; uma linha final curta («Instruções do kit vX.Y.Z — AAAA-MM-DD») tornaria a divergência visível em toda mensagem.
+- **O Git da VM do chat não tem o `core.autocrlf` da máquina do dono.** Num repositório em CRLF na árvore de trabalho, o `git diff --stat` rodado pelo chat acusa o arquivo inteiro como mudado (634 linhas no molde de WO, que mudou 12). `git -c core.autocrlf=true diff --stat` mostra o diff real. Vale uma linha no «Canal do chat»: o diff medido pelo chat em projeto CRLF se lê com essa opção.
+
+---
+
 ## 🔧 Correções de processo
 
 ### 2026-11-17 — Fim de linha se mede com o Git, não com o shell

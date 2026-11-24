@@ -41,4 +41,4 @@ Ao terminar, imprima o caminho do relatorio e um resumo de tres linhas. Se a pas
 Material a explorar: $ARGUMENTS
 
 
-*Gerado pelo Kit de Contexto Universal v1.142.0 — 2026-11-15 — esta linha e do KIT: nao funda, substitua pela do pacote mais recente.*
+*Gerado pelo Kit de Contexto Universal v1.155.0 — 2026-11-20 — esta linha e do KIT: nao funda, substitua pela do pacote mais recente.*

@@ -10,6 +10,7 @@
 ### Infraestrutura de repositório
 - **A `main` voltou a ser o branch de trabalho** (DEC-036): alcançou a `v2-planner` por avanço rápido, e a `v2-planner` foi aposentada.
 - **O GitHub Pages volta a ser publicado, agora por workflow** (DEC-037): `.github/workflows/deploy-gh-pages.yml` monta a `main` em Linux a cada push e empurra o `dist/` para a `gh-pages`. Estava parado desde 2026-04-21.
+- **Kit de contexto v1.155.0, Fatia 1** (DEC-039) — a skill `/apply-wo` grava relatório também quando recusa, abre o relatório dizendo o que entrou (`NADA FOI APLICADO` ou `APLICADO ATÉ…`) e delimita âncora e texto novo pela cerca de quatro crases; `/wrap` e `/sondar` com o carimbo novo; o molde de WO passa às cercas de quatro crases; o `.claude/settings.json` ganha oito permissões de leitura e conferência (`git show`, `git ls-files`, `git cat-file`, `date`, `sha1sum`, `wc`, `grep`, `head`); `meta/GUIA-DO-KIT.md` entra inteiro. As linhas deste projeto nas skills ficaram. Sem efeito no produto.
 
 ### Corrigido
 - Os ícones usavam caminho absoluto (`/icons/...`) e sumiriam em qualquer site servido fora da raiz, como o GitHub Pages (`/got-legends/`). Agora seguem o caminho-base do build (DEC-037).

@@ -1241,3 +1241,30 @@ Todas na análise, eixo por eixo (E1 a E9), com o motivo de cada descarte. As de
 - Build salva sem algum dos cinco slots, ou sem `p1`/`p2`, deixa de abrir: mostra «✗ Erro ao carregar» em vez de derrubar a tela. A ferramenta não gera essa forma (`createEmptyBuild` cria todos; conferido em 800 builds de `randomBuild`); saves de versões muito antigas **não foram conferidos**.
 - Id que não existe em `data.js` continua passando: não quebra o cálculo, e o aviso dele é trabalho da Fatia 2.
 - As mensagens de erro de `deserializeBuild` continuam só em PT-BR e não são exibidas. Quando a Fatia 1 as mostrar no modal, viram código + texto bilíngue (D4 da análise).
+
+---
+
+## DEC-039 — Template-update do kit v1.155.0, em duas fatias; decisões do dono sobre o que o pacote não cobre
+
+**Data:** 2026-11-23 · **Status:** aceita · **Aplicada em parte pela** `wo0039` (Fatia 1)
+
+### Contexto
+O dono descompactou o pacote v1.155.0 em 2026-11-20. Antes de comparar: versão do pacote igual à anunciada; projeto em `main` @ `46c4d0d`; as quatro superfícies existem; sem `.claude/commands/`. Linhas revogadas: 13 ocorrências varridas (1 do texto literal, a DEC-034 relatando a correção; 12 de «sessão»), 0 corrigidas, 13 justificadas — relato, contraste, o ponteiro `## 💬 Última Sessão`, o rodapé `Claude-Session` e cinco no texto que o próprio pacote mantém nas skills. Carimbo de modos coerente, sem sobra. As três correções obrigatórias do `settings.json` já estavam feitas. Comparado o pacote v1.142.0 com o v1.155.0: nove arquivos sem nenhuma mudança; o grosso do delta é o CEREBRO, que passa quatro seções para o `GUIA-DO-KIT.md`.
+
+### Decisão
+- **Fatia 1 (`wo0039`):** skills, molde de WO, `settings.json` e `GUIA-DO-KIT.md` gravados pelo chat direto no disco — o `/apply-wo` novo instalado ANTES de aplicar qualquer WO, como o dono pediu — e versionados pela WO. Skills: o vivo mais as linhas que o kit mudou; as linhas deste projeto ficam. Molde de WO: o vivo era idêntico ao pacote v1.142.0, então foi substituído.
+- **Fatia 2:** fusão do CEREBRO e das Instruções partindo do pacote, com inventário aprovado pelo dono antes de gravar. Junto: a seção «Build e validação» do CONTEXT e o `meta/SETUP.md`.
+- **Decisões do dono, 2026-11-23** `[relatado pelo dono]`:
+  - **Sistema operacional:** o pacote veio sem a seção «Ambiente (sistema operacional)» e sem a linha do Windows nas Instruções porque o dono **esqueceu de marcar o sistema no gerador**. Fica Windows, com o Git Bash no Code: transplante na Fatia 2.
+  - **Build e validação:** sai do CEREBRO («Build e validação deste projeto») e vai para o CONTEXT, que é onde o pacote declara a rede; o CEREBRO recebe a seção «A rede deste projeto» do pacote.
+  - **`meta/SETUP.md`:** adotado.
+  - **LICENSE:** sem licença por enquanto.
+
+### Alternativas consideradas
+- **Aplicar a Fatia 1 por WO com a skill velha** — descartado: a WO de migração seria aplicada pelas regras que o pacote veio corrigir (o dono pediu as skills antes).
+- **Substituir as skills inteiras pelas do pacote** — descartado: apagaria o build, o portão de diagnóstico, «não apague a WO», o teto de 6.900 e a cláusula de curadoria, que são deste projeto (colisão 5 da DEC-008).
+
+### Consequências
+- Até a Fatia 2, as quatro seções que o pacote passou para o GUIA existem nos DOIS arquivos: o GUIA (do kit, v1.155.0) e o CEREBRO vivo (v1.142.0). Vale o GUIA; a Fatia 2 as tira do CEREBRO.
+- Cinco dos seis carimbos dizem v1.155.0; o do CEREBRO sobe na Fatia 2. A pasta do pacote fica na pasta-pai até lá.
+- As Instruções coladas no painel do Projeto estão anteriores ao `9326145` (a fusão de 2026-11-15): o painel não tem a linha `Git só leitura (GIT_OPTIONAL_LOCKS=0)`. A Fatia 2 entrega o arquivo novo, e o dono cola no painel.

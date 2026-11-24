@@ -3,7 +3,8 @@
     "allow": [
       "Read", "Write", "Edit", "Grep", "Glob",
       "Bash(git status:*)", "Bash(git diff:*)", "Bash(git add:*)", "Bash(git commit:*)", "Bash(git push:*)",
-      "Bash(git mv:*)", "Bash(git log:*)",
+      "Bash(git mv:*)", "Bash(git log:*)", "Bash(git show:*)", "Bash(git ls-files:*)", "Bash(git cat-file:*)",
+      "Bash(date:*)", "Bash(sha1sum:*)", "Bash(wc:*)", "Bash(grep:*)", "Bash(head:*)",
       "Bash(npm run build:*)", "Bash(npm run dev:*)", "Bash(npm run preview:*)",
       "Bash(npm install:*)", "Bash(npm ci:*)"
     ],

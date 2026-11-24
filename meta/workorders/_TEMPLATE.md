@@ -155,16 +155,18 @@ fica invisivel dos dois lados, porque a correcao e a conferencia saem do mesmo i
 
 **Ancora** *(diga ONDE fica: secao, funcao, item — nunca numero de linha)*:
 
-```
+````
 [trecho literal e unico do arquivo vivo, copiado sem reformatar]
-```
+````
 
 **Substituir por:**
 
-```
+````
 [texto exato que entra]
-```
+````
 
+> **Cerca de QUATRO crases** nos blocos de ancora e de texto novo: texto com `## titulo` ou com bloco de tres crases dentro
+> quebra quem delimita pelo cabecalho ou pela cerca de tres; a de quatro so fecha na linha de quatro, e quem aplica delimita por ela.
 > Variantes — use a que couber, sempre com a ancora acima: **Inserir IMEDIATAMENTE APOS** ·
 > **Inserir IMEDIATAMENTE ANTES** · **Remover o bloco inteiro** · **Criar arquivo novo** (sem ancora;
 > diga o que fazer se ele ja existir) · **MOVER**.
@@ -313,4 +315,4 @@ git commit -m "tipo(escopo): descricao no imperativo curto" -m "Corpo explicando
 git push
 ```
 
-*Gerado pelo Kit de Contexto Universal v1.142.0 — 2026-11-15 — esta linha e do KIT: nao funda, substitua pela do pacote mais recente.*
+*Gerado pelo Kit de Contexto Universal v1.155.0 — 2026-11-20 — esta linha e do KIT: nao funda, substitua pela do pacote mais recente.*

@@ -47,7 +47,8 @@
 
 ## 🔧 Em Progresso
 
-- **Produto:** entrada e saída de builds (DEC-038). Fatia 0 aplicada (`wo0036`) e conferida na tela pelo dono em 2026-11-17; a Fatia 1 é a próxima, começando por uma spec em `meta/specs/`.
+- **Produto:** entrada e saída de builds (DEC-038). Fatia 0 (`wo0036`) e WO A da Fatia 1 (`wo0038`) aplicadas e conferidas na tela pelo dono; spec da Fatia 1 em `meta/specs/261117-entrada-de-builds-fatia1.md`. A WO B vem depois do template-update do kit.
+- **Kit:** template-update v1.155.0 (DEC-039) — Fatia 1 na `wo0039`; falta a Fatia 2 (CEREBRO, Instruções, CONTEXT «Build e validação», `meta/SETUP.md`).
 
 ---
 
@@ -72,6 +73,7 @@ _Nada._
 
 - [ ] **Fatia 1 da DEC-038** (proxima WO): componente de lista com selecao para importar (botao e arrastar `.json`) e exportar so as escolhidas; Desfazer na build aberta; modal «Salvar como…» so com alteracao nao salva. Mensagens de erro de `deserializeBuild` viram codigo + texto bilingue.
 - [ ] **Fatia 2 da DEC-038:** link com a build comprimida no fragmento `#b=`, codigo antigo aceito na leitura, aviso de id desconhecido em `data.js`.
+- [ ] **Colar as Instruções no painel do Projeto** depois da Fatia 2 do kit: o painel está anterior ao `9326145` e não tem a linha `Git só leitura (GIT_OPTIONAL_LOCKS=0)` (DEC-039). Do dono.
 
 ---
 
