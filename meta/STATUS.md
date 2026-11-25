@@ -47,7 +47,7 @@
 
 ## 🔧 Em Progresso
 
-- **Produto:** entrada e saída de builds (DEC-038). Fatia 0 (`wo0036`) e WO A da Fatia 1 (`wo0038`) aplicadas e conferidas na tela pelo dono; WO B (`wo0041`, modal de lista, arrasto de `.json`, aviso de rodapé) aplicada em 2026-11-24 e **ainda sem conferência de tela**; falta a WO C (Desfazer e «Salvar como…»). Spec da Fatia 1 em `meta/specs/261117-entrada-de-builds-fatia1.md`.
+- **Produto:** entrada e saída de builds (DEC-038). Fatia 0 (`wo0036`) e WO A da Fatia 1 (`wo0038`) aplicadas e conferidas na tela pelo dono; WO B (`wo0041`, modal de lista, arrasto de `.json`, aviso de rodapé) aplicada em 2026-11-24 e **ainda sem conferência de tela**; WO C (`wo0042`, Desfazer, «Salvar como…» e linha inteira clicável no modal) aplicada em 2026-11-25 e **também sem conferência de tela** — com ela, a Fatia 1 está toda no código. Spec da Fatia 1 em `meta/specs/261117-entrada-de-builds-fatia1.md`.
 - **Kit:** template-update v1.155.0 **fechado** (DEC-039) — Fatia 1 na `wo0039`, Fatia 2 na `wo0040`; os seis carimbos dizem v1.155.0. Falta só o dono colar as Instruções no painel (backlog).
 
 ---
@@ -71,7 +71,8 @@ _Nada._
 - [ ] **O botão Texto mostra ✓ mesmo quando a cópia falha** (`handleCopyText`, `App.jsx`: o `.catch` também chama `flash('txt')`). Quando falha, o que se cola é o texto anterior, sem aviso. Achado em 2026-11-16.
 - [ ] **Passada de defeitos e segurança por funcionalidade** (pedido do dono, 2026-11-16): uma `/sondar` por área, no Code. Ponto de partida medido em 2026-11-16: nenhum `dangerouslySetInnerHTML`, `innerHTML`, `eval` ou `new Function` em `src/`; as três entradas de dado externo passam por `JSON.parse` — os saves no `localStorage` (`App.jsx`), o arquivo importado (`App.jsx`) e o código Base64 (`logic.js`).
 
-- [ ] **Fatia 1 da DEC-038, WO C** (proxima WO): Desfazer na build aberta; modal «Salvar como…» so com alteracao nao salva. A lista com selecao, o arrasto e os codigos de erro bilingues entraram na `wo0041`.
+- [ ] **Conferir na tela a WO C (`wo0042`)** — roteiro do chat (Desfazer por ~8 s, modal de alteração não salva, linha inteira do modal da lista).
+- [ ] **Nome repetido ao salvar** — aguarda decisão do dono (proposta em `meta/IDEAS.md`, «Salvar com um nome que já existe»); vira a próxima WO depois da decisão.
 - [ ] **Fatia 2 da DEC-038:** link com a build comprimida no fragmento `#b=`, codigo antigo aceito na leitura, aviso de id desconhecido em `data.js`.
 - [ ] **Colar as Instruções no painel do Projeto — agora:** o `INSTRUCOES-DO-PROJETO.md` fundido em 2026-11-24 (`wo0040`, 6.840 caracteres de texto). O painel está anterior ao `9326145` e não tem a linha `Git só leitura (GIT_OPTIONAL_LOCKS=0)` (DEC-039). Do dono.
 - [ ] **README desatualizado:** manda abrir `localhost:5173/got-legends/` (o caminho-base local hoje é `/`), e a árvore de «Estrutura do Projeto» fala em `App.jsx` de ~1.2k linhas e não cita o `icons.js`. Achado em 2026-11-23.
@@ -158,3 +159,9 @@ Skills (`apply-wo`, `wrap`, `sondar`), molde de WO, `settings.json` e `meta/GUIA
 `src/App.jsx` ganhou `BuildListModal` (importar e exportar escolhendo; validade por linha, «Manter as duas»/«Substituir», cópia idêntica desmarcada, «Importar e abrir»), `Toast`, `DropOverlay` e o arrasto de `.json` em qualquer ponto da tela; `exportAll` saiu da gaveta. CHANGELOG («Adicionado») e backlog (botões neutros fora do tema claro) atualizados. `npm run build` com 0 erros (33 módulos); contagens da WO conferidas. Commit `1692ed4`, empurrado.
 
 **Pendente:** conferência de tela pelo dono com `../261124-teste-fatia1-wob.json` (importar, nome repetido, idêntica, arrasto com gaveta aberta e fechada, exportar uma e várias); depois, a WO C.
+
+### 2026-11-25 — Fatia 1, WO C: proteção da build aberta (wo0042, DEC-038)
+
+`src/App.jsx`: porta única `requestOpen` para clique num salvo, «Carregar» código e «Importar e abrir». Sem alteração não salva, troca direto e oferece «Desfazer» por ~8 s (volta build e nome); com alteração, `UnsavedModal` pergunta («Salvar como…», «Abrir sem salvar», «Cancelar», com aviso se o nome já existe). Alteração = `JSON.stringify(build)` difere do retrato (`baselineRef`) tirado ao abrir, salvar ou criar. O Salvar da gaveta passou a `saveCurrent` do `App`. No modal da lista a linha inteira marca/desmarca. Saiu o `window.__loadBuild`. `Toast` agora recebe `{ msg, action }`. Commit `c23c079`, build 0 erros (33 módulos).
+
+**Pendente:** conferência de tela pelo dono; decisão sobre nome repetido ao salvar (IDEAS). Fatia 2 da DEC-038 (link `#b=`) segue no backlog.
