@@ -12,6 +12,8 @@
 - **Arrastar um `.json` para qualquer ponto da tela** abre a mesma lista, com a gaveta aberta ou fechada. Antes, soltar um arquivo na página fazia o navegador abri-lo no lugar da ferramenta.
 - **Exportar escolhendo quais builds**: o «⬇ Exportar» abre a mesma lista; com uma build só, o arquivo leva o nome dela.
 - Aviso no rodapé da tela para o que acontece fora da gaveta.
+- **Proteção da build aberta** (spec, seção C): abrir uma build — clique num salvo, «Carregar» código, «Importar e abrir» — mostra «Desfazer» no rodapé por ~8 segundos, que devolve a build e o nome de antes. Se a build aberta tem alterações não salvas, a ferramenta pergunta antes: «Salvar como…» (com aviso se o nome já existe), «Abrir sem salvar» ou «Cancelar». Mudar só o nome não conta como alteração.
+- **No modal da lista, a linha inteira marca e desmarca**, não só o quadradinho (pedido do dono).
 
 ### Infraestrutura de repositório
 - **A `main` voltou a ser o branch de trabalho** (DEC-036): alcançou a `v2-planner` por avanço rápido, e a `v2-planner` foi aposentada.
