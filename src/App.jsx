@@ -13,7 +13,7 @@ import {
   selectTech, selectAbility,
   formatStatValue, formatPropRange, propValueForDisplay,
   propValueFromDisplay, formatCd,
-  encodeBuild, decodeBuild, serializeBuild, deserializeBuild,
+  encodeBuildLink, decodeBuildLink, serializeBuild, deserializeBuild,
   changeClass, randomBuild,
   LABELS_PT, LABELS_EN,
 } from './logic.js'
@@ -1835,7 +1835,7 @@ function NameConflictModal({ name, altName, lang, onReplace, onSaveAs, onCancel 
 }
 
 // ─── SaveDrawer — painel lateral de gerenciamento de builds ──
-function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName, saves, writeSaves, onImportFile, onRequestExport, onOpenBuild, onSave }) {
+function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName, saves, writeSaves, onImportFile, onRequestExport, onOpenBuild, onSave, shareLink, onOpenLink }) {
   const [shareCode, setShareCode] = useState('')
   // Flash: string quando mensagem ativa, null quando silencioso
   const [flash, setFlash]         = useState(null)
@@ -1900,21 +1900,23 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName, saves
     if (file) onImportFile(file)
   }
 
-  const copyCode = () => {
-    const code = encodeBuild(build, buildName || 'Build')
-    setShareCode(code)
-    navigator.clipboard.writeText(code).catch(() => {})
-    showFlash(lang === 'en' ? '✓ Code copied!' : '✓ Código copiado!')
+  // O link vem pronto do App, montado quando a build muda: a cópia acontece no
+  // próprio clique, que é o que o Safari exige para a área de transferência.
+  const copyLink = () => {
+    if (!shareLink) {
+      showFlash(lang === 'en' ? '✗ Link not ready yet, try again' : '✗ O link ainda não está pronto, tente de novo')
+      return
+    }
+    setShareCode(shareLink)
+    navigator.clipboard.writeText(shareLink)
+      .then(() => showFlash(lang === 'en' ? '✓ Link copied!' : '✓ Link copiado!'))
+      .catch(() => showFlash(lang === 'en' ? '✗ Not copied — the link is in the field' : '✗ Não copiou — o link está no campo'))
   }
 
+  // Carregar aceita o link inteiro, o código novo ou o código antigo; a leitura,
+  // a pergunta de alteração não salva e os avisos são do App (openFromLink).
   const loadCode = () => {
-    const r = decodeBuild(shareCode.trim())
-    if (r.ok) {
-      setShareCode('')
-      onOpenBuild(r.build, r.name || '')   // mesma porta do load() acima (WO C)
-    } else {
-      showFlash(lang === 'en' ? '✗ Invalid code' : '✗ Código inválido')
-    }
+    onOpenLink(shareCode).then(ok => { if (ok) setShareCode('') })
   }
 
   if (!open) return null
@@ -2069,13 +2071,13 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName, saves
 
           {/* Código de compartilhamento */}
           <div style={{ fontSize: 10, color: T.muted, marginBottom: 5 }}>
-            🔗 {lang === 'en' ? 'Share Code' : 'Código de Compartilhamento'}
+            🔗 {lang === 'en' ? 'Share Link' : 'Link de Compartilhamento'}
           </div>
           <div style={{ position: 'relative', marginBottom: 6 }}>
             <input
               value={shareCode}
               onChange={e => setShareCode(e.target.value)}
-              placeholder={lang === 'en' ? 'Paste code...' : 'Cole o código...'}
+              placeholder={lang === 'en' ? 'Paste link or code...' : 'Cole o link ou o código...'}
               style={{
                 width: '100%', background: T.card,
                 border: `1px solid ${T.border}`,
@@ -2097,15 +2099,15 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName, saves
           </div>
           <div style={{ display: 'flex', gap: 6, marginBottom: 4 }}>
             <Tooltip text={lang === 'en'
-              ? 'Generate and copy the share code for the current build'
-              : 'Gerar e copiar o código de compartilhamento da build atual'}>
-              <button onClick={copyCode} style={{ ...btnNeutral, fontSize: 11 }}>
-                📋 {lang === 'en' ? 'Copy' : 'Copiar'}
+              ? 'Copy a link that opens the current build in the tool'
+              : 'Copiar um link que abre a build atual na ferramenta'}>
+              <button onClick={copyLink} style={{ ...btnNeutral, fontSize: 11 }}>
+                📋 {lang === 'en' ? 'Copy link' : 'Copiar link'}
               </button>
             </Tooltip>
             <Tooltip text={lang === 'en'
-              ? 'Load a build from the pasted share code'
-              : 'Carregar uma build pelo código colado'}>
+              ? 'Load a build from the pasted link or code (old codes still work)'
+              : 'Carregar uma build pelo link ou código colado (códigos antigos ainda valem)'}>
               <button onClick={loadCode} disabled={!shareCode}
                 style={{ ...btnAction('#2475ad'), opacity: shareCode ? 1 : 0.4, fontSize: 11 }}>
                 ⬆ {lang === 'en' ? 'Load' : 'Carregar'}
@@ -2191,7 +2193,7 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName, saves
 // ─── Gerador de texto de exportação ─────────────────────────────
 // mode: 'build' | 'detailed' | 'stats'
 // Retorna uma string formatada em Markdown plain-text (funciona em Discord, Reddit, etc.)
-function generateBuildText({ build, stats, lang, buildName, mode, includeShareCode }) {
+function generateBuildText({ build, stats, lang, buildName, mode, includeShareCode, shareLink }) {
   const L = lang === 'en'
   const cls = getClass(build.classId)
   if (!cls) return ''
@@ -2342,12 +2344,13 @@ function generateBuildText({ build, stats, lang, buildName, mode, includeShareCo
     }
   }
 
-  // ── Código de compartilhamento (opcional) ─────────────────
-  if (includeShareCode) {
+  // ── Link de compartilhamento (opcional) ───────────────────
+  // O link vem pronto do App (montado quando a build muda). Substituiu o código
+  // Base64: ~600 caracteres contra ~1.500, num Discord de 2.000 (DEC-038, E9).
+  if (includeShareCode && shareLink) {
     lines.push('')
     lines.push('─────────────────────────')
-    const code = encodeBuild(build, buildName || 'Build')
-    lines.push(L ? `Share Code: \`${code}\`` : `Código: \`${code}\``)
+    lines.push(`Link: ${shareLink}`)
   }
 
   return lines.join('\n')
@@ -3312,7 +3315,7 @@ async function generateBuildImage({ build, stats, lang, buildName, mode }) {
   })
 }
 // ─── ExportPanel — botões de copiar texto e gerar imagem ─────
-function ExportPanel({ build, stats, lang, buildName, includeShareCode }) {
+function ExportPanel({ build, stats, lang, buildName, includeShareCode, shareLink }) {
   const [feedback, setFeedback] = useState(null)
 
   // O nivel de detalhe e escolhido UMA vez e vale para os dois formatos.
@@ -3329,7 +3332,7 @@ function ExportPanel({ build, stats, lang, buildName, includeShareCode }) {
   const flash = (key) => { setFeedback(key); setTimeout(() => setFeedback(null), 1500) }
 
   const handleCopyText = () => {
-    const text = generateBuildText({ build, stats, lang, buildName, mode, includeShareCode })
+    const text = generateBuildText({ build, stats, lang, buildName, mode, includeShareCode, shareLink })
     navigator.clipboard.writeText(text)
       .then(() => flash('txt'))
       .catch(() => flash('txt'))  // copia mesmo se o clipboard falhou silenciosamente
@@ -3639,8 +3642,8 @@ function SettingsModal({
         {/* ── Opções de exportação */}
         <SectionTitle>{L ? 'Export Options' : 'Opções de Exportação'}</SectionTitle>
         <Tooltip text={L
-          ? 'When enabled, the Base64 share code is appended at the end of exported text. Useful for posts where others can load the build directly.'
-          : 'Quando ativado, o código Base64 de compartilhamento é adicionado ao final do texto exportado. Útil para posts onde outros podem carregar a build diretamente.'}>
+          ? 'When enabled, the share link is appended at the end of exported text. Whoever opens it gets the build loaded in the tool.'
+          : 'Quando ativado, o link de compartilhamento é adicionado ao final do texto exportado. Quem abrir o link recebe a build carregada na ferramenta.'}>
           <label style={{
             display: 'flex', alignItems: 'center', gap: 8,
             cursor: 'pointer', marginBottom: 14,
@@ -3651,8 +3654,8 @@ function SettingsModal({
             />
             <span style={{ fontSize: 12, color: T.text, lineHeight: 1.4 }}>
               {L
-                ? 'Include share code in exported text'
-                : 'Incluir código de compartilhamento no texto exportado'}
+                ? 'Include share link in exported text'
+                : 'Incluir link de compartilhamento no texto exportado'}
             </span>
           </label>
         </Tooltip>
@@ -3734,6 +3737,9 @@ export default function App() {
   // dele é atualizar; por cima de outro nome, pergunta (DEC-040)
   const openedNameRef = useRef(null)
   const [nameConflict, setNameConflict] = useState(null)   // { name, alt } ou null
+  // Link de compartilhamento da build aberta (Fatia 2): montado quando ela muda
+  const [shareLink, setShareLink] = useState('')
+  const openFromLinkRef = useRef()
 
   // ── Aplica tema ANTES de qualquer render (síncrono, single-thread)
   Object.assign(T, theme === 'dark' ? THEME_DARK : THEME_LIGHT)
@@ -3788,14 +3794,14 @@ export default function App() {
   const isDirty = () => JSON.stringify(build) !== baselineRef.current
 
   /** Troca a build aberta e oferece Desfazer por ~8 s, que volta a build E o nome (C1, C2, C5). */
-  const doOpen = (next, name) => {
+  const doOpen = (next, name, note) => {
     const prev = { build, name: buildName, baseline: baselineRef.current, opened: openedNameRef.current }
     setBuild(next)
     setBuildName(name || '')
     baselineRef.current = JSON.stringify(next)
     openedNameRef.current = name || null
     const label = name || tl('Sem nome', 'Unnamed')
-    showToast(tl(`Build "${label}" aberta`, `Build "${label}" opened`), {
+    showToast(tl(`Build "${label}" aberta`, `Build "${label}" opened`) + (note ? ` — ${note}` : ''), {
       label: tl('Desfazer', 'Undo'),
       run: () => {
         setBuild(prev.build)
@@ -3812,9 +3818,9 @@ export default function App() {
    * Porta única para abrir uma build que vem de fora da tela — clique num salvo,
    * «Carregar» código, «Importar e abrir». Só pergunta se houver alteração não salva (C3).
    */
-  const requestOpen = (next, name) => {
-    if (isDirty()) setPendingOpen({ build: next, name })
-    else doOpen(next, name)
+  const requestOpen = (next, name, note) => {
+    if (isDirty()) setPendingOpen({ build: next, name, note })
+    else doOpen(next, name, note)
   }
 
   /**
@@ -3865,7 +3871,7 @@ export default function App() {
       return
     }
     setPendingOpen(null)
-    doOpen(p.build, p.name)
+    doOpen(p.build, p.name, p.note)
   }
 
   /** Abre o modal em modo exportar, com todos os salvos marcados (D1). */
@@ -3897,6 +3903,55 @@ export default function App() {
     }
     openImportFile(files[0])
   }
+
+  // ── Link de compartilhamento (Fatia 2, DEC-038) ───────────────
+
+  /**
+   * Abre a build de um link ou código — o colado na gaveta ou o da barra de
+   * endereço — pela mesma porta do clique num salvo (requestOpen, WO C).
+   * @param {string} text
+   * @returns {Promise<boolean>} se abriu, ou se foi para a pergunta de alteração não salva
+   */
+  const openFromLink = async (text) => {
+    const r = await decodeBuildLink(text)
+    if (!r.ok) {
+      showToast(tl('✗ Link ou código inválido', '✗ Invalid link or code'))
+      return false
+    }
+    const note = !r.dropped ? ''
+      : r.dropped === 1
+        ? tl('1 item desta build não existe mais e ficou vazio', '1 item of this build no longer exists and was cleared')
+        : tl(`${r.dropped} itens desta build não existem mais e ficaram vazios`, `${r.dropped} items of this build no longer exist and were cleared`)
+    requestOpen(r.build, r.name || '', note)
+    return true
+  }
+  openFromLinkRef.current = openFromLink
+
+  // O link é montado quando a build ou o nome mudam, não no clique: a compressão
+  // é assíncrona, e o Safari recusa gravar na área de transferência depois de
+  // esperar uma promessa (análise 261116, Riscos).
+  useEffect(() => {
+    let alive = true
+    encodeBuildLink(build, buildName)
+      .then(code => { if (alive) setShareLink(`${window.location.origin}${window.location.pathname}#b=${code}`) })
+      .catch(() => { if (alive) setShareLink('') })
+    return () => { alive = false }
+  }, [build, buildName])
+
+  // Abrir pelo link: ao carregar a página e quando o fragmento muda com a
+  // ferramenta aberta. O #b= sai da barra logo depois de lido — senão recarregar
+  // a página reimportaria por cima do que a pessoa editou (análise 261116, Riscos).
+  useEffect(() => {
+    const read = () => {
+      const h = window.location.hash
+      if (!h.startsWith('#b=')) return
+      history.replaceState(null, '', window.location.pathname + window.location.search)
+      openFromLinkRef.current?.(h)
+    }
+    read()
+    window.addEventListener('hashchange', read)
+    return () => window.removeEventListener('hashchange', read)
+  }, [])
 
   // Arrasto de arquivo para qualquer ponto da tela (B1–B6). Sem isto o navegador
   // abre o arquivo NO LUGAR da ferramenta, e a build aberta se perde.
@@ -4109,6 +4164,7 @@ export default function App() {
             lang={lang}
             buildName={buildName}
             includeShareCode={includeShareCode}
+            shareLink={shareLink}
           />
         </div>
       </div>
@@ -4195,6 +4251,8 @@ export default function App() {
         onRequestExport={openExport}
         onOpenBuild={requestOpen}
         onSave={requestSave}
+        shareLink={shareLink}
+        onOpenLink={openFromLink}
       />
 
       {/* Modal de configurações */}

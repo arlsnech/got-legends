@@ -1222,7 +1222,7 @@ Depois da DEC-036, o push da `main` publicou a 1.0.0 no Netlify, na Vercel e no 
 
 ## DEC-038 — Entrada e saída de builds: um validador para todas as portas, e o pacote em três fatias
 
-**Data:** 2026-11-17 · **Status:** aceita · **Aplicada em parte pela** `wo0036` (Fatia 0) · **Análise:** `meta/analises/261116-ANALISE-entrada-e-saida-de-builds.md`
+**Data:** 2026-11-17 · **Status:** aceita · **Aplicada pelas** `wo0036` (Fatia 0), `wo0038`, `wo0041` e `wo0042` (Fatia 1) e `wo0044` (Fatia 2) · **Análise:** `meta/analises/261116-ANALISE-entrada-e-saida-de-builds.md`
 
 ### Contexto
 O dono escolheu a entrada e saída de builds como próxima frente e pediu análise com pesquisa de UX. A leitura do código derrubou a premissa de que toda build que entra passa por `deserializeBuild`: a importação de `.json` só conferia `build.classId`. Achou também perda de dado no uso comum — carregar uma build não trocava o nome no campo, e o Salvar seguinte gravava por cima de outra — e mediu que o validador aceitava build sem `gear` ou sem `techs`, que o cálculo não aguenta. Medido também: o código Base64 atual tem ~1.480 caracteres por build; só o `build`, comprimido, ~530.

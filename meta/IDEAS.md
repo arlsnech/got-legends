@@ -7,7 +7,7 @@
 ## 💡 Ideias Ativas — Usuário
 
 ### 2026-06 — URL compartilhável com build encodada
-**Status (2026-11-17):** aprovada na DEC-038, Fatia 2 — no fragmento (`#b=`), não na query string, e comprimida.
+**Status (2026-11-25):** implementada na `wo0044` (DEC-038, Fatia 2) — no fragmento (`#b=`), comprimida, com prefixo de versão; o código antigo segue aceito na leitura.
 Ao invés de copiar um código Base64 separado, o link já teria a build na query string (`?b=eyJ...`). Usuário abre o link e a build carrega automaticamente.
 
 ### 2026-06 — Mais opções de layout / temas visuais

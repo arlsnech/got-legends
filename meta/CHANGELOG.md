@@ -15,6 +15,8 @@
 - **Proteção da build aberta** (spec, seção C): abrir uma build — clique num salvo, «Carregar» código, «Importar e abrir» — mostra «Desfazer» no rodapé por ~8 segundos, que devolve a build e o nome de antes. Se a build aberta tem alterações não salvas, a ferramenta pergunta antes: «Salvar como…» (com aviso se o nome já existe), «Abrir sem salvar» ou «Cancelar». Mudar só o nome não conta como alteração.
 - **No modal da lista, a linha inteira marca e desmarca**, não só o quadradinho (pedido do dono).
 - **Salvar com o nome de outra build já salva pergunta antes** (DEC-040): «Substituir "X"» ou «Salvar como "X (2)"». Salvar por cima da build que está aberta continua direto, como atualização. Antes, o Salvar com nome repetido substituía a outra build sem aviso.
+- **Link de compartilhamento** (DEC-038, Fatia 2): «📋 Copiar link», na gaveta, copia um link que abre a build na ferramenta — `…#b=<código>`, com ~600 caracteres contra os ~1.500 do código antigo. Abrir o link carrega a build pela mesma proteção do clique num salvo (Desfazer, «Salvar como…»), e o `#b=` sai da barra de endereço logo depois. O campo da gaveta aceita o link inteiro, o código novo ou o código antigo. Item, técnica ou habilidade que não existe mais fica vazio, com aviso.
+- **O texto exportado passa a terminar com o link**, não com o código Base64 (interruptor nas Configurações, agora «Incluir link de compartilhamento»).
 
 ### Infraestrutura de repositório
 - **A `main` voltou a ser o branch de trabalho** (DEC-036): alcançou a `v2-planner` por avanço rápido, e a `v2-planner` foi aposentada.

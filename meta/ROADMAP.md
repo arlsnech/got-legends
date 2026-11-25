@@ -79,7 +79,7 @@
 
 - Layout mobile dedicado (1 coluna com tabs entre seções)
 - ~~Altura dinâmica do canvas na geração de imagem~~ — **feito na F3** (DEC-026, D2): sem isso o modo Detalhado cortava mais da metade do conteúdo, então virou requisito e não polimento
-- URL compartilhável com a build comprimida no fragmento (`#b=`) — **aprovada na DEC-038 (Fatia 2)**; a query string (`?b=`) foi descartada na análise de 2026-11-16
+- ~~URL compartilhável com a build comprimida no fragmento (`#b=`)~~ — **feito na `wo0044`** (DEC-038, Fatia 2); a query string (`?b=`) foi descartada na análise de 2026-11-16
 - Animações de transição suaves entre layouts
 - PWA: `manifest.json` + service worker para uso offline
 

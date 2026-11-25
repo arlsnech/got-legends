@@ -1194,6 +1194,114 @@ export function decodeBuild(code) {
   }
 }
 
+// ─── LINK DE COMPARTILHAMENTO (Fatia 2, DEC-038) ──────────────
+// O link leva só a build e o nome, comprimidos e em base64url, no fragmento
+// `#b=` — que não vai ao servidor. O prefixo de versão decide como ler: formato
+// novo é prefixo novo, NUNCA o mesmo prefixo com outro conteúdo, senão os links
+// já espalhados passam a abrir errado em silêncio.
+const LINK_CODE_V1 = '1.';
+
+/** Bytes → base64url (sem `+`, `/` nem `=`, que a URL quebraria). */
+function toBase64Url(bytes) {
+  let s = '';
+  bytes.forEach(b => { s += String.fromCharCode(b); });
+  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+/** base64url → bytes. Lança se o texto não for base64 — quem chama trata. */
+function fromBase64Url(text) {
+  const b64 = text.replace(/-/g, '+').replace(/_/g, '/');
+  const bin = atob(b64 + '='.repeat((4 - (b64.length % 4)) % 4));
+  return Uint8Array.from(bin, c => c.charCodeAt(0));
+}
+
+/** Passa bytes por um CompressionStream/DecompressionStream nativo (sem dependência). */
+async function pipeBytes(bytes, stream) {
+  const out = new Blob([bytes]).stream().pipeThrough(stream);
+  return new Uint8Array(await new Response(out).arrayBuffer());
+}
+
+/**
+ * Codifica a build para o link: build e nome em JSON, deflate-raw nativo e
+ * base64url, com prefixo de versão. Medido: ~530 caracteres, contra ~1.480 do
+ * código Base64 antigo (análise 261116, M2).
+ * @param {Object} build
+ * @param {string} name
+ * @returns {Promise<string>}
+ */
+export async function encodeBuildLink(build, name) {
+  const json = JSON.stringify({ n: name || '', b: build });
+  const packed = await pipeBytes(new TextEncoder().encode(json), new CompressionStream('deflate-raw'));
+  return LINK_CODE_V1 + toBase64Url(packed);
+}
+
+/**
+ * Tira o código de um texto colado: o link inteiro (`…#b=<código>`) ou só o código.
+ * @param {string} text
+ * @returns {string}
+ */
+export function extractShareCode(text) {
+  const t = (text || '').trim();
+  const i = t.indexOf('#b=');
+  return i >= 0 ? t.slice(i + 3) : t;
+}
+
+/**
+ * Esvazia o que a build cita e o data.js não tem mais — item de um slot,
+ * técnica, habilidade — e conta quantos foram. Build de link pode ter sido
+ * montada numa versão anterior da ferramenta; slot vazio com aviso é melhor que
+ * slot fantasma. NÃO confere propriedade e vantagem de item que existe.
+ * @param {Object} build  build já validada por deserializeBuild
+ * @returns {{ build: Object, dropped: number }}
+ */
+export function dropUnknownIds(build) {
+  const cls = getClass(build.classId);
+  let dropped = 0;
+  const gear = {};
+  for (const [slot, st] of Object.entries(build.gear)) {
+    if (st?.itemId && !getItem(st.itemId)) {
+      dropped++;
+      gear[slot] = slot === 'charm' ? { ...emptySlot(), linkedClass: build.classId } : emptySlot();
+    } else {
+      gear[slot] = st;
+    }
+  }
+  const techs = { ...build.techs };
+  for (const tier of Object.keys(techs)) {
+    if (techs[tier] && !cls.techs.some(t => t.id === techs[tier])) { dropped++; techs[tier] = null; }
+  }
+  let abilityId = build.abilityId;
+  if (abilityId && !cls.abilities.some(a => a.id === abilityId)) { dropped++; abilityId = null; }
+  return dropped ? { build: { ...build, gear, techs, abilityId }, dropped } : { build, dropped: 0 };
+}
+
+/**
+ * Lê um link ou código colado. Com o prefixo de versão, o formato novo; sem ele,
+ * o código Base64 antigo (decodeBuild), que segue aceito na leitura (DEC-038).
+ * Depois de validar, esvazia o que não existe mais (dropUnknownIds).
+ * @param {string} text  link inteiro, código novo ou código antigo
+ * @returns {Promise<{ ok: boolean, build?: Object, name?: string, dropped?: number, error?: string, code?: string }>}
+ */
+export async function decodeBuildLink(text) {
+  const code = extractShareCode(text);
+  let res;
+  if (code.startsWith(LINK_CODE_V1)) {
+    try {
+      const bytes = await pipeBytes(fromBase64Url(code.slice(LINK_CODE_V1.length)), new DecompressionStream('deflate-raw'));
+      const payload = JSON.parse(new TextDecoder().decode(bytes));
+      const r = deserializeBuild({ game: 'got-legends', build: payload?.b });
+      res = r.ok ? { ok: true, build: r.build, name: typeof payload.n === 'string' ? payload.n : '' } : r;
+    } catch {
+      return { ok: false, error: 'Código inválido ou corrompido.', code: 'bad_code' };
+    }
+  } else {
+    res = decodeBuild(code);
+  }
+  if (!res.ok) return res;
+  const { build, dropped } = dropUnknownIds(res.build);
+  return { ...res, build, dropped };
+}
+
 // ─── INFORMAÇÕES DE DISPLAY ───────────────────────────────────
 
 /**
