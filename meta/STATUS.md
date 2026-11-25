@@ -72,7 +72,7 @@ _Nada._
 - [ ] **Passada de defeitos e segurança por funcionalidade** (pedido do dono, 2026-11-16): uma `/sondar` por área, no Code. Ponto de partida medido em 2026-11-16: nenhum `dangerouslySetInnerHTML`, `innerHTML`, `eval` ou `new Function` em `src/`; as três entradas de dado externo passam por `JSON.parse` — os saves no `localStorage` (`App.jsx`), o arquivo importado (`App.jsx`) e o código Base64 (`logic.js`).
 
 - [ ] **Conferir na tela a WO C (`wo0042`)** — roteiro do chat (Desfazer por ~8 s, modal de alteração não salva, linha inteira do modal da lista).
-- [ ] **Nome repetido ao salvar** — aguarda decisão do dono (proposta em `meta/IDEAS.md`, «Salvar com um nome que já existe»); vira a próxima WO depois da decisão.
+- [ ] **Conferir na tela a WO D (`wo0043`, DEC-040)** — salvar com o nome de outra build abre o modal; por cima da build aberta grava direto; Esc cancela; Desfazer devolve o nome aberto.
 - [ ] **Fatia 2 da DEC-038:** link com a build comprimida no fragmento `#b=`, codigo antigo aceito na leitura, aviso de id desconhecido em `data.js`.
 - [ ] **Colar as Instruções no painel do Projeto — agora:** o `INSTRUCOES-DO-PROJETO.md` fundido em 2026-11-24 (`wo0040`, 6.840 caracteres de texto). O painel está anterior ao `9326145` e não tem a linha `Git só leitura (GIT_OPTIONAL_LOCKS=0)` (DEC-039). Do dono.
 - [ ] **README desatualizado:** manda abrir `localhost:5173/got-legends/` (o caminho-base local hoje é `/`), e a árvore de «Estrutura do Projeto» fala em `App.jsx` de ~1.2k linhas e não cita o `icons.js`. Achado em 2026-11-23.
@@ -165,3 +165,9 @@ Skills (`apply-wo`, `wrap`, `sondar`), molde de WO, `settings.json` e `meta/GUIA
 `src/App.jsx`: porta única `requestOpen` para clique num salvo, «Carregar» código e «Importar e abrir». Sem alteração não salva, troca direto e oferece «Desfazer» por ~8 s (volta build e nome); com alteração, `UnsavedModal` pergunta («Salvar como…», «Abrir sem salvar», «Cancelar», com aviso se o nome já existe). Alteração = `JSON.stringify(build)` difere do retrato (`baselineRef`) tirado ao abrir, salvar ou criar. O Salvar da gaveta passou a `saveCurrent` do `App`. No modal da lista a linha inteira marca/desmarca. Saiu o `window.__loadBuild`. `Toast` agora recebe `{ msg, action }`. Commit `c23c079`, build 0 erros (33 módulos).
 
 **Pendente:** conferência de tela pelo dono; decisão sobre nome repetido ao salvar (IDEAS). Fatia 2 da DEC-038 (link `#b=`) segue no backlog.
+
+### 2026-11-25 — Fatia 1, nome repetido ao salvar (wo0043, DEC-040)
+
+`src/App.jsx`: `NameConflictModal` e `requestSave`. O Salvar da gaveta grava direto com nome novo ou com o nome da build aberta (`openedNameRef`, definido ao abrir, salvar e desfazer); com o nome de outra build salva, pergunta «Substituir» × «Salvar como "Nome (2)"» × «Cancelar». CHANGELOG, DECISIONS (DEC-040) e IDEAS atualizados. Commit `55cace1`, empurrado; `npm run build` com 0 erros (33 módulos).
+
+**Fecha o «Pendente» da entrada da wo0042** (decisão sobre nome repetido). **Pendente:** conferência de tela pelo dono; Fatia 2 da DEC-038 (link `#b=`) segue no backlog.
