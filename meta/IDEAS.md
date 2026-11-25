@@ -42,7 +42,7 @@ Hoje o «Exportar JSON» do painel exporta a lista inteira. A ideia é exportar 
 Ordenar por nome (alfabético), por data de criação ou de edição; agrupar por classe; filtrar por classe, por equipamento presente, por vantagem ativa ou outra regra. O dono pediu que o assistente pese e **barre se for desnecessário**, com critério, estudo e pesquisa de UX. A pergunta que decide é **a partir de quantas builds salvas** uma lista simples deixa de servir. Observação técnica: hoje o save guarda só `createdAt`; ordenar por edição pede um campo novo (`updatedAt`) e cuidado com os saves antigos, que não o têm. Vai para a mesma análise.
 
 ### 2026-11 — Salvar com um nome que já existe: aviso ou renomear
-**Status (2026-11-24):** proposta do assistente aguardando decisão do dono `[proposto pelo assistente]`.
+**Status (2026-11-25):** aprovada pelo dono como proposta e implementada na `wo0043` (DEC-040).
 `[relatado pelo dono, nota 261124-0856]` Hoje o «Salvar» da gaveta com um nome que já existe substitui a build salva sem aviso; o dono quer «um renomear automático ou pelo menos um aviso», como a importação já faz. Proposta: salvar por cima **em silêncio só quando o nome é o da build que foi aberta** (é a atualização normal de quem carregou, editou e salvou); com o nome de OUTRA build salva, perguntar «Substituir "X"» × «Salvar como "X (2)"» × «Cancelar». Renomear sempre quebraria a atualização; avisar sempre cobraria confirmação em todo salvar. Peça para a próxima WO, depois da decisão.
 
 ---

@@ -1780,6 +1780,60 @@ function UnsavedModal({ incomingName, currentName, saves, lang, onSaveAndOpen, o
   )
 }
 
+/**
+ * Salvar com o nome de OUTRA build salva (pedido do dono, 2026-11-24; DEC-040):
+ * pergunta antes de substituir e oferece o próximo nome livre. Salvar por cima
+ * da build que está aberta não passa por aqui — é a atualização normal.
+ */
+function NameConflictModal({ name, altName, lang, onReplace, onSaveAs, onCancel }) {
+  const tx = (pt, en) => (lang === 'en' ? en : pt)
+
+  // Esc cancela sem gravar
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onCancel() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onCancel])
+
+  return (
+    <>
+      <div onClick={onCancel} style={{
+        position: 'fixed', inset: 0, zIndex: 800, background: 'rgba(0,0,0,0.55)',
+      }} />
+      {/* Centralização por flexbox, sem transform (FIX-011, armadilha 17) */}
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 900,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        pointerEvents: 'none',
+      }}>
+        <div role="dialog" aria-modal="true" style={{
+          pointerEvents: 'auto',
+          background: T.panel, border: `1px solid ${T.borderHov}`,
+          borderRadius: 13, padding: '16px 18px', width: 400, maxWidth: '92vw',
+          boxShadow: '0 20px 56px rgba(0,0,0,0.75)',
+        }}>
+          <div style={{ fontWeight: 700, fontSize: 14, color: T.text, marginBottom: 6 }}>
+            {tx('Nome já usado', 'Name already in use')}
+          </div>
+          <div style={{ fontSize: 12, color: T.muted, marginBottom: 14, lineHeight: 1.45 }}>
+            {tx(`Já existe outra build salva com o nome "${name}".`,
+                `Another saved build is already named "${name}".`)}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, flexWrap: 'wrap' }}>
+            <button onClick={onCancel} style={plainBtn()}>{tx('Cancelar', 'Cancel')}</button>
+            <button onClick={onReplace} style={btnAction(T.red)}>
+              {tx(`Substituir "${name}"`, `Replace "${name}"`)}
+            </button>
+            <button autoFocus onClick={onSaveAs} style={btnAction(T.accent)}>
+              {tx(`Salvar como "${altName}"`, `Save as "${altName}"`)}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
 // ─── SaveDrawer — painel lateral de gerenciamento de builds ──
 function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName, saves, writeSaves, onImportFile, onRequestExport, onOpenBuild, onSave }) {
   const [shareCode, setShareCode] = useState('')
@@ -1803,9 +1857,11 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName, saves
 
   const save = () => {
     const name = buildName.trim() || (lang === 'en' ? 'Unnamed' : 'Sem nome')
-    // A gravação é do App (saveCurrent): ela também marca a build como salva,
-    // que é o que a proteção da build aberta lê (WO C, spec C8).
-    if (!onSave(name)) {
+    // A gravação e a regra do nome repetido são do App (requestSave, DEC-040): por cima,
+    // em silêncio, só a build aberta; outra com o mesmo nome, o App pergunta e avisa.
+    const result = onSave(name)
+    if (result === 'asked') return
+    if (result === 'failed') {
       showFlash(lang === 'en' ? '✗ Could not write to browser storage' : '✗ Não foi possível gravar no navegador')
       return
     }
@@ -3674,6 +3730,10 @@ export default function App() {
   const baselineRef = useRef(null)
   if (baselineRef.current === null) baselineRef.current = JSON.stringify(build)
   const [pendingOpen, setPendingOpen] = useState(null)   // { build, name } ou null
+  // Nome com que a build aberta foi aberta ou salva pela última vez: salvar por cima
+  // dele é atualizar; por cima de outro nome, pergunta (DEC-040)
+  const openedNameRef = useRef(null)
+  const [nameConflict, setNameConflict] = useState(null)   // { name, alt } ou null
 
   // ── Aplica tema ANTES de qualquer render (síncrono, single-thread)
   Object.assign(T, theme === 'dark' ? THEME_DARK : THEME_LIGHT)
@@ -3729,10 +3789,11 @@ export default function App() {
 
   /** Troca a build aberta e oferece Desfazer por ~8 s, que volta a build E o nome (C1, C2, C5). */
   const doOpen = (next, name) => {
-    const prev = { build, name: buildName, baseline: baselineRef.current }
+    const prev = { build, name: buildName, baseline: baselineRef.current, opened: openedNameRef.current }
     setBuild(next)
     setBuildName(name || '')
     baselineRef.current = JSON.stringify(next)
+    openedNameRef.current = name || null
     const label = name || tl('Sem nome', 'Unnamed')
     showToast(tl(`Build "${label}" aberta`, `Build "${label}" opened`), {
       label: tl('Desfazer', 'Undo'),
@@ -3740,6 +3801,7 @@ export default function App() {
         setBuild(prev.build)
         setBuildName(prev.name)
         baselineRef.current = prev.baseline
+        openedNameRef.current = prev.opened
         clearTimeout(toastTimer.current)
         setToast(null)
       },
@@ -3765,7 +3827,34 @@ export default function App() {
     const entry = serializeBuild(build, name)
     if (!writeSaves([entry, ...saves.filter(s => s.name !== name)])) return false
     baselineRef.current = JSON.stringify(build)
+    openedNameRef.current = name
     return true
+  }
+
+  /**
+   * O Salvar da gaveta (DEC-040). Por cima, em silêncio, só a build que está
+   * aberta — quem carregou, editou e salvou está atualizando. Com o nome de
+   * OUTRA build salva, pergunta («Substituir» × «Salvar como "Nome (2)"»).
+   * @returns {'saved'|'asked'|'failed'}
+   */
+  const requestSave = (name) => {
+    const taken = saves.some(s => s.name === name)
+    if (taken && name !== openedNameRef.current) {
+      setNameConflict({ name, alt: freeName(name, new Set(saves.map(s => s.name))) })
+      return 'asked'
+    }
+    return saveCurrent(name) ? 'saved' : 'failed'
+  }
+
+  /** Resposta do modal de nome repetido: grava com o nome escolhido e o põe no campo. */
+  const resolveConflict = (finalName) => {
+    setNameConflict(null)
+    if (!saveCurrent(finalName)) {
+      showToast(tl('✗ Não foi possível gravar no navegador', '✗ Could not write to browser storage'))
+      return
+    }
+    setBuildName(finalName)
+    showToast(tl(`✓ "${finalName}" salvo`, `✓ "${finalName}" saved`))
   }
 
   /** Resposta do modal de alterações não salvas: com nome, salva antes de abrir (C4); sem, só abre (C5). */
@@ -4105,7 +4194,7 @@ export default function App() {
         onImportFile={openImportFile}
         onRequestExport={openExport}
         onOpenBuild={requestOpen}
-        onSave={saveCurrent}
+        onSave={requestSave}
       />
 
       {/* Modal de configurações */}
@@ -4146,6 +4235,18 @@ export default function App() {
           onSaveAndOpen={(name) => resolvePending(name)}
           onOpen={() => resolvePending()}
           onCancel={() => setPendingOpen(null)}
+        />
+      )}
+
+      {/* Nome repetido ao salvar pela gaveta (DEC-040) */}
+      {nameConflict && (
+        <NameConflictModal
+          name={nameConflict.name}
+          altName={nameConflict.alt}
+          lang={lang}
+          onReplace={() => resolveConflict(nameConflict.name)}
+          onSaveAs={() => resolveConflict(nameConflict.alt)}
+          onCancel={() => setNameConflict(null)}
         />
       )}
 

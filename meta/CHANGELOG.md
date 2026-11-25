@@ -14,6 +14,7 @@
 - Aviso no rodapé da tela para o que acontece fora da gaveta.
 - **Proteção da build aberta** (spec, seção C): abrir uma build — clique num salvo, «Carregar» código, «Importar e abrir» — mostra «Desfazer» no rodapé por ~8 segundos, que devolve a build e o nome de antes. Se a build aberta tem alterações não salvas, a ferramenta pergunta antes: «Salvar como…» (com aviso se o nome já existe), «Abrir sem salvar» ou «Cancelar». Mudar só o nome não conta como alteração.
 - **No modal da lista, a linha inteira marca e desmarca**, não só o quadradinho (pedido do dono).
+- **Salvar com o nome de outra build já salva pergunta antes** (DEC-040): «Substituir "X"» ou «Salvar como "X (2)"». Salvar por cima da build que está aberta continua direto, como atualização. Antes, o Salvar com nome repetido substituía a outra build sem aviso.
 
 ### Infraestrutura de repositório
 - **A `main` voltou a ser o branch de trabalho** (DEC-036): alcançou a `v2-planner` por avanço rápido, e a `v2-planner` foi aposentada.

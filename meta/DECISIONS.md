@@ -1268,3 +1268,26 @@ O dono descompactou o pacote v1.155.0 em 2026-11-20. Antes de comparar: versão 
 - Até a Fatia 2, as quatro seções que o pacote passou para o GUIA existem nos DOIS arquivos: o GUIA (do kit, v1.155.0) e o CEREBRO vivo (v1.142.0). Vale o GUIA; a Fatia 2 as tira do CEREBRO.
 - Cinco dos seis carimbos dizem v1.155.0; o do CEREBRO sobe na Fatia 2. A pasta do pacote fica na pasta-pai até lá.
 - As Instruções coladas no painel do Projeto estão anteriores ao `9326145` (a fusão de 2026-11-15): o painel não tem a linha `Git só leitura (GIT_OPTIONAL_LOCKS=0)`. A Fatia 2 entrega o arquivo novo, e o dono cola no painel.
+
+---
+
+## DEC-040 — Salvar por cima só em silêncio para a build que está aberta
+
+**Data:** 2026-11-25 · **Status:** aceita · **Aplicada pela** `wo0043`
+
+### Contexto
+O «Salvar» da gaveta deduplica por nome: salvar com um nome que já existe substituía a outra build sem aviso. O dono pediu, em 2026-11-24 (nota `261124-0856`), «um renomear automático ou pelo menos um aviso», como a importação já fazia (DEC-038, A4). Mas salvar por cima do próprio nome é o uso normal de quem abre uma build, edita e salva.
+
+### Decisão
+Aprovada pelo dono em 2026-11-25 `[relatado pelo dono]`:
+- Salvar com um nome que **não** existe, ou com o nome com que a build aberta foi **aberta ou salva pela última vez**, grava direto.
+- Salvar com o nome de **outra** build salva abre um modal: «Substituir "X"» × «Salvar como "X (2)"» (o próximo nome livre, a mesma regra da importação) × «Cancelar».
+- O «nome aberto» é lembrado pelo `App` ao abrir (salvo, código, importar e abrir) e ao salvar, e o «Desfazer» da troca também o devolve.
+
+### Alternativas consideradas
+- **Renomear sempre** — descartado: quebraria a atualização de quem carregou e editou.
+- **Avisar sempre** — descartado: cobraria uma confirmação em todo salvar, o uso mais comum da gaveta.
+
+### Consequências
+- O «Salvar como…» do modal de alterações não salvas (WO C) não muda: ele já avisa, antes de confirmar, quando o nome existe.
+- Uma build aberta por código com o nome de uma salva conta como «a build aberta»: salvar por cima é direto.
