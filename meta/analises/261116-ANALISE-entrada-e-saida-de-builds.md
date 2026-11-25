@@ -1,6 +1,6 @@
 # ANÁLISE — Entrada e saída de builds
 
-> **Status:** Decidida — em 2026-11-17 o dono aprovou o pacote como está (DEC-038). A Fatia 0 é a `wo0036`.
+> **Status:** Implementada — pacote aprovado pelo dono em 2026-11-17 (DEC-038): Fatia 0 `wo0036`, Fatia 1 `wo0038`/`wo0041`/`wo0042`, Fatia 2 `wo0044`; tudo conferido na tela pelo dono até 2026-11-25.
 > **Data:** 2026-11-16 (data de criação; não muda depois)
 > **Origem:** backlog do `STATUS.md` (próxima frente escolhida pelo dono em 2026-11-16); `IDEAS.md` — «Importar build arrastando um `.json`», «Exportar só as builds escolhidas», «Filtrar, ordenar e agrupar as builds salvas», «URL compartilhável», «QR Code» e «Onde vive o compartilhamento por link» (2026-07-27); `ROADMAP.md` F4 e F5.
 > **Marcas de origem:** `[medido]` = lido no código ou rodado nesta conversa · `[relatado pelo dono]` · `[estimativa]` = raciocínio sem medição · `[pesquisa]` = fonte externa, listada em «Fontes».

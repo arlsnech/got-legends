@@ -24,7 +24,7 @@ Seção "Builds populares" com presets curados do meta atual. Usuário clica e c
 Gerar um QR Code da URL compartilhável direto na ferramenta para facilitar compartilhamento mobile.
 
 ### 2026-11 — Importar build arrastando um `.json` para a tela
-**Status (2026-11-17):** aprovada na DEC-038, Fatia 1. Importar não abre nada por padrão — responde à pergunta em aberto do dono abaixo. A frase «todas passam pela mesma validação» era premissa e era falsa para o arquivo (análise, M1); a Fatia 0 a tornou verdadeira.
+**Status (2026-11-25):** implementada (`wo0041`, `wo0042`) e conferida na tela pelo dono. aprovada na DEC-038, Fatia 1. Importar não abre nada por padrão — responde à pergunta em aberto do dono abaixo. A frase «todas passam pela mesma validação» era premissa e era falsa para o arquivo (análise, M1); a Fatia 0 a tornou verdadeira.
 Soltar o arquivo em qualquer ponto da ferramenta, com o painel lateral aberto ou não, carrega a build quando o arquivo for compatível — o mesmo caminho do «Importar JSON» do painel de saves. Vai para a análise de compartilhamento por link como mais uma via de ENTRADA de build: todas passam pela mesma validação (`deserializeBuild`). Lacunas a decidir lá: arquivo com várias builds (o export do painel é uma lista), substituir a build aberta com ou sem confirmação, e o aviso bilíngue de arquivo incompatível.
 
 **Decisões preliminares do dono (2026-11-16) `[relatado pelo dono]`**, para a análise confirmar ou recusar com UX:
@@ -34,7 +34,7 @@ Soltar o arquivo em qualquer ponto da ferramenta, com o painel lateral aberto ou
 - **Aviso de arquivo incompatível:** aceita a recomendação (aviso bilíngue).
 
 ### 2026-11 — Exportar só as builds escolhidas
-**Status (2026-11-17):** aprovada na DEC-038, Fatia 1 — o mesmo componente de lista da importação.
+**Status (2026-11-25):** implementada (`wo0041`) e conferida na tela pelo dono — o mesmo componente de lista da importação.
 Hoje o «Exportar JSON» do painel exporta a lista inteira. A ideia é exportar **uma build específica** ou **marcar quais** exportar, com UI/UX prática. Par natural do modal de importação seletiva — o mesmo componente de lista com seleção pode servir aos dois sentidos. Vai para a mesma análise.
 
 ### 2026-11 — Filtrar, ordenar e agrupar as builds salvas

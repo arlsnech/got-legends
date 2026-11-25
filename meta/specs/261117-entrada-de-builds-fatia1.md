@@ -1,6 +1,6 @@
 # SPEC — Entrada de builds, Fatia 1: lista com seleção, arrasto e proteção da build aberta
 
-> **Status:** Aprovada pelo dono em 2026-11-17, como está. WO A = `wo0038`. Único ajuste depois da aprovação: o aviso de rodapé passou da WO A para a WO B, onde é usado pela primeira vez (na WO A seria código sem uso, impossível de conferir na tela).
+> **Status:** Implementada e conferida na tela pelo dono (2026-11-25) — WO A `wo0038`, WO B `wo0041`, WO C `wo0042`. Aprovada em 2026-11-17, como está. WO A = `wo0038`. Único ajuste depois da aprovação: o aviso de rodapé passou da WO A para a WO B, onde é usado pela primeira vez (na WO A seria código sem uso, impossível de conferir na tela).
 > **Data:** 2026-11-17
 > **Origem:** `meta/analises/261116-ANALISE-entrada-e-saida-de-builds.md` (eixos E4 a E7), decidida na DEC-038. A Fatia 0 (`wo0036`) já está aplicada e conferida.
 > **Marcas:** `[medido]` = lido no código neste turno · `[decisão da spec]` = escolha técnica minha, que o dono pode trocar ao aprovar.

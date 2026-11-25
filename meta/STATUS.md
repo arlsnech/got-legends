@@ -47,8 +47,8 @@
 
 ## 🔧 Em Progresso
 
-- **Produto:** entrada e saída de builds (DEC-038). Fatia 0 (`wo0036`) e WO A da Fatia 1 (`wo0038`) aplicadas e conferidas na tela pelo dono; WO B (`wo0041`, modal de lista, arrasto de `.json`, aviso de rodapé) aplicada em 2026-11-24 e **ainda sem conferência de tela**; WO C (`wo0042`, Desfazer, «Salvar como…» e linha inteira clicável no modal) aplicada em 2026-11-25 e **também sem conferência de tela** — com ela, a Fatia 1 está toda no código; a Fatia 2 (link `#b=`, `wo0044`, 2026-11-25) também está no código e **sem conferência de tela**. Spec da Fatia 1 em `meta/specs/261117-entrada-de-builds-fatia1.md`.
-- **Kit:** template-update v1.155.0 **fechado** (DEC-039) — Fatia 1 na `wo0039`, Fatia 2 na `wo0040`; os seis carimbos dizem v1.155.0. Falta só o dono colar as Instruções no painel (backlog).
+- **Produto:** entrada e saída de builds (DEC-038) **concluída e conferida na tela pelo dono** — Fatia 0 (`wo0036`), Fatia 1 (`wo0038`, `wo0041`, `wo0042`), Fatia 2 (`wo0044`, o link `#b=`) e a regra do nome repetido ao salvar (`wo0043`, DEC-040). Nada em curso: próxima frente a escolher (ver backlog).
+- **Kit:** template-update v1.155.0 **fechado** (DEC-039) — Fatia 1 na `wo0039`, Fatia 2 na `wo0040`; os seis carimbos dizem v1.155.0. As Instruções novas estão no painel do Projeto `[medido pelo chat em 2026-11-24: a sessão abriu com o texto que começa em «## Ritual de início de turno», com a linha do GIT_OPTIONAL_LOCKS=0]`.
 
 ---
 
@@ -71,10 +71,6 @@ _Nada._
 - [ ] **O botão Texto mostra ✓ mesmo quando a cópia falha** (`handleCopyText`, `App.jsx`: o `.catch` também chama `flash('txt')`). Quando falha, o que se cola é o texto anterior, sem aviso. Achado em 2026-11-16.
 - [ ] **Passada de defeitos e segurança por funcionalidade** (pedido do dono, 2026-11-16): uma `/sondar` por área, no Code. Ponto de partida medido em 2026-11-16: nenhum `dangerouslySetInnerHTML`, `innerHTML`, `eval` ou `new Function` em `src/`; as três entradas de dado externo passam por `JSON.parse` — os saves no `localStorage` (`App.jsx`), o arquivo importado (`App.jsx`) e o código Base64 (`logic.js`).
 
-- [ ] **Conferir na tela a WO C (`wo0042`)** — roteiro do chat (Desfazer por ~8 s, modal de alteração não salva, linha inteira do modal da lista).
-- [ ] **Conferir na tela a WO D (`wo0043`, DEC-040)** — salvar com o nome de outra build abre o modal; por cima da build aberta grava direto; Esc cancela; Desfazer devolve o nome aberto.
-- [ ] **Conferir na tela a Fatia 2 (`wo0044`, DEC-038)** — «Copiar link» → colar o link numa aba nova: abre a build, `#b=` some da barra; link com alteração não salva abre a pergunta; código Base64 antigo ainda carrega no campo; link/código lixo mostra «✗ Link ou código inválido»; texto exportado termina com `Link:`.
-- [ ] **Colar as Instruções no painel do Projeto — agora:** o `INSTRUCOES-DO-PROJETO.md` fundido em 2026-11-24 (`wo0040`, 6.840 caracteres de texto). O painel está anterior ao `9326145` e não tem a linha `Git só leitura (GIT_OPTIONAL_LOCKS=0)` (DEC-039). Do dono.
 - [ ] **README desatualizado:** manda abrir `localhost:5173/got-legends/` (o caminho-base local hoje é `/`), e a árvore de «Estrutura do Projeto» fala em `App.jsx` de ~1.2k linhas e não cita o `icons.js`. Achado em 2026-11-23.
 - [ ] **Botões neutros não acompanham o tema claro:** `btnNeutral` (e `btnSmall`) são objetos de módulo, montados com o `T` da carga (tema escuro), e não mudam com o tema — os botões «Exportar», «Importar» e «Copiar» da gaveta ficam escuros no tema claro. Os componentes da WO B usam um estilo lido no render (`plainBtn`). Achado em 2026-11-24, lendo o código; **não conferido na tela**.
 
@@ -177,3 +173,15 @@ Skills (`apply-wo`, `wrap`, `sondar`), molde de WO, `settings.json` e `meta/GUIA
 `src/logic.js`: `encodeBuildLink`/`decodeBuildLink` (deflate-raw nativo + base64url, prefixo `1.`), `extractShareCode`, `dropUnknownIds`. `src/App.jsx`: «Copiar link» na gaveta (link montado num `useEffect` quando a build muda, por causa do Safari), `openFromLink` pela porta `requestOpen`, leitura do `#b=` ao carregar e no `hashchange` (a barra é limpa com `replaceState`), texto exportado termina com `Link:`. Código antigo segue aceito na leitura. Commit `dcd5f77`, empurrado; build 0 erros (33 módulos); prova de vida: `1. true true Teste 0 true Velho bad_code`.
 
 **Pendente:** conferência de tela pelo dono. Não conferido: propriedade/vantagem de item que existe (fora de escopo); o ✓ falso do Texto segue no backlog.
+
+### 2026-11-25 — Chat: entrada e saída de builds conferida na tela (wo0045)
+
+Fatos que só existiam no chat, com a origem:
+- **WO B (`wo0041`):** roteiro 1–15 ok — `[relatado pelo dono, 2026-11-24]`.
+- **WO C (`wo0042`):** roteiro 1–14 ok — `[relatado pelo dono, 2026-11-25]`.
+- **WO D (`wo0043`, DEC-040):** roteiro 1–9 ok — `[relatado pelo dono, 2026-11-25]`.
+- **Fatia 2 (`wo0044`):** roteiro 1–10 ok, incluindo Safari e o site publicado; o texto exportado no nível Estatístico, com o link, **coube no limite de 2.000 caracteres do Discord** — `[relatado pelo dono, 2026-11-25]`. Era o item da tabela de Riscos da análise que o chat não conseguira medir.
+- **Instruções no painel:** coladas `[medido pelo chat em 2026-11-24, pela sessão aberta com o texto novo]`. Sai do backlog.
+- A análise `261116` e a spec da Fatia 1 passam a «Implementada». Sem mudança de código.
+
+**Pendente:** escolher a próxima frente (backlog) e decidir se a entrada e saída de builds fecha a versão 1.1.0.
