@@ -182,3 +182,9 @@ Fatos que só existiam no chat, com a origem:
 - A análise `261116` e a spec da Fatia 1 passam a «Implementada». Sem mudança de código.
 
 **Pendente:** escolher a próxima frente (backlog) e decidir se a entrada e saída de builds fecha a versão 1.1.0.
+
+### 2026-11-26 — wo0047: ✗ em Texto/Imagem, botões no tema claro, README
+
+Commit `9b8a42e`, empurrado. Os botões Texto e Imagem mostram ✗ quando a cópia ou a geração falha (antes ✓ falso); `btnSmall` e `btnNeutral` leem o tema por getters e os ▲▼ do `PropInput` espalham o estilo; README (endereço local, árvore, saves, link da build de exemplo) e CHANGELOG atualizados. Os 3 itens correspondentes saíram do backlog. Build 0 erros.
+
+**Pendente:** o dono conferir na tela — tema claro (▲▼, Exportar, Importar, Copiar link) e o ✗ do Texto com a área de transferência negada. O tema claro estava «não conferido na tela» no backlog e segue assim até essa conferência.
