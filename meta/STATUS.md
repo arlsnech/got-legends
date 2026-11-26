@@ -66,9 +66,11 @@ _Nada._
 
 ## 📋 Backlog (curto prazo — acionáveis no próximo turno)
 
-- [ ] **`DECISIONS.md` com 1.173 linhas** (limiar ~700): mover as entradas antigas para `DECISIONS-archive.md`. Curadoria do chat.
+- [ ] **`DECISIONS.md` com 1.293 linhas** `[medido pelo chat em 2026-11-26, wc -l]` (limiar ~700): mover as entradas antigas para `DECISIONS-archive.md`. Curadoria do chat.
 - [ ] **Cópias soltas de `GUIA_COMPLETO*.md`** em `notas-arquivadas\` (pasta-pai): as duas têm o mesmo md5 (`7fa3bda4…`) que `meta/legacy/GUIA_COMPLETO_v4.md` no Git, antes de `c232da3` — que a tirou da árvore. O conteúdo está salvo no histórico; apagar ou manter é decisão do dono.
-- [ ] **Passada de defeitos e segurança por funcionalidade** (pedido do dono, 2026-11-16): uma `/sondar` por área, no Code. Ponto de partida medido em 2026-11-16: nenhum `dangerouslySetInnerHTML`, `innerHTML`, `eval` ou `new Function` em `src/`; as três entradas de dado externo passam por `JSON.parse` — os saves no `localStorage` (`App.jsx`), o arquivo importado (`App.jsx`) e o código Base64 (`logic.js`).
+- [ ] **Passada de defeitos e segurança por funcionalidade** (pedido do dono, 2026-11-16): uma `/sondar` por área, no Code. Ponto de partida medido em 2026-11-16: nenhum `dangerouslySetInnerHTML`, `innerHTML`, `eval` ou `new Function` em `src/`; as três entradas de dado externo passam por `JSON.parse` — os saves no `localStorage` (`App.jsx`), o arquivo importado (`App.jsx`) e o código Base64 (`logic.js`). Desde a 1.1.0 há uma quarta: o link `#b=` (`decodeBuildLink`, `logic.js`).
+- [ ] **«💬 Última Sessão» voltou a crescer:** 18 entradas desde a reescrita de 2026-11-15 (contando a desta WO) `[medido pelo chat em 2026-11-26]`, contra o «rolante» do cabeçalho. Decidir: a `/wrap` passa a substituir a entrada anterior em vez de acrescentar, ou o chat enxuga a cada N entradas (movendo para `STATUS-archive.md`). Pergunta aberta desde o brief de 2026-11-16, só agora registrada.
+- [ ] **`npm run deploy` no `package.json`:** quebra no Windows (DEC-016) e deixou de ser necessário com o workflow do GitHub Pages (DEC-037); segue no `deny` do `.claude/settings.json`. Remover o script ou mantê-lo — decisão do dono. Aberta desde o brief de 2026-11-16.
 
 
 ---
@@ -188,3 +190,14 @@ Fatos que só existiam no chat, com a origem:
 Commit `9b8a42e`, empurrado. Os botões Texto e Imagem mostram ✗ quando a cópia ou a geração falha (antes ✓ falso); `btnSmall` e `btnNeutral` leem o tema por getters e os ▲▼ do `PropInput` espalham o estilo; README (endereço local, árvore, saves, link da build de exemplo) e CHANGELOG atualizados. Os 3 itens correspondentes saíram do backlog. Build 0 erros.
 
 **Pendente:** o dono conferir na tela — tema claro (▲▼, Exportar, Importar, Copiar link) e o ✗ do Texto com a área de transferência negada. O tema claro estava «não conferido na tela» no backlog e segue assim até essa conferência.
+
+### 2026-11-26 — Chat: a 1.1.0 conferida na tela e a transferência de conversa (wo0048)
+
+Fatos que só existiam no chat, com a origem:
+- **Roteiro de tela da `wo0047`, itens 1–6: todos certos** — `[relatado pelo dono, 2026-11-26]`. No tema claro, «Exportar», «Importar» e «Copiar link» da gaveta e os −/+ das propriedades ficam claros, e voltam a escuros ao trocar o tema sem recarregar; «📋 Texto» mostra ✓ na cópia e ✗ na falha; o link do README abre «O Samurai Contra-Ataca» no site; a tag `v1.1.0` aparece no GitHub. **Fecha o «Pendente» da entrada acima.** Não testado: a falha da Imagem (difícil de provocar).
+- **Tag `v1.1.0` no remoto** também `[medido por instrumento]`: `git ls-remote --tags origin v1.1.0` no relatório da `wo0046` (objeto `d399f1e`, apontando para `3cfe99e`).
+- **Defeito do chat na `wo0047`:** o passo 3 da conferência saiu com o marcador `CHECKS` do gerador no lugar das contagens; o Code relatou e seguiu (o build e o `git diff --stat` cobriram). Regra em IDEAS, «🔧 Correções de processo».
+- **Backlog:** contagem do `DECISIONS.md` atualizada; entram as duas perguntas abertas desde o brief de 2026-11-16 (`Última Sessão` crescendo e `npm run deploy`).
+- **Transferência:** a conversa fecha aqui; a próxima abre pelo `261126-HANDOFF-BRIEF.md` da pasta-pai.
+
+**Pendente:** escolher a próxima frente (backlog). Nada pendente de aplicação.

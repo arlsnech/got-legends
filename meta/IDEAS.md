@@ -266,6 +266,14 @@ Nos prompts antigos o autor cogitou **remover o modo Estatístico** caso desse t
 
 ## 🔧 Correções de processo
 
+### 2026-11-26 — Marcador do gerador que sobra na WO, e idempotência por prefixo
+
+**O marcador.** O chat monta as WOs com um gerador que troca marcadores (`CHECKS` e outros) pelo texto final. Na `wo0047`, o do passo 3 da conferência não foi trocado e a WO saiu com a palavra `CHECKS` sozinha, sem contagens. A simulação não pegou porque lê só os blocos de âncora e texto novo, não a WO inteira. Sem dano: o Code relatou e conferiu pelo build e pelo `git diff --stat`.
+**Regra que fica:** antes de entregar uma WO gerada, procure no texto final os marcadores do gerador (`grep -nE '\b[A-Z_]{4,}\b'` e olhar o que não é sigla conhecida). Faz parte da simulação, não de uma releitura opcional.
+
+**A idempotência por prefixo.** A Ed. 11 da `wo0047` trocava `…/got-legends/` por `…/`: o texto novo era prefixo da âncora, e o script do Code concluiu «já aplicada» porque achou o texto novo no arquivo. Aplicou à mão.
+**Regra que fica:** idempotência se confere pelos dois lados — o texto novo está lá **e** a âncora saiu. Quem escreve a WO avisa quando o texto novo contém a âncora ou é prefixo dela (a `wo0048` avisa).
+
 ### 2026-11-17 — Fim de linha se mede com o Git, não com o shell
 
 A `wo0036` avisou que `src/` e `meta/` estão em CRLF na árvore de trabalho. O relatório de aplicação disse que não («crlf=0 por wc/grep»), e o log do dia gravou isso como aprendizado. Remedido pelo chat no mesmo dia, com dois instrumentos que concordam: `git ls-files --eol src/App.jsx` → `i/lf w/crlf`, e `grep -c $'\r$'` → 3.611 linhas com CR em `App.jsx`, 1.581 em `logic.js`, 1.243 em `DECISIONS.md`. Só `STATUS.md` e o log do dia, regravados pelo Code, estão em LF. A causa da leitura errada não foi apurada (suspeita, não conferida: o `grep` do Git Bash não vê o `\r` como o do Linux). Sem dano: as âncoras de uma linha casam nos dois casos — e foi por isso que a WO as usou.
