@@ -21,7 +21,7 @@ A ferramenta permite montar completamente um personagem de Ghost of Tsushima: Le
 - **CDR de Armas Fantasma calculado individualmente** — CDR própria da arma ≠ CDR global do amuleto
 - **Card do Supremo** com variantes selecionáveis (Ronin), golpes e modificadores
 - **Toggle PT-BR ↔ EN** em tempo real
-- **Sistema de saves**: salvar/carregar localmente, exportar/importar .json, compartilhar por código
+- **Sistema de saves**: salvar/carregar localmente, importar e exportar `.json` escolhendo as builds (também arrastando o arquivo para a tela), desfazer a troca de build, compartilhar por link
 
 ---
 
@@ -31,14 +31,21 @@ A ferramenta permite montar completamente um personagem de Ghost of Tsushima: Le
 got-legends/
 ├── index.html
 ├── package.json
-├── vite.config.js
+├── vite.config.js        — caminho-base pelo VITE_BASE_URL (o GitHub Pages usa /got-legends/)
 ├── tailwind.config.js
 ├── postcss.config.js
+├── netlify.toml · vercel.json · public/_redirects — rota única da SPA em cada host
+├── .github/workflows/
+│   └── deploy-gh-pages.yml — publica o GitHub Pages a cada push na main
+├── public/
+│   └── icons/            — SVGs de classe, equipamento e armas fantasma; PNGs das técnicas
+├── meta/                 — documentos de contexto do projeto (estado, decisões, changelog)
 └── src/
     ├── main.jsx          — ponto de entrada React
-    ├── App.jsx           — interface completa (~1.2k linhas)
-    ├── data.js           — banco de dados do jogo (~1.1k linhas)
-    ├── logic.js          — motor de cálculo de stats (~1.5k linhas)
+    ├── App.jsx           — interface completa
+    ├── data.js           — banco de dados do jogo
+    ├── logic.js          — motor de cálculo, validação e link de compartilhamento
+    ├── icons.js          — mapeamento id → ícone
     └── index.css         — estilos base
 ```
 
@@ -56,7 +63,7 @@ npm install
 
 # 3. Rodar em desenvolvimento
 npm run dev
-# Acesse: http://localhost:5173/got-legends/
+# Acesse: http://localhost:5173/
 ```
 
 > **Requisitos:** Node.js 18+ e npm
@@ -87,10 +94,10 @@ npm run dev
 
 ## 📁 Builds de Exemplo
 
-### Códigos de Compartilhamento (Base64)
+### Links de compartilhamento
 #### [O Samurai Contra-Ataca] — **Samurai**
 Build focada no contra-ataque da katana Ira de Sarugami
-<br>*[copie o código abaixo, e então cole-o e carregue]*
+<br>**[Abrir esta build na ferramenta](https://arlsnech.github.io/got-legends/#b=1.hZPNjpwwEIRfZdVnEmVITtyiPc0phzxAqzA94OAf1DaziVa8e2RYZWB_MjdUXZjPXcUzBWrox8NP-FlhHx5jyIpP3zMMqKKWmmcyDimdO2oobS6qCK11Nv9ZVQdvA1h-Ty4mey3vaQw2cKuCPFATZucqymKGVM47U0N9dJMknjReqKLzP4nNrKtQlMusFjzADJy_0lJRL9BywoiMgPJks_gVwio4QecevvBNpzKdNE7r9BeCODAmaKSKrnCzUPPl86leKprqg7dDiGzWPeytq1N0PFFD25RtyNbTJtfU0BRTnhXsZhRaReilO1BCTSxXzPEtY48wRO4kc2dTPlC-hbyK4ywhIX7E6OfAEq47vKLgYguaGaD-SOZnJznyLeL3V2jure9lN-YjLrXZRzYqyezYXvqAVkKRnQ2jdI-leLvalQY8nV4tVMVLSpGz6BrY-9jjPWyVjlUM908nHq1zN_-3Hbx4NgM8Un2IvVPbIW589YHPoIVBiRx5-zVe8ZXvro3r7yR-A6z_A1jqozJJyHvCVlrbgS9Rs9CyLMtf)** · ou copie o código abaixo (formato antigo, ainda aceito) e cole no campo «Link de Compartilhamento» da gaveta
 ```
 eyJ2ZXJzaW9uIjoiMS4wIiwiZ2FtZSI6ImdvdC1sZWdlbmRzIiwiaWQiOiJtbzhzM2NrcWN0MXEyIiwibmFtZSI6Ik8gU2FtdXJhaSBDb250cmEtQXRhY2EiLCJjcmVhdGVkQXQiOiIyMDI2LTA0LTIxVDE1OjI4OjIxLjA5OFoiLCJidWlsZCI6eyJjbGFzc0lkIjoic2FtdXJhaSIsImFiaWxpdHlJZCI6ImxhbWluYV9leHBsb3NpdmEiLCJyb25pbl9icmVhdGgiOm51bGwsInRlY2hzIjp7IkkiOiJnb2xwZXNfcHJvZiIsIklJIjoiZ29scGVfY3VyIiwiSUlJIjoiZnVyaWFfaGFjaF90MyJ9LCJnZWFyIjp7ImthdGFuYSI6eyJpdGVtSWQiOiJpcmFfc2FydWdhbWkiLCJwMSI6eyJwcm9wSWQiOiJqYW5lbGFfYXBhcm8iLCJ2YWx1ZSI6MC4xMn0sInAyIjp7InByb3BJZCI6ImRhbm9fY29udHJhIiwidmFsdWUiOjAuMn0sInBlcmsxIjoiY29udHJhX2ludGltIiwicGVyazIiOiJwb3N0dXJhX2x1YSJ9LCJyYW5nZWQiOnsiaXRlbUlkIjoiYXJjb19jdXJ0byIsInAxIjp7InByb3BJZCI6ImdhbmhvX2RldF9kaXN0IiwidmFsdWUiOjAuMX0sInAyIjp7InByb3BJZCI6InZlbF90ZW5zYW8iLCJ2YWx1ZSI6MC4yfSwicGVyazEiOiJtdW5fZW52IiwicGVyazIiOiJtdW5fYWZpIn0sImNoYXJtIjp7Iml0ZW1JZCI6ImFtdWxldG9fc2FtdXJhaSIsInAxIjp7InByb3BJZCI6ImphbmVsYV9jIiwidmFsdWUiOjAuMTJ9LCJwMiI6eyJwcm9wSWQiOiJjb250cmFfYyIsInZhbHVlIjowLjJ9LCJwZXJrMSI6InJpdG1vX2NyZXNjIiwicGVyazIiOiJnb2xwZXNfYWJlbmMiLCJsaW5rZWRDbGFzcyI6InNhbXVyYWkifSwiZ3cxIjp7Iml0ZW1JZCI6ImFycmVtZXNzb190ZXJyYSIsInAxIjp7InByb3BJZCI6ImphbmVsYV9rIiwidmFsdWUiOjAuMTJ9LCJwMiI6eyJwcm9wSWQiOiJyZWRfcmVjX2d3MV9raWxsIiwidmFsdWUiOjR9LCJwZXJrMSI6ImVtX2NoYW1hczIiLCJwZXJrMiI6InBvZHJpZGFvIn0sImd3MiI6eyJpdGVtSWQiOiJjYWJhY2FfY3VyYXRpdmEiLCJwMSI6eyJwcm9wSWQiOiJyZWRfZGFub19nIiwidmFsdWUiOjAuMX0sInAyIjp7InByb3BJZCI6InJlZF9yZWNfZ3cyX2tpbGwiLCJ2YWx1ZSI6NH0sInBlcmsxIjoiZGV0X3JlcGVudDIiLCJwZXJrMiI6ImJlYmlkYV9mb3J0ZSJ9fX19
 

@@ -7,7 +7,12 @@
 
 ## [Não lançado]
 
-_Nada ainda._
+### Corrigido
+- **Os botões Texto e Imagem mostram ✗ quando falham.** Antes mostravam ✓ mesmo quando a cópia ou a geração da imagem falhava, e quem colava levava o texto anterior sem saber.
+- **Os botões ▲▼ das propriedades e «Exportar», «Importar» e «Copiar link» da gaveta acompanham o tema claro.** Os estilos deles guardavam as cores do tema escuro da carga da página.
+
+### Documentação
+- README: endereço local (`localhost:5173/`), estrutura do projeto, o sistema de saves e o link da build de exemplo.
 
 ---
 

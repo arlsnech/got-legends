@@ -333,7 +333,7 @@ function PropInput({ item, propState, onPropChange, onValueChange, slot, propSlo
               <button
                 onClick={() => step(-1)}
                 aria-label={lang === 'en' ? 'Decrease value' : 'Diminuir valor'}
-                style={btnSmall}
+                style={{ ...btnSmall }}
               >−</button>
               <input
                 type="text"
@@ -358,7 +358,7 @@ function PropInput({ item, propState, onPropChange, onValueChange, slot, propSlo
               <button
                 onClick={() => step(1)}
                 aria-label={lang === 'en' ? 'Increase value' : 'Aumentar valor'}
-                style={btnSmall}
+                style={{ ...btnSmall }}
               >+</button>
             </div>
           )
@@ -368,8 +368,15 @@ function PropInput({ item, propState, onPropChange, onValueChange, slot, propSlo
   )
 }
 
+// Os dois estilos de botão do módulo usam getters nas cores: são lidos no render,
+// então seguem o tema ativo (o T é mutado a cada render do App). Como objeto literal,
+// guardavam as cores do tema escuro da carga da página e não mudavam no tema claro.
+// Quem os usa espalha ({ ...btnSmall }) — uma referência nova a cada render, senão o
+// React vê o mesmo objeto e não reaplica o estilo quando o tema muda.
 const btnSmall = {
-  background: T.card, border: `1px solid ${T.border}`, color: T.text,
+  get background() { return T.card },
+  get border() { return `1px solid ${T.border}` },
+  get color() { return T.text },
   borderRadius: 4, width: 22, height: 22, cursor: 'pointer',
   fontSize: 14, fontWeight: 600, lineHeight: 1, paddingBottom: 1,
   display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -1293,7 +1300,9 @@ const btnAction = (color) => ({
 })
 
 const btnNeutral = {
-  background: T.cardHov, border: `1px solid ${T.borderHov}`, color: T.text,
+  get background() { return T.cardHov },
+  get border() { return `1px solid ${T.borderHov}` },
+  get color() { return T.text },
   borderRadius: 6, padding: '6px 12px', cursor: 'pointer', fontSize: 12,
   fontWeight: 600, whiteSpace: 'nowrap',
 }
@@ -3335,7 +3344,9 @@ function ExportPanel({ build, stats, lang, buildName, includeShareCode, shareLin
     const text = generateBuildText({ build, stats, lang, buildName, mode, includeShareCode, shareLink })
     navigator.clipboard.writeText(text)
       .then(() => flash('txt'))
-      .catch(() => flash('txt'))  // copia mesmo se o clipboard falhou silenciosamente
+      // Falha da área de transferência (permissão negada, aba sem foco) mostra ✗: com ✓
+      // aqui, quem colava levava o texto ANTERIOR sem saber (backlog de 2026-11-16).
+      .catch(() => flash('txt-err'))
   }
 
   const handleGenImage = () => {
@@ -3345,7 +3356,7 @@ function ExportPanel({ build, stats, lang, buildName, includeShareCode, shareLin
         // A exportacao e o unico ponto que lanca se o canvas estiver
         // contaminado — o drawImage nao lanca. Ver DEC-026, D7.
         console.error('Falha ao gerar a imagem da build:', err)
-        flash('img')
+        flash('img-err')   // o mesmo ✓ falso do Texto, na Imagem
       })
   }
 
@@ -3457,7 +3468,7 @@ function ExportPanel({ build, stats, lang, buildName, includeShareCode, shareLin
           ? 'Downloads a PNG of the build at the selected detail level'
           : 'Baixa um PNG da build no nível de detalhe selecionado'}>
           <button onClick={handleGenImage} style={bGen('img', '#6c5ce7')}>
-            {feedback === 'img' ? '✓' : `🖼️ ${L ? 'Image' : 'Imagem'}`}
+            {feedback === 'img' ? '✓' : feedback === 'img-err' ? '✗' : `🖼️ ${L ? 'Image' : 'Imagem'}`}
           </button>
         </Tooltip>
 
@@ -3465,7 +3476,7 @@ function ExportPanel({ build, stats, lang, buildName, includeShareCode, shareLin
           ? 'Copies the build as text at the selected detail level'
           : 'Copia a build como texto no nível de detalhe selecionado'}>
           <button onClick={handleCopyText} style={bGen('txt', T.accent)}>
-            {feedback === 'txt' ? '✓' : `📋 ${L ? 'Text' : 'Texto'}`}
+            {feedback === 'txt' ? '✓' : feedback === 'txt-err' ? '✗' : `📋 ${L ? 'Text' : 'Texto'}`}
           </button>
         </Tooltip>
       </div>
