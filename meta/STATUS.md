@@ -9,7 +9,7 @@
 
 ## Versão Atual
 
-**[1.0.0]** — 2026-11-15 — primeira versão estável, com tag Git `v1.0.0`. Fecha F1–F3 do ROADMAP: planejador, exportação em texto e exportação em imagem (Fase 3, com painel de exportação reconstruído e custo do Supremo em pips). Na `main` desde 2026-11-16, que voltou a ser o branch de trabalho (DEC-036).
+**[1.1.0]** — 2026-11-26 — entrada e saída de builds (DEC-038) e nome repetido ao salvar (DEC-040), conferidos na tela pelo dono; tag Git `v1.1.0` na `main`. A anterior, **[1.0.0]** (2026-11-15), fechou F1–F3 do ROADMAP: planejador, exportação em texto e em imagem.
 
 ---
 

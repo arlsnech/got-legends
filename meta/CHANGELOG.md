@@ -7,6 +7,14 @@
 
 ## [Não lançado]
 
+_Nada ainda._
+
+---
+
+## [1.1.0] — 2026-11-26
+
+> Entrada e saída de builds (DEC-038): importar e exportar escolhendo as builds, arrastar um `.json` para a tela, proteção da build aberta (Desfazer e «Salvar como…») e o link de compartilhamento no lugar do código Base64; mais a regra do nome repetido ao salvar (DEC-040). Tudo conferido na tela pelo dono. Também o template-update do kit v1.155.0 (DEC-039), sem efeito no produto. Tag Git `v1.1.0` no commit desta versão, na `main`.
+
 ### Adicionado
 - **Importar escolhendo quais builds** (DEC-038, spec `meta/specs/261117-entrada-de-builds-fatia1.md`): o «⬆ Importar» abre uma lista com as builds do arquivo, todas marcadas; as que não abrem aparecem desmarcadas, com o motivo; nome repetido oferece «Manter as duas» (a importada vira «Nome (2)») ou «Substituir»; uma build idêntica a uma salva vem desmarcada. «Importar N para os salvos» não troca a build aberta; com uma marcada, «Importar e abrir».
 - **Arrastar um `.json` para qualquer ponto da tela** abre a mesma lista, com a gaveta aberta ou fechada. Antes, soltar um arquivo na página fazia o navegador abri-lo no lugar da ferramenta.
