@@ -9,7 +9,7 @@ Leia `meta/CEREBRO.md` -> `meta/CONTEXT.md` -> `meta/STATUS.md` antes de agir. C
 
 ## O que este projeto e
 SPA React 18 + Vite 5, sem backend. Planejador de builds de Ghost of Tsushima: Legends, bilingue PT-BR/EN.
-Quatro arquivos carregam tudo: `src/App.jsx` (UI inteira, ~2500 linhas), `src/data.js` (banco do jogo),
+Quatro arquivos carregam tudo: `src/App.jsx` (UI inteira, o maior arquivo), `src/data.js` (banco do jogo),
 `src/logic.js` (motor de calculo), `src/icons.js` (mapa id -> icone). Detalhe em `meta/CONTEXT.md`.
 
 ## Build / validacao

@@ -66,9 +66,13 @@ _Nada._
 
 ## 📋 Backlog (curto prazo — acionáveis no próximo turno)
 
-- [ ] **`DECISIONS.md` com 1.293 linhas** `[medido pelo chat em 2026-11-26, wc -l]` (limiar ~700): mover as entradas antigas para `DECISIONS-archive.md`. Curadoria do chat.
+- [ ] **C1 — saves do navegador lidos sem validação (provável tela quebrada)** `[hipótese do Code, /sondar de 2026-11-27, pela leitura do código; não reproduzida no navegador]`: `useSavedBuilds` faz `setSaves(JSON.parse(raw))` sem conferir que é uma lista de builds. Um valor como `null`, `{}` ou `[null]` na chave `gotlegends_v1_builds` faria `saves.length`/`saves.map` lançar erro no render, e não há `ErrorBoundary`: a tela inteira cairia. Conferir antes de consertar, **numa janela anônima** (o teste troca os saves).
 - [ ] **Cópias soltas de `GUIA_COMPLETO*.md`** em `notas-arquivadas\` (pasta-pai): as duas têm o mesmo md5 (`7fa3bda4…`) que `meta/legacy/GUIA_COMPLETO_v4.md` no Git, antes de `c232da3` — que a tirou da árvore. O conteúdo está salvo no histórico; apagar ou manter é decisão do dono.
-- [ ] **Passada de defeitos e segurança por funcionalidade** (pedido do dono, 2026-11-16): uma `/sondar` por área, no Code. Ponto de partida medido em 2026-11-16: nenhum `dangerouslySetInnerHTML`, `innerHTML`, `eval` ou `new Function` em `src/`; as três entradas de dado externo passam por `JSON.parse` — os saves no `localStorage` (`App.jsx`), o arquivo importado (`App.jsx`) e o código Base64 (`logic.js`). Desde a 1.1.0 há uma quarta: o link `#b=` (`decodeBuildLink`, `logic.js`).
+- [ ] **C2 — valor de propriedade fora da faixa passa ao abrir uma build** `[medido pelo Code, fuzz em Node, /sondar de 2026-11-27]`: em item não Magistral, `deserializeBuild` aceita `'abc'` (o dano vira `NaN`), `1e9`, `-500` e `'5'` (texto). Decisão do dono: descartar a propriedade com aviso, ou prender o valor à faixa mínima–máxima do item.
+- [ ] **C3/C4 — só o link limpa id que não existe** `[medido pelo Code, /sondar de 2026-11-27]`: `dropUnknownIds` roda só em `decodeBuildLink`; o salvo e o `.json` importado não passam por ele. E ele não confere `ronin_breath`, `perk1`/`perk2`, `propId` nem `linkedClass`.
+- [ ] **C5 — a mesma estatística em P1 e P2 do mesmo item é aceita na entrada** `[medido pelo Code, fuzz, /sondar de 2026-11-27]` (o dano dobra); o gerador 🎲 impede isso. Confirmar com o dono se o jogo permite.
+- [ ] **C6 — o «~530 caracteres» do link não tem comando que o reproduza** `[medido pelo Code: build vazia dá 222]`. Não é defeito: falta o script que mede o link de N builds aleatórias.
+- A passada de defeitos e segurança por área (pedido do dono, 2026-11-16) teve a primeira área feita: as quatro entradas de dado (`/sondar` de 2026-11-27). Sem achado: o prefixo `1.` não colide com o Base64 antigo, lixo no link sempre dá `bad_code` sem exceção, o link e o código do README abrem. Outras áreas, quando o dono pedir.
 - [ ] **«💬 Última Sessão» voltou a crescer:** 18 entradas desde a reescrita de 2026-11-15 (contando a desta WO) `[medido pelo chat em 2026-11-26]`, contra o «rolante» do cabeçalho. Decidir: a `/wrap` passa a substituir a entrada anterior em vez de acrescentar, ou o chat enxuga a cada N entradas (movendo para `STATUS-archive.md`). Pergunta aberta desde o brief de 2026-11-16, só agora registrada.
 - [ ] **`npm run deploy` no `package.json`:** quebra no Windows (DEC-016) e deixou de ser necessário com o workflow do GitHub Pages (DEC-037); segue no `deny` do `.claude/settings.json`. Remover o script ou mantê-lo — decisão do dono. Aberta desde o brief de 2026-11-16.
 
@@ -201,3 +205,10 @@ Fatos que só existiam no chat, com a origem:
 - **Transferência:** a conversa fecha aqui; a próxima abre pelo `261126-HANDOFF-BRIEF.md` da pasta-pai.
 
 **Pendente:** escolher a próxima frente (backlog). Nada pendente de aplicação.
+
+### 2026-11-27 — Chat: o DECISIONS dividido e a /sondar das entradas de dado (wo0049)
+
+- **`meta/DECISIONS.md` dividido** (curadoria do chat, critério por evento do CEREBRO): dez entradas foram movidas sem edição para `meta/DECISIONS-archive.md`, que diz o motivo de cada uma; o vivo passou de 1.293 para 1.052 linhas `[medido pelo chat, wc -l]`. Ficou acima do alarme de ~700 porque o resto está em vigor. **Fecha o item do backlog.**
+- **`/sondar` das quatro entradas de dado** rodada pelo dono no Code `[relatório 261127-1533, pasta-pai]`: o backlog troca o item da passada pelos candidatos C1–C6. O C7 (número velho de linhas no `CLAUDE.md` e no CONTEXT) foi resolvido nesta WO.
+
+**Pendente:** conferir o C1 numa janela anônima; decidir o C2 (descartar ou prender à faixa) e responder o C5.

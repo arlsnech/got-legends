@@ -48,9 +48,9 @@ Planejador de builds para **Ghost of Tsushima: Legends** — modo cooperativo do
 ```
 projeto/
 ├── src/
-│   ├── App.jsx       — UI completa (~2539 linhas). Todos os componentes em um arquivo só.
-│   ├── data.js       — Banco de dados do jogo (~1051 linhas). Classes, gear, perks, props.
-│   ├── logic.js      — Motor de cálculo e estado (~1499 linhas). computeStats, serialização, labels.
+│   ├── App.jsx       — UI completa. Todos os componentes em um arquivo só (4.339 linhas em 2026-11-27; `wc -l` dá o atual).
+│   ├── data.js       — Banco de dados do jogo. Classes, gear, perks, props.
+│   ├── logic.js      — Motor de cálculo e estado. computeStats, serialização, labels.
 │   ├── icons.js      — Mapeamento item_id → URL de ícone. Separado do App para fácil manutenção.
 │   ├── index.css     — Apenas @tailwind directives + reset mínimo.
 │   └── main.jsx      — Entrypoint React (ReactDOM.createRoot).

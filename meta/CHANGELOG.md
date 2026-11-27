@@ -13,6 +13,7 @@
 
 ### Documentação
 - README: endereço local (`localhost:5173/`), estrutura do projeto, o sistema de saves e o link da build de exemplo.
+- `meta/DECISIONS.md` dividido: dez entradas de evento fechado foram para `meta/DECISIONS-archive.md`, sem edição. A numeração DEC/FIX é uma só para os dois arquivos.
 
 ---
 
