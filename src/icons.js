@@ -203,9 +203,9 @@ export const CLASS_TECH_FALLBACK = {
 }
 
 // ─── LOGO ─────────────────────────────────────────────────────
-// Se tiver PNG: '/icons/logo/tsushima_logo.png'
-// Se tiver SVG: '/icons/logo/tsushima_logo.svg'
-export const LOGO_URL = '/icons/logo/tsushima_logo.png'
+// Segue o caminho-base, como os outros ícones (DEC-037): fixo em '/icons/...',
+// o logo da aba da gaveta dava 404 no GitHub Pages (visto em 2026-11-27).
+export const LOGO_URL = `${BASE}icons/logo/tsushima_logo.png`
 
 // ─── HELPERS ──────────────────────────────────────────────────
 export function getGearIconUrl(item) {

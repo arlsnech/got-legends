@@ -1050,3 +1050,30 @@ Aprovada pelo dono em 2026-11-25 `[relatado pelo dono]`:
 ### Consequências
 - O «Salvar como…» do modal de alterações não salvas (WO C) não muda: ele já avisa, antes de confirmar, quando o nome existe.
 - Uma build aberta por código com o nome de uma salva conta como «a build aberta»: salvar por cima é direto.
+
+---
+
+## DEC-041 — A build que entra é consertada na leitura: faixa da propriedade, P2 repetido e salvos ilegíveis
+
+**Data:** 2026-11-27 · **Status:** aceita · **Aplicada pela** `wo0050`
+
+### Contexto
+A `/sondar` das quatro entradas de dado (2026-11-27) devolveu, entre outros, três candidatos que mexem no que a pessoa vê. **C1:** os salvos do navegador eram lidos com `setSaves(JSON.parse(raw))`, sem conferir que eram uma lista; a gaveta e o modal usam `saves.length` e `saves.map`, e não há `ErrorBoundary`. **C2:** em item não Magistral, `deserializeBuild` aceitava valor de propriedade fora da faixa, `NaN` e texto — no fuzz, `'abc'` virou `NaN` no dano. **C5:** a mesma estatística em P1 e P2 do mesmo item passava na entrada, e o dano dobrava; o gerador 🎲 já impedia.
+
+O teste do C1 pelo dono «abriu normal» `[relatado pelo dono]` porque a gaveta não é renderizada fechada (`if (!open) return null`): a tela cairia ao abri-la, não ao carregar a página. O C1 ficou confirmado pela leitura do código e, em 2026-11-28, na tela: com o site ainda sem o conserto (a `wo0050` tinha sido recusada pelo `/apply-wo`), abrir a gaveta deu tela branca e `TypeError: Cannot read properties of null (reading 'length')` no console `[captura do dono]`. O link de teste do C2 abriu, no mesmo site, com Dano Corpo a Corpo em +100000000000% `[captura do dono]`.
+
+### Decisão
+Escolhas do dono em 2026-11-27 `[relatado pelo dono]`:
+- **C1 — guardar cópia e seguir.** `readSaves` aceita só uma lista JSON e tira dela o que não é objeto. Se o gravado não é uma lista, a lista começa vazia, o texto vai para `gotlegends_v1_builds_backup` e um aviso diz isso. O próximo Salvar grava por cima do ilegível, mas a cópia fica.
+- **C2 — prender à faixa.** `clampPropValues`, chamado por `deserializeBuild`: número fora da faixa vira o mínimo ou o máximo do item (com folga de `1e-9` para resíduo de ponto flutuante); o que não é número finito deixa a propriedade vazia.
+- **C5 — o jogo não permite** a mesma estatística (`sk`) em P1 e P2: o P2 repetido fica vazio.
+- Como tudo passa por `deserializeBuild`, as quatro portas — salvo, `.json`, código antigo e link — recebem o conserto. Abrir um salvo e abrir um link ou código avisam no rodapé quantas propriedades foram ajustadas.
+
+### Alternativas consideradas
+- **C1, só ignorar** o gravado ilegível: o primeiro Salvar apagaria o conteúdo sem deixar cópia.
+- **C2, descartar com aviso** em vez de prender: perderia uma propriedade que só precisava voltar à faixa.
+
+### Consequências
+- A importação de `.json` também ajusta, mas **sem aviso**: o modal lista as builds, não as abre. «Importar e abrir» também não avisa.
+- Medido na simulação `[medido pelo chat, Node]`: 800 builds de `randomBuild` passam sem nenhum ajuste; as 420 propriedades de classe dos amuletos com `classBinding`, no máximo, também; o link de exemplo do README abre com 0 ajustes.
+- Item ou propriedade que o `data.js` não tem continua fora deste conserto (C3/C4 do backlog).

@@ -9,6 +9,9 @@
 
 ### Corrigido
 - **Os botões Texto e Imagem mostram ✗ quando falham.** Antes mostravam ✓ mesmo quando a cópia ou a geração da imagem falhava, e quem colava levava o texto anterior sem saber.
+- **Salvos ilegíveis no navegador não derrubam mais a tela ao abrir a gaveta** (DEC-041). A lista começa vazia, uma cópia do conteúdo fica em `gotlegends_v1_builds_backup` e um aviso diz isso.
+- **Valor de propriedade fora da faixa, ao abrir uma build, volta à faixa do item** (DEC-041); o que não é número fica vazio, e a mesma estatística em P1 e P2 do mesmo item deixa o P2 vazio. Abrir um salvo, um código ou um link avisa quantas propriedades foram ajustadas.
+- **O logo da aba da gaveta aparece no GitHub Pages.** Era o único ícone sem o caminho-base (DEC-037) e dava 404.
 - **Os botões ▲▼ das propriedades e «Exportar», «Importar» e «Copiar link» da gaveta acompanham o tema claro.** Os estilos deles guardavam as cores do tema escuro da carga da página.
 
 ### Documentação

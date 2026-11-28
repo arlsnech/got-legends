@@ -1391,21 +1391,49 @@ function BookmarkTab({ open, onToggle, lang }) {
 // Mora no App, e não na gaveta: o arrasto de .json (Fatia 1, WO B) precisa
 // gravar com a gaveta fechada (spec 261117, «Decisões de design»).
 const STORAGE_KEY = 'gotlegends_v1_builds'
+// Cópia do conteúdo ilegível, para não perder nada quando o próximo Salvar
+// gravar a lista nova por cima (DEC-041).
+const STORAGE_BACKUP_KEY = 'gotlegends_v1_builds_backup'
+
+/**
+ * Lê a lista de salvos gravada. A gaveta e o modal usam `saves.length` e
+ * `saves.map` sem conferir: um valor que não seja lista (`null`, `{}`, texto
+ * quebrado) derrubava a tela ao abrir a gaveta (C1 da /sondar de 2026-11-27).
+ * Entrada que não é objeto sai da lista; build inválida segue listada e é
+ * recusada ao abrir, como antes (deserializeBuild).
+ * @param {string} raw  o texto do localStorage
+ * @returns {Object[]|null}  null se o texto não é JSON de uma lista
+ */
+function readSaves(raw) {
+  let parsed
+  try { parsed = JSON.parse(raw) } catch { return null }
+  if (!Array.isArray(parsed)) return null
+  return parsed.filter(s => s !== null && typeof s === 'object' && !Array.isArray(s))
+}
 
 /**
  * Lista de builds salvas e a gravação dela no localStorage.
- * @returns {{ saves: Object[], writeSaves: (list: Object[]) => boolean }}
+ * @returns {{ saves: Object[], writeSaves: (list: Object[]) => boolean, corrupt: boolean }}
  *   writeSaves grava primeiro e só então atualiza a lista; devolve false se o
  *   navegador recusar (cota cheia, armazenamento bloqueado). Quem chama avisa.
+ *   corrupt: o gravado era ilegível; a lista começa vazia e uma cópia foi para
+ *   STORAGE_BACKUP_KEY. Quem chama avisa.
  */
 function useSavedBuilds() {
   const [saves, setSaves] = useState([])
+  const [corrupt, setCorrupt] = useState(false)
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      if (raw) setSaves(JSON.parse(raw))
-    } catch {}
+    let raw = null
+    try { raw = localStorage.getItem(STORAGE_KEY) } catch { return }
+    if (!raw) return
+    const list = readSaves(raw)
+    if (list) {
+      setSaves(list)
+      return
+    }
+    try { localStorage.setItem(STORAGE_BACKUP_KEY, raw) } catch {}
+    setCorrupt(true)
   }, [])
 
   const writeSaves = (list) => {
@@ -1418,7 +1446,24 @@ function useSavedBuilds() {
     return true
   }
 
-  return { saves, writeSaves }
+  return { saves, writeSaves, corrupt }
+}
+
+/**
+ * Aviso de propriedades ajustadas ao abrir uma build (DEC-041), para o rodapé.
+ * @param {number} fixed  contagem de clampPropValues
+ * @param {string} lang
+ * @returns {string}  vazio quando nada mudou
+ */
+function fixedNote(fixed, lang) {
+  if (!fixed) return ''
+  const en = lang === 'en'
+  if (fixed === 1) {
+    return en ? '1 property was out of the item\'s range and was adjusted'
+      : '1 propriedade estava fora da faixa do item e foi ajustada'
+  }
+  return en ? `${fixed} properties were out of the item's range and were adjusted`
+    : `${fixed} propriedades estavam fora da faixa do item e foram ajustadas`
 }
 
 // ─── Entrada e saída de builds (Fatia 1, WO B — spec 261117) ──
@@ -1882,7 +1927,7 @@ function SaveDrawer({ open, onClose, build, lang, buildName, setBuildName, saves
     if (r.ok) {
       // A troca, o nome junto (D1), o Desfazer e a pergunta de alteração não salva
       // são do App (requestOpen, WO C)
-      onOpenBuild(r.build, entry.name || '')
+      onOpenBuild(r.build, entry.name || '', fixedNote(r.fixed, lang))
     } else {
       showFlash(lang === 'en' ? '✗ Error loading' : '✗ Erro ao carregar')
     }
@@ -3732,7 +3777,7 @@ export default function App() {
   const [includeShareCode, setIncludeShareCode] = useState(false)
   const [theme,            setTheme]            = useState('dark')
   // Builds salvas: do App, não da gaveta — o arrasto da WO B grava com ela fechada
-  const { saves, writeSaves } = useSavedBuilds()
+  const { saves, writeSaves, corrupt } = useSavedBuilds()
   // Entrada e saída de builds (WO B): modal da lista, aviso de rodapé e arrasto
   const [listModal, setListModal] = useState(null)   // { mode, rows, id } ou null
   const [toast,     setToast]     = useState(null)
@@ -3767,6 +3812,15 @@ export default function App() {
     setToast({ msg, action })
     toastTimer.current = setTimeout(() => setToast(null), ms)
   }
+
+  // Salvos ilegíveis (DEC-041): a lista começa vazia, e o aviso diz onde ficou a cópia
+  useEffect(() => {
+    if (!corrupt) return
+    showToast(tl(
+      `✗ Os salvos deste navegador estavam ilegíveis. Uma cópia ficou em ${STORAGE_BACKUP_KEY}`,
+      `✗ The saved builds in this browser were unreadable. A copy was kept in ${STORAGE_BACKUP_KEY}`,
+    ), null, 10000)
+  }, [corrupt])
 
   /** Lê o arquivo escolhido ou solto e abre o modal; arquivo estranho só avisa (A8). */
   const openImportFile = (file) => {
@@ -3929,10 +3983,11 @@ export default function App() {
       showToast(tl('✗ Link ou código inválido', '✗ Invalid link or code'))
       return false
     }
-    const note = !r.dropped ? ''
+    const droppedNote = !r.dropped ? ''
       : r.dropped === 1
         ? tl('1 item desta build não existe mais e ficou vazio', '1 item of this build no longer exists and was cleared')
         : tl(`${r.dropped} itens desta build não existem mais e ficaram vazios`, `${r.dropped} items of this build no longer exist and were cleared`)
+    const note = [droppedNote, fixedNote(r.fixed, lang)].filter(Boolean).join(' · ')
     requestOpen(r.build, r.name || '', note)
     return true
   }

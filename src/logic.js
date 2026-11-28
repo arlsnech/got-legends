@@ -1131,6 +1131,61 @@ function hasBuildShape(build) {
   });
 }
 
+// Folga para comparar com os limites da faixa: valor gravado pelos steppers
+// pode chegar com resíduo de ponto flutuante (0.12000000000000001) e não
+// deve contar como ajuste.
+const RANGE_EPS = 1e-9;
+
+/**
+ * Conserta, na leitura, as propriedades de uma build vinda de fora — salvo,
+ * arquivo, código ou link (DEC-041). Número fora da faixa do item vira o mínimo
+ * ou o máximo; o que não é número finito deixa a propriedade vazia; P2 com a
+ * mesma estatística (`sk`) do P1 fica vazia, porque o jogo não permite e o
+ * cálculo somaria as duas. Item ou propriedade que o data.js não tem não é
+ * conferido aqui (C3/C4 do backlog). O item Magistral já chega no máximo por
+ * normalizeLegendaryProps.
+ * @param {Object} build  build com a forma mínima (hasBuildShape)
+ * @returns {{ build: Object, fixed: number }}  fixed = propriedades ajustadas
+ */
+export function clampPropValues(build) {
+  let fixed = 0;
+  const gear = {};
+  for (const [slotName, slot] of Object.entries(build.gear)) {
+    gear[slotName] = slot;
+    if (!slot.itemId) continue;
+    // Amuleto com classBinding: as propriedades de classe só existem no item efetivo
+    const item = slotName === 'charm'
+      ? getEffectiveCharm(slot.itemId, slot.linkedClass)
+      : getItem(slot.itemId);
+    if (!item) continue;
+
+    let next = slot;
+    let p1Sk = null;
+    for (const ps of ['p1', 'p2']) {
+      const { propId, value } = next[ps];
+      if (!propId) continue;
+      const def = item.props.find(p => p.id === propId);
+      if (!def) continue;
+      let v = value;
+      if (typeof v !== 'number' || !Number.isFinite(v)) v = null;
+      else if (v < def.mn - RANGE_EPS) v = def.mn;
+      else if (v > def.mx + RANGE_EPS) v = def.mx;
+      if (v === null || (ps === 'p2' && def.sk === p1Sk)) {
+        next = { ...next, [ps]: { propId: null, value: 0 } };
+        fixed++;
+        continue;
+      }
+      if (ps === 'p1') p1Sk = def.sk;
+      if (v !== value) {
+        next = { ...next, [ps]: { propId, value: v } };
+        fixed++;
+      }
+    }
+    gear[slotName] = next;
+  }
+  return fixed ? { build: { ...build, gear }, fixed } : { build, fixed: 0 };
+}
+
 /**
  * Serializa um build para JSON (para salvar/exportar).
  * @param {Object} build
@@ -1152,7 +1207,8 @@ export function serializeBuild(build, name) {
  * Deserializa um build de um objeto salvo.
  * Valida versão e retorna build state.
  * @param {Object} saved
- * @returns {{ ok: boolean, build?: Object, error?: string, code?: string }}
+ * @returns {{ ok: boolean, build?: Object, fixed?: number, error?: string, code?: string }}
+ *   fixed: propriedades ajustadas por clampPropValues (DEC-041), para quem abre avisar.
  *   code: 'not_got_legends' | 'bad_structure' | 'unknown_class' — estável, para a
  *   interface traduzir (análise 261116, D4); error segue em PT-BR, como antes.
  */
@@ -1168,7 +1224,8 @@ export function deserializeBuild(saved) {
   if (!cls) {
     return { ok: false, error: `Classe desconhecida: ${saved.build.classId}`, code: 'unknown_class' };
   }
-  return { ok: true, build: normalizeLegendaryProps(saved.build) };
+  const { build, fixed } = clampPropValues(normalizeLegendaryProps(saved.build));
+  return { ok: true, build, fixed };
 }
 
 /**
@@ -1188,7 +1245,7 @@ export function decodeBuild(code) {
     const json = JSON.parse(decodeURIComponent(escape(atob(code))));
     const result = deserializeBuild(json);
     if (!result.ok) return result;
-    return { ok: true, name: json.name, build: result.build };
+    return { ok: true, name: json.name, build: result.build, fixed: result.fixed };
   } catch {
     return { ok: false, error: 'Código inválido ou corrompido.', code: 'bad_code' };
   }
@@ -1280,7 +1337,7 @@ export function dropUnknownIds(build) {
  * o código Base64 antigo (decodeBuild), que segue aceito na leitura (DEC-038).
  * Depois de validar, esvazia o que não existe mais (dropUnknownIds).
  * @param {string} text  link inteiro, código novo ou código antigo
- * @returns {Promise<{ ok: boolean, build?: Object, name?: string, dropped?: number, error?: string, code?: string }>}
+ * @returns {Promise<{ ok: boolean, build?: Object, name?: string, dropped?: number, fixed?: number, error?: string, code?: string }>}
  */
 export async function decodeBuildLink(text) {
   const code = extractShareCode(text);
@@ -1290,7 +1347,7 @@ export async function decodeBuildLink(text) {
       const bytes = await pipeBytes(fromBase64Url(code.slice(LINK_CODE_V1.length)), new DecompressionStream('deflate-raw'));
       const payload = JSON.parse(new TextDecoder().decode(bytes));
       const r = deserializeBuild({ game: 'got-legends', build: payload?.b });
-      res = r.ok ? { ok: true, build: r.build, name: typeof payload.n === 'string' ? payload.n : '' } : r;
+      res = r.ok ? { ok: true, build: r.build, name: typeof payload.n === 'string' ? payload.n : '', fixed: r.fixed } : r;
     } catch {
       return { ok: false, error: 'Código inválido ou corrompido.', code: 'bad_code' };
     }
