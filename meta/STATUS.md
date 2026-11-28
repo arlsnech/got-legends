@@ -66,7 +66,7 @@ _Nada._
 
 ## 📋 Backlog (curto prazo — acionáveis no próximo turno)
 
-- [ ] **Conferência de tela da `wo0050`** (C1, C2, C5 e o logo no GitHub Pages, DEC-041): roteiro em `logs/2026-11-27.md`, «Roteiro de tela da wo0050». Só depois do deploy do push.
+- [ ] **Cortar a 1.1.1?** O `[Não lançado]` do CHANGELOG tem só consertos, todos conferidos na tela (`wo0047` e `wo0050`): pela SemVer é versão de correção. Decisão do dono.
 - [ ] **Cópias soltas de `GUIA_COMPLETO*.md`** em `notas-arquivadas\` (pasta-pai): as duas têm o mesmo md5 (`7fa3bda4…`) que `meta/legacy/GUIA_COMPLETO_v4.md` no Git, antes de `c232da3` — que a tirou da árvore. O conteúdo está salvo no histórico; apagar ou manter é decisão do dono.
 - [ ] **C3/C4 — só o link limpa id que não existe** `[medido pelo Code, /sondar de 2026-11-27]`: `dropUnknownIds` roda só em `decodeBuildLink`; o salvo e o `.json` importado não passam por ele. E ele não confere `ronin_breath`, `perk1`/`perk2`, `propId` nem `linkedClass`.
 - [ ] **C6 — o «~530 caracteres» do link não tem comando que o reproduza** `[medido pelo Code: build vazia dá 222]`. Não é defeito: falta o script que mede o link de N builds aleatórias.
@@ -219,3 +219,11 @@ Fatos que só existiam no chat, com a origem:
 - `src/logic.js` (`clampPropValues`, chamado por `deserializeBuild`), `src/App.jsx` (`readSaves`, cópia em `gotlegends_v1_builds_backup`, avisos ao abrir) e `src/icons.js` (`LOGO_URL`).
 
 **Pendente:** conferência de tela pelo dono (backlog).
+
+### 2026-11-28 — Chat: a wo0050 conferida na tela (wo0051)
+
+- **Roteiro de tela 1–7 da `wo0050`: certo** — `[relatado pelo dono, 2026-11-28, com três capturas]`: o logo aparece na aba da gaveta e o 404 saiu do console; a gaveta abre vazia, sem tela branca; o link «Teste C2» abre com P1 = 12%, P2 vazio e o dano em +12%. **Fecha o «Pendente» da entrada acima.**
+- Antes disso, a primeira tentativa de aplicar a `wo0050` foi recusada (faltava o campo «Âncoras lidas em») e o roteiro rodou no site velho; detalhe e lição no `logs/2026-11-28.md`.
+- O `meta/STATUS.md` deixou de ter fim de linha misto: agora é todo CRLF (`git ls-files --eol`).
+
+**Pendente:** decidir se corta a 1.1.1 (backlog).
